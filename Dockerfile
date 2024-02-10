@@ -9,7 +9,6 @@ COPY . .
 # RENDER=true
 # RENDER_REACT_APP_FLICKR_API_KEY='xxxxxx' es la API de Flickr
 ARG RENDER
-ARG RENDER_REACT_APP_FLICKR_API_KEY
 
 # Variables de entorno para npm run build
 ENV NPM_BUILD_ENV=""
@@ -27,15 +26,8 @@ RUN apk add wasm-pack
 # Build wasm module
 RUN npm run build:wasm
 
-# build segun el ambiente
-# render -> se agrega la api key en el comando npm build
-# local -> los toma de .env
-RUN if [[ ! -z "$RENDER" ]]; \
-    then NPM_BUILD_ENV="${NPM_BUILD_ENV} REACT_APP_FLICKR_API_KEY=${RENDER_REACT_APP_FLICKR_API_KEY}"; \
-  fi; \
-  NPM_BUILD_COMMAND="${NPM_BUILD_ENV} npm run build"; \
-  echo "${NPM_BUILD_COMMAND}"; \
-  eval "${NPM_BUILD_COMMAND}";
+# build
+RUN npm run build
 
 # Paquetes para desarrollo con vscode
 # Solo se instalan localmente, no en render
