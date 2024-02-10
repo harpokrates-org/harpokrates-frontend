@@ -15,9 +15,7 @@ ENV NPM_BUILD_ENV=""
 
 # If you are building your code for production
 # RUN npm ci --only=production
-RUN if [[ -z "$RENDER" ]]; then npm install; else npm ci --only=production; fi;
-
-RUN npm install --global serve
+RUN npm install
 
 # Rust
 RUN apk add --no-cache rust cargo
