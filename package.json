@@ -6,9 +6,11 @@
     "dev": "next dev",
     "build": "next build",
     "start": "next start",
-    "lint": "next lint"
+    "lint": "next lint",
+    "build:wasm": "cd wasm-lib && wasm-pack build --target web --out-dir pkg"
   },
   "dependencies": {
+    "wasm-lib": "file:wasm-lib/pkg",
     "react": "^18",
     "react-dom": "^18",
     "next": "14.1.0"

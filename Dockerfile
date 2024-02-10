@@ -1,4 +1,4 @@
-FROM node:16-alpine3.17
+FROM node:21-alpine3.18
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -45,4 +45,4 @@ RUN if [[ -z "$RENDER" ]]; then \
   apk add rust-analyzer; \
   fi; 
 
-CMD ["serve",  "-s", "build"] 
+CMD ["npm", "run", "start"] 
