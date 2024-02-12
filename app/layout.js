@@ -2,9 +2,9 @@ import { Inter } from "next/font/google";
 import "./globals.css";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import NavBar from "./components/NavBar";
+import StoreProvider from "@/store/StoreProvider";
 
 const inter = Inter({ subsets: ["latin"] });
-import Providers from "@/store/provider";
 
 export const metadata = {
   title: "Harpokrates",
@@ -16,11 +16,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <Providers>
+          <StoreProvider>
             <NavBar>
               {children}
             </NavBar>
-          </Providers>
+          </StoreProvider>
         </AppRouterCacheProvider>
       </body>
     </html>
