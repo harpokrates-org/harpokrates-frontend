@@ -13,7 +13,6 @@ export default function UserSearcher() {
 
   const updateNameHandler = (event) => {
     setFlickrUserName(event.target.value)
-    console.log('flickrUserName',flickrUserName)
   }
 
   const searchNameHandler = () => {
