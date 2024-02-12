@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import NavBar from "./components/NavBar";
 
 const inter = Inter({ subsets: ["latin"] });
+import Providers from "@/store/provider";
 
 export const metadata = {
   title: "Harpokrates",
@@ -15,9 +16,11 @@ export default function RootLayout({ children }) {
     <html lang="en">
       <body>
         <AppRouterCacheProvider>
-          <NavBar>
-            {children}
-          </NavBar>
+          <Providers>
+            <NavBar>
+              {children}
+            </NavBar>
+          </Providers>
         </AppRouterCacheProvider>
       </body>
     </html>
