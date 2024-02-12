@@ -3,7 +3,7 @@ import { createSlice } from '@reduxjs/toolkit'
 export const flickrUserSlice = createSlice({
   name: 'flickrUser',
   initialState: {
-    name: 'hola mundo',
+    name: '',
   },
   reducers: {
     changeName: (state, action) => {
