@@ -17,9 +17,8 @@ export default function RootLayout({ children }) {
       <body>
         <AppRouterCacheProvider>
           <Providers>
-            <NavBar>
-              {children}
-            </NavBar>
+            <NavBar/>
+            {children}
           </Providers>
         </AppRouterCacheProvider>
       </body>
