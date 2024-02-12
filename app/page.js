@@ -1,9 +1,7 @@
-import Image from "next/image";
+import TextBox from "./components/TextBox";
 
 export default function Home() {
   return (
-    <main>
-      Hello world!
-    </main>
+    <TextBox/>
   );
 }
