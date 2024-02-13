@@ -4,7 +4,9 @@ import Button from '@mui/material/Button';
 import { Input } from '@mui/joy';
 import Person from '@mui/icons-material/Person';
 import { useDispatch } from 'react-redux'
-import { changeName } from '@/store/FlickrUserSlice';
+import { changeName, wasFound, wasNotFound } from '@/store/FlickrUserSlice';
+import axios from 'axios';
+import { close, open } from '@/store/SearchAlertSlice';
 
 
 export default function UserSearcher() {
@@ -12,11 +14,23 @@ export default function UserSearcher() {
   const dispatch = useDispatch()
 
   const updateNameHandler = (event) => {
+    dispatch(close())
     setFlickrUserName(event.target.value)
   }
 
   const searchNameHandler = () => {
     dispatch(changeName(flickrUserName))
+    axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/user', {
+      params: {
+        username: flickrUserName
+      },
+    }).then((response) => {
+      dispatch(wasFound())
+    }).catch((error) => {
+      dispatch(wasNotFound())
+    }).finally(() => {
+      dispatch(open())
+    })
   }
 
   return (
