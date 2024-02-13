@@ -20,7 +20,10 @@ export default function UserSearcher() {
 
   const searchNameHandler = () => {
     dispatch(changeName(flickrUserName))
-    axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/user', {
+    console.log(`NEXT_PUBLIC_BACKEND_URL: ${process.env.NEXT_PUBLIC_BACKEND_URL}`)
+    const user_url = process.env.NEXT_PUBLIC_BACKEND_URL + '/user'
+    console.log(`user-url: ${user_url}`)
+    axios.get(user_url, {
       params: {
         username: flickrUserName
       },
