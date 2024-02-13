@@ -5,9 +5,13 @@ WORKDIR /usr/src/app
 
 COPY . .
 
+# Argumentos recibidos en render.com
+# nota: Para que se tomen como variables de entorno, deben ser agregado al string ENVVARS
+# mas abajo
+#
 # Si estamos en render.com entonces
 # RENDER=true
-# RENDER_NEXT_PUBLIC_BACKEND_URL='xxxxxx' es la API de Flickr
+# RENDER_NEXT_PUBLIC_BACKEND_URL='xxxxxx' es la url del backend
 ARG RENDER
 ARG RENDER_NEXT_PUBLIC_BACKEND_URL
 
