@@ -13,7 +13,7 @@ COPY . .
 # RENDER=true
 # RENDER_NEXT_PUBLIC_BACKEND_URL='xxxxxx' es la url del backend
 ARG RENDER
-ARG RENDER_NEXT_PUBLIC_BACKEND_URL
+ARG NEXT_PUBLIC_BACKEND_URL
 
 # Variables de entorno para npm run build
 ENV NPM_BUILD_ENV=""
@@ -42,7 +42,7 @@ RUN if [[ -z "$RENDER" ]]; then \
   else \ 
     # Si estamos en render.com, seteamos la env variables en un string \
     # Settear aca todas las variablas de entorno
-    ENVVARS="NEXT_PUBLIC_BACKEND_URL=${RENDER_NEXT_PUBLIC_BACKEND_URL}"; \ 
+    ENVVARS="NEXT_PUBLIC_BACKEND_URL=${NEXT_PUBLIC_BACKEND_URL}"; \ 
   fi; 
 
 # build
