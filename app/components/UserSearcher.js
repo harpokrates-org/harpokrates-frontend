@@ -25,8 +25,10 @@ export default function UserSearcher() {
         username: flickrUserName
       },
     }).then((response) => {
+      console.log(response)
       dispatch(wasFound())
     }).catch((error) => {
+      console.log(error)
       dispatch(wasNotFound())
     }).finally(() => {
       dispatch(open())
