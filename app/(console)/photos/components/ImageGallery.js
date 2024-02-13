@@ -1,5 +1,5 @@
 import { Box, ImageList, ImageListItem } from "@mui/material"
-import { getUserID } from '@/api/flickr/users'
+
 export default async function ImageGallery() {
   const PHOTOS = [
     "https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg",
