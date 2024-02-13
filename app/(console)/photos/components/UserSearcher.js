@@ -23,14 +23,10 @@ export default function UserSearcher() {
     <Input
       onChange={updateNameHandler}
       startDecorator={<Person/>}
-      placeholder="Ingrese un nombre de usuario..."
+      placeholder="Ingresá un nombre de usuario..."
       endDecorator={<Button onClick={searchNameHandler}>Buscar</Button>}
       size='sm'
-      style={{
-        position: 'absolute', left: '50%', top: '50%',
-        transform: 'translate(-50%, -50%)',
-        width: '400px'
-      }}
+      style={{width: '400px'}}
     ></Input>
   );
 }
