@@ -5,6 +5,7 @@ import { Input } from '@mui/joy';
 import Person from '@mui/icons-material/Person';
 import { useDispatch } from 'react-redux'
 import { changeName } from '@/store/FlickrUserSlice';
+import axios from 'axios';
 
 
 export default function UserSearcher() {
@@ -17,6 +18,15 @@ export default function UserSearcher() {
 
   const searchNameHandler = () => {
     dispatch(changeName(flickrUserName))
+    axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/user', {
+      params: {
+        username: newName
+      },
+    }).then((response) => {
+      state.name = newName
+    }).catch((error) => {
+      console.log('ERROR')
+    })
   }
 
   return (
