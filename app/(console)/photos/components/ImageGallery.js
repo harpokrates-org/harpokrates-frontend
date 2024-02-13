@@ -12,9 +12,6 @@ export default async function ImageGallery() {
     "https://images.pexels.com/photos/346529/pexels-photo-346529.jpeg"
   ]
 
-  const userID = await getUserID('eugefranx')
-  console.log(userID)
-
   return (
     <Box>
       <ImageList cols={4}>
