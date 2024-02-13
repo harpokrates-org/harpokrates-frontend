@@ -11,7 +11,7 @@ COPY . .
 #
 # Si estamos en render.com entonces
 # RENDER=true
-# RENDER_NEXT_PUBLIC_BACKEND_URL='xxxxxx' es la url del backend
+# NEXT_PUBLIC_BACKEND_URL='xxxxxx' es la url del backend
 ARG RENDER
 ARG NEXT_PUBLIC_BACKEND_URL
 
