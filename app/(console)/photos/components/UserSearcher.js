@@ -7,7 +7,7 @@ import { useDispatch } from 'react-redux'
 import { changeName, wasFound, wasNotFound } from '@/store/FlickrUserSlice';
 import axios from 'axios';
 import { close, open } from '@/store/SearchAlertSlice';
-
+import { toast } from 'react-hot-toast';
 
 export default function UserSearcher() {
   const [flickrUserName, setFlickrUserName] = useState('');
@@ -26,10 +26,9 @@ export default function UserSearcher() {
         username: flickrUserName
       },
     }).then((response) => {
-      console.log(response)
       dispatch(wasFound())
     }).catch((error) => {
-      console.log(error)
+      toast.error('Usuario no encontrado')
       dispatch(wasNotFound())
     }).finally(() => {
       dispatch(open())
