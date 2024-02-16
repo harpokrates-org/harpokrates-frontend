@@ -6,21 +6,14 @@ import Typography from '@mui/material/Typography';
 import Button from '@mui/material/Button';
 import IconButton from '@mui/material/IconButton';
 import MenuIcon from '@mui/icons-material/Menu';
-import UserSearcher from './UserSearcher';
-
 
 export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="static">
-        <Toolbar>
-          <Typography variant="h6" component="div" sx={{ flexGrow: 1 }}>
-            Harpokrates
-          </Typography>
-
-          <UserSearcher/>
-
-          <Button color="inherit">Login</Button>
+        <Toolbar sx={{ justifyContent: 'space-between' }} variant="dense">
+          <Button color="inherit" href="/">Harpokrates</Button>
+          <Button color="inherit" href="/register">Login</Button>
         </Toolbar>
       </AppBar>
     </Box>
