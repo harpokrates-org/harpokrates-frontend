@@ -33,9 +33,16 @@ export default function UserSearcher() {
     })
   }
 
+  const enterKeyNameHandler = (event) => {
+    if (event.key === "Enter") {
+      searchNameHandler();
+    }
+  }
+
   return (
     <Input
       onChange={updateNameHandler}
+      onKeyDown={enterKeyNameHandler}
       startDecorator={<Person/>}
       placeholder="Ingrese un nombre de usuario..."
       endDecorator={<Button onClick={searchNameHandler}>Buscar</Button>}
