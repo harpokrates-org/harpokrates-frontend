@@ -15,7 +15,7 @@ const filterSizeByLabel = (sizes, label) => {
 
 const getPhotos = async (userId) => {
   return await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/photos', {
-    params: { user_id: userId, per_page: 10 }
+    params: { user_id: userId, per_page: 12 }
   })
 }
 
@@ -56,6 +56,7 @@ export default function ImageGallery() {
                 srcSet={photo.source}
                 src={photo.source}
                 alt={photo.source}
+                style={{ height: 150 }}
               />
             </ImageListItem>
           ))
