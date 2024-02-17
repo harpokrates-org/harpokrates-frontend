@@ -3,6 +3,7 @@ import "./globals.css";
 import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import NavBar from "./components/NavBar";
 import StoreProvider from "@/store/StoreProvider";
+import { Toaster } from "react-hot-toast";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,6 +19,7 @@ export default function RootLayout({ children }) {
         <AppRouterCacheProvider>
           <StoreProvider>
             <NavBar/>
+            <Toaster position="top-right" />
             {children}
           </StoreProvider>
         </AppRouterCacheProvider>
