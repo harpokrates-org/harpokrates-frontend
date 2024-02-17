@@ -3,7 +3,6 @@ import { Box, Button, Grid, Typography } from "@mui/material";
 export default function TextBox() {
   return (
     <Box>
-      <SearchAlert/>
       <Grid container spacing={2} p={7}>
         <Grid item xs={6} m="auto">
           <Grid item xs={12} m="auto">
