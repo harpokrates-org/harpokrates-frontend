@@ -31,6 +31,11 @@ export default function SearchAlert() {
             </IconButton>
           }
           sx={{ mb: 2 }}
+          style={{
+            position: 'fixed',
+            left: '50%',
+            transform: 'translate(-50%, 0%)',
+          }}
         >
           {found ? 'Usuario encontrado!' : 'No hemos encontramos el usuario ingresado.'}
         </Alert>
