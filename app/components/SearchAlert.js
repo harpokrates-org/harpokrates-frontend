@@ -8,6 +8,9 @@ import CloseIcon from '@mui/icons-material/Close';
 import { useDispatch, useSelector } from 'react-redux';
 import { close } from '@/store/SearchAlertSlice';
 
+const SUCCESS_TEXT= 'Usuario encontrado!'
+const USER_NOT_FOUND_TEXT = 'No hemos encontramos el usuario ingresado.'
+
 export default function SearchAlert() {
   let found = useSelector((store) => store.flickrUser.found)
   let open = useSelector((store) => store.searchAlert.open)
@@ -37,7 +40,7 @@ export default function SearchAlert() {
             transform: 'translate(-50%, 0%)',
           }}
         >
-          {found ? 'Usuario encontrado!' : 'No hemos encontramos el usuario ingresado.'}
+          {found ? SUCCESS_TEXT : USER_NOT_FOUND_TEXT}
         </Alert>
       </Collapse>
     </Box>
