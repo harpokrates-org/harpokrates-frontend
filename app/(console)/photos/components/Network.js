@@ -26,7 +26,7 @@ export default function Network() {
     init()
       .then(() => {
         const parsed_input = JSON.stringify(exampleNet)
-        let socialNetwork = SocialNetwork.new()
+        const socialNetwork = new SocialNetwork()
         socialNetwork.set_net(parsed_input)
         const net = JSON.parse(socialNetwork.get_net())
         setNet(net)
