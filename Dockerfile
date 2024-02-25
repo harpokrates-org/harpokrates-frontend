@@ -23,8 +23,11 @@ ENV NPM_BUILD_ENV=""
 RUN npm install
 
 # Rust
-RUN apk add --no-cache rust cargo
-RUN apk add wasm-pack
+# Se usa la version /edge porque utiliza rust 1.76 en vez de 1.71 (default en alpine 3.18)
+RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    rust \
+    cargo \
+    wasm-pack
 
 # Build wasm module
 RUN npm run build:wasm
@@ -36,9 +39,10 @@ ENV ENVVARS=""
 # Paquetes para desarrollo con vscode
 # Solo se instalan localmente, no en render
 RUN if [[ -z "$RENDER" ]]; then \
-    apk add nano; \
-    apk add git; \
-    apk add rust-analyzer; \
+    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+        nano \
+        git \
+        rust-analyzer; \
   else \ 
     # Si estamos en render.com, seteamos la env variables en un string \
     # Settear aca todas las variablas de entorno
