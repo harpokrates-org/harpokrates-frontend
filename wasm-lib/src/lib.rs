@@ -38,6 +38,7 @@ pub struct SocialNetwork {
 
 #[wasm_bindgen]
 impl SocialNetwork {
+    #[wasm_bindgen(constructor)]
     pub fn new() -> Self {
         set_panic_hook();
         Self {
