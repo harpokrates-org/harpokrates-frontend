@@ -1,6 +1,7 @@
 import UserSearcher from "@/app/(console)/photos/components/UserSearcher";
 import { Grid } from "@mui/material";
 import ImageGallery from "./components/ImageGallery";
+import Network from "./components/Network";
 
 export default function Photos() {
   return (
@@ -10,6 +11,7 @@ export default function Photos() {
       </Grid>
       <Grid item xs={12}>
         <ImageGallery />
+        <Network/>
       </Grid>
     </Grid>
   );
