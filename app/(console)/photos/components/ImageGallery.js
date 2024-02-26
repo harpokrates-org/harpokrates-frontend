@@ -32,19 +32,18 @@ export default function ImageGallery() {
   const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
 
-  const getFilter = async (src) => {
-    const pix = await pixels(src);
-    const prediction = await classify(model, pix);
-    const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
-    const filter = prediction > 0.5 ? stegoFilter : "";
-    return filter;
-  }
-
   useEffect(() => {
+    const getFilter = async (src) => {
+      const pix = await pixels(src);
+      const prediction = await classify(model, pix);
+      const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
+      const filter = prediction > 0.5 ? stegoFilter : "";
+      return filter;
+    }
+
     const fetchModel = async () => {
       if (model) return;
       const m = await loadLowModel()
-      m.summary()
       setModel(m)
     }
 
