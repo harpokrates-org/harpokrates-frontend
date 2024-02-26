@@ -1,9 +1,11 @@
 'use client'
+import { classify, loadLowModel } from "@/app/libs/classifier"
 import { selectId } from "@/store/FlickrUserSlice"
 import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+const pixels = require('image-pixels')
 const R = require('ramda');
 
 const filterSizeByLabel = (sizes, label) => {
@@ -27,9 +29,25 @@ const getSizes = async (photoId) => {
 
 export default function ImageGallery() {
   const [sizes, setSizes] = useState([])
+  const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
 
+  const getFilter = async (src) => {
+    const pix = await pixels(src);
+    const prediction = await classify(model, pix);
+    const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
+    const filter = prediction > 0.5 ? stegoFilter : "";
+    return filter;
+  }
+
   useEffect(() => {
+    const fetchModel = async () => {
+      if (model) return;
+      const m = await loadLowModel()
+      m.summary()
+      setModel(m)
+    }
+
     const fetchPhotos = async () => {
       if (!userId) return;
       const photos_res = await getPhotos(userId)
@@ -41,22 +59,34 @@ export default function ImageGallery() {
         const r = await getSizes(photo.id)
         return r.data
       }))
-      setSizes(sizes_res)
+
+      const mediums = filterSizeByLabel(sizes_res, 'Medium');
+      const siz = mediums.map(async m => {
+        return { source: m.source, filter: await getFilter(m.source) }
+      })
+
+      setSizes(await Promise.all(siz))
     }
-    fetchPhotos();
-  }, [userId])
+
+    const fetchAll = async () => {
+      await fetchModel();
+      fetchPhotos()
+    }
+
+    fetchAll();
+  }, [userId, model])
 
   return (
     <Box>
       <ImageList cols={4}>
         {
-          filterSizeByLabel(sizes, 'Medium').map((photo) => (
+          sizes.map((photo) => (
             <ImageListItem key={photo.source}>
               <img
                 srcSet={photo.source}
                 src={photo.source}
                 alt={photo.source}
-                style={{ height: 150 }}
+                style={{ height: 150, filter: photo.filter }}
               />
             </ImageListItem>
           ))
