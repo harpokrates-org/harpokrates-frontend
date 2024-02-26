@@ -5,7 +5,11 @@ import axios from "axios"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 const R = require('ramda');
-
+// Import @tensorflow/tfjs or @tensorflow/tfjs-core
+const tf = require('@tensorflow/tfjs');
+// Add the WASM backend to the global backend registry.
+require('@tensorflow/tfjs-backend-wasm');
+ 
 const filterSizeByLabel = (sizes, label) => {
   return sizes.map(size => {
     const r = R.filter((e) => e.label == label, size.sizes)[0]
@@ -27,9 +31,17 @@ const getSizes = async (photoId) => {
 
 export default function ImageGallery() {
   const [sizes, setSizes] = useState([])
+  const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
 
   useEffect(() => {
+    const fetchModel = async () => {
+      if (model) return;
+      const m = await tf.loadLayersModel('model/low/model.json')
+      m.summary()
+      setModel(m)
+    }
+
     const fetchPhotos = async () => {
       if (!userId) return;
       const photos_res = await getPhotos(userId)
@@ -43,8 +55,14 @@ export default function ImageGallery() {
       }))
       setSizes(sizes_res)
     }
-    fetchPhotos();
-  }, [userId])
+
+    const fetchAll = async () => {
+      fetchModel()
+      fetchPhotos()
+    }
+
+    fetchAll();
+  }, [userId, model])
 
   return (
     <Box>
