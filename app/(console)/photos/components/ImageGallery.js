@@ -1,4 +1,5 @@
 'use client'
+import { classify, loadLowModel } from "@/app/libs/classifier"
 import { selectId } from "@/store/FlickrUserSlice"
 import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
@@ -6,11 +7,7 @@ import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
 const pixels = require('image-pixels')
 const R = require('ramda');
-// Import @tensorflow/tfjs or @tensorflow/tfjs-core
-const tf = require('@tensorflow/tfjs');
-// Add the WASM backend to the global backend registry.
-require('@tensorflow/tfjs-backend-wasm');
- 
+
 const filterSizeByLabel = (sizes, label) => {
   return sizes.map(size => {
     const r = R.filter((e) => e.label == label, size.sizes)[0]
@@ -35,32 +32,18 @@ export default function ImageGallery() {
   const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
 
-  const classify = async (pix) => {
-    // PREDICCIÓN
-    // Uint8Array -> Tensor 3D RGBA [x,y,4]
-    const rgbaTens3d = tf.tensor3d(pix.data, [pix.width, pix.height, 4]);
-    // Tensor 3D RGBA [x,y,4] -> Tensor 3D RGB [x,y,3]
-    const rgbTens3d = tf.slice3d(rgbaTens3d, [0, 0, 0], [-1, -1, 3])
-    // Tensor 3D RGB [x,y,3] -> Tensor 3D RGB [100,100,3]
-    const smallImg = tf.image.resizeBilinear(rgbTens3d, [128, 128]);
-    // Tensor 3D RGB [100,100,3] -> Tensor 4D RGB [1,100,100,3]
-    const tensor = smallImg.reshape([1, 128, 128, 3])
-    const prediction = model.predict(tensor).dataSync()[0];
-    return prediction;
-  }
-
   const getFilter = async (src) => {
     const pix = await pixels(src);
-    const prediction = await classify(pix);
+    const prediction = await classify(model, pix);
     const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
-    const filter = parseInt(prediction) % 2 === 0 ? stegoFilter : "";
+    const filter = prediction > 0.5 ? stegoFilter : "";
     return filter;
   }
 
   useEffect(() => {
     const fetchModel = async () => {
       if (model) return;
-      const m = await tf.loadLayersModel('model/low/model.json')
+      const m = await loadLowModel()
       m.summary()
       setModel(m)
     }
