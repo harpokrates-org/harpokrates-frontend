@@ -4,6 +4,7 @@ import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+const pixels = require('image-pixels')
 const R = require('ramda');
 // Import @tensorflow/tfjs or @tensorflow/tfjs-core
 const tf = require('@tensorflow/tfjs');
@@ -34,6 +35,28 @@ export default function ImageGallery() {
   const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
 
+  const classify = async (pix) => {
+    // PREDICCIÓN
+    // Uint8Array -> Tensor 3D RGBA [x,y,4]
+    const rgbaTens3d = tf.tensor3d(pix.data, [pix.width, pix.height, 4]);
+    // Tensor 3D RGBA [x,y,4] -> Tensor 3D RGB [x,y,3]
+    const rgbTens3d = tf.slice3d(rgbaTens3d, [0, 0, 0], [-1, -1, 3])
+    // Tensor 3D RGB [x,y,3] -> Tensor 3D RGB [100,100,3]
+    const smallImg = tf.image.resizeBilinear(rgbTens3d, [128, 128]);
+    // Tensor 3D RGB [100,100,3] -> Tensor 4D RGB [1,100,100,3]
+    const tensor = smallImg.reshape([1, 128, 128, 3])
+    const prediction = model.predict(tensor).dataSync()[0];
+    return prediction;
+  }
+
+  const getFilter = async (src) => {
+    const pix = await pixels(src);
+    const prediction = await classify(pix);
+    const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
+    const filter = parseInt(prediction) % 2 === 0 ? stegoFilter : "";
+    return filter;
+  }
+
   useEffect(() => {
     const fetchModel = async () => {
       if (model) return;
@@ -53,11 +76,17 @@ export default function ImageGallery() {
         const r = await getSizes(photo.id)
         return r.data
       }))
-      setSizes(sizes_res)
+
+      const mediums = filterSizeByLabel(sizes_res, 'Medium');
+      const siz = mediums.map(async m => {
+        return { source: m.source, filter: await getFilter(m.source) }
+      })
+
+      setSizes(await Promise.all(siz))
     }
 
     const fetchAll = async () => {
-      fetchModel()
+      await fetchModel();
       fetchPhotos()
     }
 
@@ -68,13 +97,13 @@ export default function ImageGallery() {
     <Box>
       <ImageList cols={4}>
         {
-          filterSizeByLabel(sizes, 'Medium').map((photo) => (
+          sizes.map((photo) => (
             <ImageListItem key={photo.source}>
               <img
                 srcSet={photo.source}
                 src={photo.source}
                 alt={photo.source}
-                style={{ height: 150 }}
+                style={{ height: 150, filter: photo.filter }}
               />
             </ImageListItem>
           ))
