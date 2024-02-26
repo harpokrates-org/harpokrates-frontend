@@ -16,6 +16,7 @@ export const classify = async (model, pix) => {
 }
 
 export const loadLowModel = async () => {
+    await tf.ready();
     return await tf.loadLayersModel('model/low/model.json')
 }
 
