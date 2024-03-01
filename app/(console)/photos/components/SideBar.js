@@ -2,6 +2,8 @@
 import { Box, CssBaseline, Divider, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from "@mui/material";
 import InboxIcon from '@mui/icons-material/MoveToInbox';
 import MailIcon from '@mui/icons-material/Mail';
+import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
+import HubIcon from '@mui/icons-material/Hub';
 
 const drawerWidth = 180;
 
@@ -18,29 +20,22 @@ export default function SideBar() {
       <Toolbar />
       <Box sx={{ overflow: 'auto' }}>
         <List>
-          {['Inbox', 'Starred', 'Send email', 'Drafts'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
-        </List>
-        <Divider />
-        <List>
-          {['All mail', 'Trash', 'Spam'].map((text, index) => (
-            <ListItem key={text} disablePadding>
-              <ListItemButton>
-                <ListItemIcon>
-                  {index % 2 === 0 ? <InboxIcon /> : <MailIcon />}
-                </ListItemIcon>
-                <ListItemText primary={text} />
-              </ListItemButton>
-            </ListItem>
-          ))}
+          <ListItem key='ImageGallery' disablePadding>
+            <ListItemButton href="/photos">
+              <ListItemIcon>
+                <PhotoLibraryIcon />
+              </ListItemIcon>
+              <ListItemText primary='Fotos' />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key='Network' disablePadding>
+            <ListItemButton href="/network">
+              <ListItemIcon>
+                <HubIcon />
+              </ListItemIcon>
+              <ListItemText primary='Red' />
+            </ListItemButton>
+          </ListItem>
         </List>
       </Box>
     </Drawer>

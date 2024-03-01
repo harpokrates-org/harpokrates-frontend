@@ -10,10 +10,9 @@ export default function NavBar() {
   return (
     <Box sx={{ flexGrow: 1 }}>
       <AppBar position="fixed" sx={{ zIndex: (theme) => theme.zIndex.drawer + 1 }}>
-        <Toolbar variant="dense">
-          <Typography variant="h6" noWrap component="div">
-            Clipped drawer
-          </Typography>
+        <Toolbar sx={{ justifyContent: 'space-between' }} variant="dense">
+          <Button color="inherit" href="/">Harpokrates</Button>
+          <Button color="inherit" href="/register">Login</Button>
         </Toolbar>
       </AppBar>
     </Box>
