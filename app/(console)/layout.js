@@ -1,6 +1,6 @@
 "use client"
 
-import { Box, Container, CssBaseline, Divider, Grid, Toolbar } from "@mui/material";
+import { Box, Toolbar } from "@mui/material";
 import SideBar from "./components/SideBar";
 
 export default function ConsoleLayout({ children }) {
