@@ -5,6 +5,7 @@ import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useSelector } from "react-redux"
+import SideBar from "./SideBar"
 const pixels = require('image-pixels')
 const R = require('ramda');
 
