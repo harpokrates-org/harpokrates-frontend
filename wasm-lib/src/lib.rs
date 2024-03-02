@@ -17,16 +17,56 @@ pub fn greet() {
 }
 
 #[derive(Serialize, Deserialize)]
-struct Net {
+struct Node {
+    id: String,
+    name: String,
+    val: u8,
+    group: u8,
+}
+
+impl Node {
+    pub fn new(id: String) -> Self {
+        Self {
+            id: id.clone(),
+            name: id,
+            val: 1,
+            group: 1,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct Edge {
+    source: String,
+    target: String,
+}
+
+impl Edge {
+    pub fn new(source: String, target: String) -> Self {
+        Self {
+            source,
+            target,
+        }
+    }
+}
+
+#[derive(Serialize, Deserialize)]
+struct InputNet {
     nodes: Vec<String>,
     edges: Vec<(String, String)>,
 }
 
-impl Net {
+#[derive(Serialize, Deserialize)]
+struct OutputNet {
+    nodes: Vec<Node>,
+    links: Vec<Edge>,
+}
+
+impl OutputNet {
     pub fn new() -> Self {
         Self {
             nodes: Vec::new(),
-            edges: Vec::new(),
+            links: Vec::new(),
         }
     }
 }
@@ -48,7 +88,7 @@ impl SocialNetwork {
 
     pub fn set_net(&mut self, net_json: &str) {
         set_panic_hook();
-        let net: Net = serde_json::from_str(net_json).expect("SET_NET: Failed to parse input net");
+        let net: InputNet = serde_json::from_str(net_json).expect("SET_NET: Failed to parse input net");
         let mut indexes: HashMap<String, NodeIndex> = HashMap::new();
         
         for node in net.nodes.iter() {
@@ -65,18 +105,18 @@ impl SocialNetwork {
     
     pub fn get_net(&mut self) -> String {
         set_panic_hook();
-        let mut net: Net = Net::new();
+        let mut net: OutputNet = OutputNet::new();
         let graph_clone_nodes: DiGraph<String, u32> = self.graph.clone();
         let graph_clone_edges: DiGraph<String, u32> = self.graph.clone();
         graph_clone_nodes.into_nodes_edges().0.iter()
             .for_each(|node| {
-                net.nodes.push(node.weight.clone())
+                net.nodes.push(Node::new(node.weight.clone()))
             });
         graph_clone_edges.into_nodes_edges().1.iter()
             .for_each(|edge| {
                 let from = edge.source();
                 let to = edge.target();
-                net.edges.push((
+                net.links.push(Edge::new(
                     (*self.graph.node_weight(from).expect("GET_NET: Source node not found")).clone(),
                     (*self.graph.node_weight(to).expect("GET_NET: Target node not found")).clone()
                 ))

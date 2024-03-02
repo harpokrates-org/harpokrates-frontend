@@ -1,81 +1,44 @@
 'use client'
 import Box from '@mui/material/Box';
-import { useCallback, useRef } from 'react';
+import { useCallback, useRef, useEffect, useState } from 'react';
+import init, { SocialNetwork } from "wasm-lib";
 import { ForceGraph2D, ForceGraph3D, ForceGraphVR, ForceGraphAR } from 'react-force-graph';
 
-const data = {
-  "nodes": [ 
-      { 
-        "id": "id1",
-        "name": "name1",
-        "val": 1,
-        "group": 1,
-      },
-      { 
-        "id": "id2",
-        "name": "name2",
-        "val": 10,
-        "group": 1,
-      },
-      { 
-        "id": "id3",
-        "name": "name3",
-        "val": 1,
-        "group": 1,
-      },
-      { 
-        "id": "id4",
-        "name": "name3",
-        "val": 1,
-        "group": 2,
-      },
-      { 
-        "id": "id5",
-        "name": "name3",
-        "val": 1,
-        "group": 2,
-      },
-      { 
-        "id": "id6",
-        "name": "name3",
-        "val": 1,
-        "group": 1,
-      },
+const exampleNet = {
+  nodes: [
+      'ana',
+      'brian',
+      'carolina',
+      'daniel',
+      'emilia'
   ],
-  "links": [
-      {
-          "source": "id1",
-          "target": "id2"
-      },
-      {
-          "source": "id1",
-          "target": "id3"
-      },
-      {
-          "source": "id1",
-          "target": "id4"
-      },
-      {
-          "source": "id2",
-          "target": "id5"
-      },
-      {
-          "source": "id2",
-          "target": "id6"
-      },
-      {
-          "source": "id2",
-          "target": "id3"
-      },
-      {
-          "source": "id4",
-          "target": "id6"
-      },
+  edges: [
+      ['ana', 'brian'],
+      ['ana', 'carolina'],
+      ['carolina', 'daniel'],
+      ['carolina', 'brian'],
+      ['brian', 'emilia'],
   ]
 }
 
 export default function Graph() {
   const fgRef = useRef();
+  const [net, setNet] = useState()
+
+  useEffect(() => {
+    init()
+      .then(() => {
+        const parsed_input = JSON.stringify(exampleNet)
+        const socialNetwork = new SocialNetwork()
+        socialNetwork.set_net(parsed_input)
+        const net = JSON.parse(socialNetwork.get_net())
+        setNet(net)
+        console.log(net)
+      })
+      .catch((e) => {
+        console.log(`Error al crear grafo en WASM: ${e}`)
+      });
+  }, [])
 
   const handleClick = useCallback(node => {
     const distance = 40;
@@ -92,7 +55,7 @@ export default function Graph() {
     <Box>
       <ForceGraph3D
         ref={fgRef}
-        graphData={data}
+        graphData={net}
         nodeLabel="id"
         nodeAutoColorBy="group"
         linkDirectionalArrowLength={3.5}
