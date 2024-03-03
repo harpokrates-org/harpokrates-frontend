@@ -22,7 +22,7 @@ export const flickrUserSlice = createSlice({
       state.found = false
     },
     setPhotos: (state, action) => {
-      state.photos = false
+      state.photos = action.payload
     },
   },
 })

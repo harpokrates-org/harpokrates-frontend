@@ -5,40 +5,39 @@ import init, { SocialNetwork } from "wasm-lib";
 import { ForceGraph3D } from 'react-force-graph';
 import { useSelector } from "react-redux";
 import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
+import axios from 'axios';
 
 export default function Graph() {
   const fgRef = useRef();
-  const [inputNet, setInputNet] = useState({ nodes:[], edges:[]})
   const [net, setNet] = useState({ nodes:[], links:[]})
   const username = useSelector(selectName)
   const photos = useSelector(selectPhotos)
 
   const getFavorites = async () => {
     if (photos.length === 0) return
+    const photoIds = JSON.stringify(photos.map((photo) => photo.id))
     const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
       params: {
         username,
-        photo_ids: [photos[0].id],
+        photo_ids: photoIds,
       }
     })
-    setInputNet(response.data)
+    return response.data
   }
 
   useEffect(() => {
-    getFavorites().then(() => {
-      init()
-        .then(() => {
-          const parsed_input = JSON.stringify(inputNet)
-          const socialNetwork = new SocialNetwork()
-          socialNetwork.set_net(parsed_input)
-          const net = JSON.parse(socialNetwork.get_net())
-          setNet(net)
-          console.log(net)
-        })
-        .catch((e) => {
-          console.log(`Error al crear grafo en WASM: ${e}`)
-        });
+    init()
+      .then(async () => {
+        const inputNet = await getFavorites()
+        const parsed_input = JSON.stringify(inputNet)
+        const socialNetwork = new SocialNetwork()
+        socialNetwork.set_net(parsed_input)
+        const net = JSON.parse(socialNetwork.get_net())
+        setNet(net)
       })
+      .catch((e) => {
+        console.log(`Error al crear grafo en WASM: ${e}`)
+      });
   }, [])
 
   const handleClick = useCallback(node => {
