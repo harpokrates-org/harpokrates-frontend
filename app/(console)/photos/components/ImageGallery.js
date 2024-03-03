@@ -1,10 +1,10 @@
 'use client'
 import { classify, loadLowModel } from "@/app/libs/classifier"
-import { selectId } from "@/store/FlickrUserSlice"
+import { selectId, setPhotos } from "@/store/FlickrUserSlice"
 import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
-import { useSelector } from "react-redux"
+import { useSelector, useDispatch } from "react-redux"
 import SideBar from "../../components/SideBar"
 const pixels = require('image-pixels')
 const R = require('ramda');
@@ -32,6 +32,7 @@ export default function ImageGallery() {
   const [sizes, setSizes] = useState([])
   const [model, setModel] = useState(null)
   const userId = useSelector(selectId)
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const getFilter = async (src) => {
@@ -54,6 +55,7 @@ export default function ImageGallery() {
       if (photos_res.status != '200') {
         toast.error('Error al cargar las fotos')
       }
+      dispatch(setPhotos(photos_res.data.photos))
 
       const sizes_res = await Promise.all(photos_res.data.photos.map(async (photo) => {
         const r = await getSizes(photo.id)

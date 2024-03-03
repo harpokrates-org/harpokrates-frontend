@@ -5,7 +5,8 @@ export const flickrUserSlice = createSlice({
   initialState: {
     name: '',
     id: '',
-    found: null
+    found: null,
+    photos: [],
   },
   reducers: {
     changeName: (state, action) => {
@@ -20,6 +21,9 @@ export const flickrUserSlice = createSlice({
     wasNotFound: (state, action) => {
       state.found = false
     },
+    setPhotos: (state, action) => {
+      state.photos = false
+    },
   },
 })
 
@@ -28,9 +32,11 @@ export const {
   changeId,
   wasFound,
   wasNotFound,
+  setPhotos,
 } = flickrUserSlice.actions
 
 export const selectName = (state) => state.flickrUser.name
 export const selectId = (state) => state.flickrUser.id
+export const selectPhotos = (state) => state.flickrUser.photos
 
 export default flickrUserSlice.reducer
