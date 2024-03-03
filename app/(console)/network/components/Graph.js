@@ -8,11 +8,12 @@ import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 
 export default function Graph() {
   const fgRef = useRef();
-  const [net, setNet] = useState()
+  const [inputNet, setInputNet] = useState({ nodes:[], edges:[]})
+  const [net, setNet] = useState({ nodes:[], links:[]})
+  const username = useSelector(selectName)
+  const photos = useSelector(selectPhotos)
 
   const getFavorites = async () => {
-    const username = useSelector(selectName)
-    const photos = useSelector(selectPhotos)
     if (photos.length === 0) return
     const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
       params: {
@@ -20,14 +21,14 @@ export default function Graph() {
         photo_ids: [photos[0].id],
       }
     })
-    setNet(response.data)
+    setInputNet(response.data)
   }
 
   useEffect(() => {
     getFavorites().then(() => {
       init()
         .then(() => {
-          const parsed_input = JSON.stringify(net)
+          const parsed_input = JSON.stringify(inputNet)
           const socialNetwork = new SocialNetwork()
           socialNetwork.set_net(parsed_input)
           const net = JSON.parse(socialNetwork.get_net())
