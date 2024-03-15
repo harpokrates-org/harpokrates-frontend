@@ -1,19 +1,16 @@
 'use client'
 import * as React from 'react';
 import Box from '@mui/material/Box';
-import ImageGallery from './components/ImageGallery';
-import UserSearcher from './components/UserSearcher';
 import { Grid } from '@mui/material';
+import dynamic from 'next/dynamic';
 
 export default function ClippedDrawer() {
+  const Graph = dynamic(() => import('./components/Graph'), { ssr: false })
   return (
     <Box>
       <Grid container spacing={2}>
         <Grid item>
-          <UserSearcher />
-        </Grid>
-        <Grid item>
-          <ImageGallery />
+          <Graph />
         </Grid>
       </Grid>
     </Box>

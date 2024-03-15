@@ -4,6 +4,7 @@ import { AppRouterCacheProvider } from '@mui/material-nextjs/v13-appRouter';
 import NavBar from "./components/NavBar";
 import StoreProvider from "@/store/StoreProvider";
 import { Toaster } from "react-hot-toast";
+import { CssBaseline } from "@mui/material";
 
 const inter = Inter({ subsets: ["latin"] });
 
@@ -18,7 +19,8 @@ export default function RootLayout({ children }) {
       <body>
         <AppRouterCacheProvider>
           <StoreProvider>
-            <NavBar/>
+            <CssBaseline />
+            <NavBar />
             <Toaster position="top-right" />
             {children}
           </StoreProvider>
