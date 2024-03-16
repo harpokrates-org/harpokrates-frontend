@@ -1,6 +1,5 @@
 import { configureStore } from '@reduxjs/toolkit'
 import flickrUserReducer from "./FlickrUserSlice";
-import searchAlertReducer from "./SearchAlertSlice";
 import storage from 'redux-persist/lib/storage';
 import { persistReducer, persistStore } from 'redux-persist';
 import persistCombineReducers from "redux-persist/es/persistCombineReducers";
@@ -12,7 +11,6 @@ const persistConfig = {
 
 const persistedReducer = persistCombineReducers(persistConfig, {
   flickrUser: flickrUserReducer,
-  searchAlert: searchAlertReducer,
 });
 
 export const store = configureStore({

@@ -15,12 +15,6 @@ export const flickrUserSlice = createSlice({
     changeId: (state, action) => {
       state.id = action.payload
     },
-    wasFound: (state) => {
-      state.found = true
-    },
-    wasNotFound: (state, action) => {
-      state.found = false
-    },
     setPhotos: (state, action) => {
       state.photos = action.payload
     },
@@ -30,8 +24,6 @@ export const flickrUserSlice = createSlice({
 export const {
   changeName,
   changeId,
-  wasFound,
-  wasNotFound,
   setPhotos,
 } = flickrUserSlice.actions
 
