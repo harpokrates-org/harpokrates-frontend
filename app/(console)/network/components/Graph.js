@@ -1,31 +1,39 @@
 'use client'
-import Box from '@mui/material/Box';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import init, { SocialNetwork } from "wasm-lib";
 import { ForceGraph3D } from 'react-force-graph';
 import { useSelector } from "react-redux";
 import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
+import { drawerWidth } from '../../components/SideBar';
+import { useWindowSize } from '@react-hook/window-size';
+import Image from 'next/image';
+
+const noGraphTitle = 'No encontramos una red'
+const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar a la sección de “Fotos” y buscar un usuario.'
+const topMenuHeight = 50
+const padding = 60
 
 export default function Graph() {
   const fgRef = useRef();
   const [net, setNet] = useState({ nodes:[], links:[]})
   const username = useSelector(selectName)
   const photos = useSelector(selectPhotos)
-
-  const getFavorites = async () => {
-    if (photos.length === 0) return
-    const photoIds = JSON.stringify(photos.map((photo) => photo.id))
-    const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
-      params: {
-        username,
-        photo_ids: photoIds,
-      }
-    })
-    return response.data
-  }
+  const [width, height] = useWindowSize();
 
   useEffect(() => {
+    const getFavorites = async () => {
+      if (photos.length === 0) return
+      const photoIds = JSON.stringify(photos.map((photo) => photo.id))
+      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
+        params: {
+          username,
+          photo_ids: photoIds,
+        }
+      })
+      return response.data
+    }
+
     init()
       .then(async () => {
         const inputNet = await getFavorites()
@@ -38,7 +46,7 @@ export default function Graph() {
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [])
+  }, [photos, username])
 
   const handleClick = useCallback(node => {
     const distance = 40;
@@ -51,17 +59,48 @@ export default function Graph() {
     );
   }, [fgRef]);
 
-  return (
-    <Box>
-      <ForceGraph3D
-        ref={fgRef}
-        graphData={net}
-        nodeLabel="id"
-        nodeAutoColorBy="group"
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
-        onNodeClick={handleClick}
+  const graph = () => {
+    return <ForceGraph3D
+      ref={fgRef}
+      graphData={net}
+      nodeLabel="id"
+      nodeAutoColorBy="group"
+      linkDirectionalArrowLength={3.5}
+      linkDirectionalArrowRelPos={1}
+      onNodeClick={handleClick}
+      width={width - drawerWidth - padding}
+      height={height- topMenuHeight - padding}
+    />
+  }
+
+  const noGraph = () => {
+    return <div
+      style={{
+        position: 'absolute',
+        left: `${(width - drawerWidth)/2 + drawerWidth}px`,
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+      }}
+    >
+      <Image
+        src="/imgs/lens.png"
+        width={100}
+        height={100}
+        style={{
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
+        alt=''
       />
-    </Box>
+      <h1 style={{ fontSize:30, textAlign: "center" }}>{noGraphTitle}</h1>
+      <p style={{ textAlign: "center" }}>{noGraphMessage}</p>
+    </div>
+  }
+
+  return (
+    <div>
+      { username ? graph() : noGraph() }
+    </div>
   )
 }

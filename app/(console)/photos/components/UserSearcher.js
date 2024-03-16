@@ -3,18 +3,18 @@ import { useState } from 'react';
 import Button from '@mui/material/Button';
 import { Input } from '@mui/joy';
 import Person from '@mui/icons-material/Person';
-import { useDispatch } from 'react-redux'
-import { changeName, wasFound, wasNotFound, changeId } from '@/store/FlickrUserSlice';
+import { useDispatch, useSelector } from 'react-redux'
+import { changeName, changeId, reset, selectName } from '@/store/FlickrUserSlice';
 import axios from 'axios';
-import { close, open } from '@/store/SearchAlertSlice';
 import { toast } from 'react-hot-toast';
 
 export default function UserSearcher() {
-  const [flickrUserName, setFlickrUserName] = useState('');
+  const [flickrUserName, setFlickrUserName] = useState(
+    useSelector(selectName)
+  );
   const dispatch = useDispatch()
 
   const updateNameHandler = (event) => {
-    dispatch(close())
     setFlickrUserName(event.target.value)
   }
 
@@ -26,15 +26,10 @@ export default function UserSearcher() {
         username: flickrUserName
       },
     }).then((response) => {
-      console.log(response.data.id)
       dispatch(changeId(response.data.id))
-      dispatch(wasFound())
     }).catch((error) => {
       toast.error('Usuario no encontrado')
-      console.log(error)
-      dispatch(wasNotFound())
-    }).finally(() => {
-      dispatch(open())
+      dispatch(reset())
     })
   }
 
@@ -53,6 +48,7 @@ export default function UserSearcher() {
       endDecorator={<Button onClick={searchNameHandler}>Buscar</Button>}
       size='sm'
       style={{width: '400px'}}
+      value={flickrUserName}
     ></Input>
   );
 }
