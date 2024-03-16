@@ -11,6 +11,8 @@ import { useWindowSize } from '@react-hook/window-size';
 
 const noGraphTitle = 'No encontramos una red'
 const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar ala sección de “Fotos” y buscar un usuario.'
+const topMenuHeight = 50
+const padding = 60
 
 export default function Graph() {
   const fgRef = useRef();
@@ -66,6 +68,8 @@ export default function Graph() {
       linkDirectionalArrowLength={3.5}
       linkDirectionalArrowRelPos={1}
       onNodeClick={handleClick}
+      width={width - drawerWidth - padding}
+      height={height- topMenuHeight - padding}
     />
   }
 
