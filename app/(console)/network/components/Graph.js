@@ -10,7 +10,7 @@ import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
 
 const noGraphTitle = 'No encontramos una red'
-const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar ala sección de “Fotos” y buscar un usuario.'
+const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar a la sección de “Fotos” y buscar un usuario.'
 const topMenuHeight = 50
 const padding = 60
 
