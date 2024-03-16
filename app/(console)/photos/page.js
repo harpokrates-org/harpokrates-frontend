@@ -16,6 +16,6 @@ export default function ClippedDrawer() {
           <ImageGallery />
         </Grid>
       </Grid>
-    </Box>
+    </Box> 
   );
 }
