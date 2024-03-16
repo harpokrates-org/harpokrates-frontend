@@ -1,5 +1,4 @@
 'use client'
-import Box from '@mui/material/Box';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import init, { SocialNetwork } from "wasm-lib";
 import { ForceGraph3D } from 'react-force-graph';
@@ -8,6 +7,7 @@ import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
+import Image from 'next/image';
 
 const noGraphTitle = 'No encontramos una red'
 const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar a la sección de “Fotos” y buscar un usuario.'
@@ -21,19 +21,19 @@ export default function Graph() {
   const photos = useSelector(selectPhotos)
   const [width, height] = useWindowSize();
 
-  const getFavorites = async () => {
-    if (photos.length === 0) return
-    const photoIds = JSON.stringify(photos.map((photo) => photo.id))
-    const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
-      params: {
-        username,
-        photo_ids: photoIds,
-      }
-    })
-    return response.data
-  }
-
   useEffect(() => {
+    const getFavorites = async () => {
+      if (photos.length === 0) return
+      const photoIds = JSON.stringify(photos.map((photo) => photo.id))
+      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
+        params: {
+          username,
+          photo_ids: photoIds,
+        }
+      })
+      return response.data
+    }
+
     init()
       .then(async () => {
         const inputNet = await getFavorites()
@@ -46,7 +46,7 @@ export default function Graph() {
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [])
+  }, [photos, username])
 
   const handleClick = useCallback(node => {
     const distance = 40;
@@ -82,14 +82,16 @@ export default function Graph() {
         transform: 'translate(-50%, -50%)'
       }}
     >
-      <img
-        src="imgs/lens.png"
+      <Image
+        src="/imgs/lens.png"
         width={100}
+        height={100}
         style={{
           display: 'block',
           marginLeft: 'auto',
           marginRight: 'auto',
         }}
+        alt=''
       />
       <h1 style={{ fontSize:30, textAlign: "center" }}>{noGraphTitle}</h1>
       <p style={{ textAlign: "center" }}>{noGraphMessage}</p>

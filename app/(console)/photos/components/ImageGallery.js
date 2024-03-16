@@ -65,11 +65,11 @@ export default function ImageGallery() {
       }))
 
       const mediums = filterSizeByLabel(sizes_res, 'Medium');
-      const siz = mediums.map(async m => {
+      const siz = await Promise.all(mediums.map(async m => {
         return { source: m.source, filter: await getFilter(m.source) }
-      })
+      }))
 
-      setSizes(await Promise.all(siz))
+      setSizes(siz)
     }
 
     const fetchAll = async () => {
@@ -78,7 +78,7 @@ export default function ImageGallery() {
     }
 
     fetchAll();
-  }, [userId, model])
+  }, [userId, model, dispatch])
 
   return (
     <Box>
