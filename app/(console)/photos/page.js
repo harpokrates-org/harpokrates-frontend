@@ -9,13 +9,13 @@ export default function ClippedDrawer() {
   return (
     <Box>
       <Grid container spacing={2}>
-        <Grid item>
+        <Grid item xs={12}>
           <UserSearcher />
         </Grid>
-        <Grid item>
+        <Grid item xs={12}>
           <ImageGallery />
         </Grid>
       </Grid>
-    </Box>
+    </Box> 
   );
 }
