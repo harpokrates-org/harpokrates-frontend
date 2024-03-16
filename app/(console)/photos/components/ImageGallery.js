@@ -5,7 +5,6 @@ import { Box, ImageList, ImageListItem } from "@mui/material"
 import axios from "axios"
 import { useEffect, useState } from "react"
 import { useSelector, useDispatch } from "react-redux"
-import SideBar from "../../components/SideBar"
 const pixels = require('image-pixels')
 const R = require('ramda');
 
@@ -50,7 +49,10 @@ export default function ImageGallery() {
     }
 
     const fetchPhotos = async () => {
-      if (!userId) return;
+      if (!userId) {
+        setSizes([])
+        return;
+      }
       const photos_res = await getPhotos(userId)
       if (photos_res.status != '200') {
         toast.error('Error al cargar las fotos')

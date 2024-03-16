@@ -1,13 +1,15 @@
 import { createSlice } from '@reduxjs/toolkit'
 
+const initialState = {
+  name: '',
+  id: '',
+  found: null,
+  photos: [],
+}
+
 export const flickrUserSlice = createSlice({
   name: 'flickrUser',
-  initialState: {
-    name: '',
-    id: '',
-    found: null,
-    photos: [],
-  },
+  initialState,
   reducers: {
     changeName: (state, action) => {
       state.name = action.payload
@@ -18,6 +20,9 @@ export const flickrUserSlice = createSlice({
     setPhotos: (state, action) => {
       state.photos = action.payload
     },
+    reset: (state, action) => {
+      return initialState
+    },
   },
 })
 
@@ -25,6 +30,7 @@ export const {
   changeName,
   changeId,
   setPhotos,
+  reset,
 } = flickrUserSlice.actions
 
 export const selectName = (state) => state.flickrUser.name
