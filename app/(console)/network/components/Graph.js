@@ -6,12 +6,18 @@ import { ForceGraph3D } from 'react-force-graph';
 import { useSelector } from "react-redux";
 import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
+import { drawerWidth } from '../../components/SideBar';
+import { useWindowSize } from '@react-hook/window-size';
+
+const noGraphTitle = 'No encontramos una red'
+const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar ala sección de “Fotos” y buscar un usuario.'
 
 export default function Graph() {
   const fgRef = useRef();
   const [net, setNet] = useState({ nodes:[], links:[]})
   const username = useSelector(selectName)
   const photos = useSelector(selectPhotos)
+  const [width, height] = useWindowSize();
 
   const getFavorites = async () => {
     if (photos.length === 0) return
@@ -51,17 +57,44 @@ export default function Graph() {
     );
   }, [fgRef]);
 
-  return (
-    <Box>
-      <ForceGraph3D
-        ref={fgRef}
-        graphData={net}
-        nodeLabel="id"
-        nodeAutoColorBy="group"
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
-        onNodeClick={handleClick}
+  const graph = () => {
+    return <ForceGraph3D
+      ref={fgRef}
+      graphData={net}
+      nodeLabel="id"
+      nodeAutoColorBy="group"
+      linkDirectionalArrowLength={3.5}
+      linkDirectionalArrowRelPos={1}
+      onNodeClick={handleClick}
+    />
+  }
+
+  const noGraph = () => {
+    return <div
+      style={{
+        position: 'absolute',
+        left: `${(width - drawerWidth)/2 + drawerWidth}px`,
+        top: '50%',
+        transform: 'translate(-50%, -50%)'
+      }}
+    >
+      <img
+        src="imgs/lens.png"
+        width={100}
+        style={{
+          display: 'block',
+          marginLeft: 'auto',
+          marginRight: 'auto',
+        }}
       />
-    </Box>
+      <h1 style={{ fontSize:30, textAlign: "center" }}>{noGraphTitle}</h1>
+      <p style={{ textAlign: "center" }}>{noGraphMessage}</p>
+    </div>
+  }
+
+  return (
+    <div>
+      { username ? graph() : noGraph() }
+    </div>
   )
 }
