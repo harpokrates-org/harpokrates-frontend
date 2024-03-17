@@ -2,6 +2,7 @@
 
 import { Button, Dialog, DialogActions, DialogContent, DialogTitle, TextField } from "@mui/material";
 import axios from "axios";
+import { toast } from 'react-hot-toast';
 
 export default function Register({open, onClose}) {
   const registerUserHandler = async (email) => {
@@ -19,6 +20,7 @@ export default function Register({open, onClose}) {
           const formData = new FormData(event.currentTarget);
           const formJson = Object.fromEntries(formData.entries());
           await registerUserHandler(formJson.email);
+          toast.success('Cuenta registrada')
           onClose();
         },
       }}
