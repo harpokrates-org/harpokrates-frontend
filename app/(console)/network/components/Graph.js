@@ -7,10 +7,7 @@ import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
-import Image from 'next/image';
 
-const noGraphTitle = 'No encontramos una red'
-const noGraphMessage = 'Para ver la red de un usuario de Flickr, necesitas ingresar a la sección de “Fotos” y buscar un usuario.'
 const topMenuHeight = 50
 const padding = 60
 
@@ -59,8 +56,8 @@ export default function Graph() {
     );
   }, [fgRef]);
 
-  const graph = () => {
-    return <ForceGraph3D
+  return (
+    <ForceGraph3D
       ref={fgRef}
       graphData={net}
       nodeLabel="id"
@@ -71,36 +68,5 @@ export default function Graph() {
       width={width - drawerWidth - padding}
       height={height- topMenuHeight - padding}
     />
-  }
-
-  const noGraph = () => {
-    return <div
-      style={{
-        position: 'absolute',
-        left: `${(width - drawerWidth)/2 + drawerWidth}px`,
-        top: '50%',
-        transform: 'translate(-50%, -50%)'
-      }}
-    >
-      <Image
-        src="/imgs/lens.png"
-        width={100}
-        height={100}
-        style={{
-          display: 'block',
-          marginLeft: 'auto',
-          marginRight: 'auto',
-        }}
-        alt=''
-      />
-      <h1 style={{ fontSize:30, textAlign: "center" }}>{noGraphTitle}</h1>
-      <p style={{ textAlign: "center" }}>{noGraphMessage}</p>
-    </div>
-  }
-
-  return (
-    <div>
-      { username ? graph() : noGraph() }
-    </div>
   )
 }
