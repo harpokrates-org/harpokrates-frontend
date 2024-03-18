@@ -1,5 +1,4 @@
 const tf = require('@tensorflow/tfjs');
-require('@tensorflow/tfjs-backend-wasm');
 
 export const classify = async (model, pix) => {
     // PREDICCIÓN
