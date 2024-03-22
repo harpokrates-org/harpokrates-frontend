@@ -5,8 +5,8 @@ import { Input } from '@mui/joy';
 import Person from '@mui/icons-material/Person';
 import { useDispatch, useSelector } from 'react-redux'
 import { changeName, changeId, reset, selectName } from '@/store/FlickrUserSlice';
-import axios from 'axios';
 import { toast } from 'react-hot-toast';
+import { getUserName } from "@/app/api/UserAPI"
 
 export default function UserSearcher() {
   const [flickrUserName, setFlickrUserName] = useState(
@@ -19,19 +19,16 @@ export default function UserSearcher() {
   }
 
   const searchNameHandler = () => {
-    dispatch(changeName(flickrUserName))
-    const user_url = process.env.NEXT_PUBLIC_BACKEND_URL + '/user'
-    axios.get(user_url, {
-      params: {
-        username: flickrUserName
-      },
-    }).then((response) => {
-      dispatch(changeId(response.data.id))
-    }).catch((error) => {
-      toast.error('Usuario no encontrado')
-      dispatch(reset())
-    })
-  }
+    dispatch(changeName(flickrUserName));
+    getUserName(flickrUserName)
+      .then((response) => {
+        dispatch(changeId(response.data.id));
+      })
+      .catch((error) => {
+        toast.error("Usuario no encontrado");
+        dispatch(reset());
+      });
+  };
 
   const enterKeyNameHandler = (event) => {
     if (event.key === "Enter") {

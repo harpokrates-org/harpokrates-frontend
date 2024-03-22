@@ -2,23 +2,17 @@
 import { classify, loadLowModel } from "@/app/libs/classifier";
 import { selectName } from "@/store/FlickrUserSlice";
 import { Box, ImageList, ImageListItem } from "@mui/material";
-import axios from "axios";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
 const pixels = require("image-pixels");
 const R = require("ramda");
+import { getUserPhotoSizes } from "@/app/api/UserAPI"
 
 export default function ImageGallery() {
   const [photos, setPhotos] = useState([]);
   const [model, setModel] = useState(null);
   const username = useSelector(selectName);
-
-  const getUserPhotoSizes = async (username, count) => {
-    return await axios.get(
-      process.env.NEXT_PUBLIC_BACKEND_URL + `/user/${username}/photos?count=${count}`
-    );
-  };
 
   useEffect(() => {
     const getFilter = async (src) => {
