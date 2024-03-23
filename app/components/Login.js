@@ -1,15 +1,38 @@
 'use client'
 
 import { Button, Dialog, DialogActions, DialogContent, DialogContentText, DialogTitle, Link, TextField } from "@mui/material";
+import { postLogin } from "@/app/api/UserAPI"
+import { useState } from "react";
+import { toast } from 'react-hot-toast';
+import axios from "axios";
+
+const emailDoesNotExistMessage = 'Email no encontrado'
 
 export default function Login({open, onClose, registerClickHandler}) {
+  const [emailDoesNotExist, setEmailDoesNotExist] = useState(false)
+
+  const loginUserHandler = async (email) => {
+    try{
+      return await postLogin(email);
+    } catch(error) {
+      console.log(error)
+      if (error.response.status === 401 && error.response.data.code === 'USER_DOESNT_EXIST') setEmailDoesNotExist(true)
+      return null
+    }
+  }
+
   return (
     <Dialog
       open={open}
       onClose={onClose}
       PaperProps={{
         component: 'form',
-        onSubmit: (event) => {
+        onSubmit: async (event) => {
+          event.preventDefault();
+          const formData = new FormData(event.currentTarget);
+          const formJson = Object.fromEntries(formData.entries());
+          if (!(await loginUserHandler(formJson.email))) return
+          toast.success('Login exitoso')
           onClose();
         },
       }}
@@ -25,6 +48,8 @@ export default function Login({open, onClose, registerClickHandler}) {
           type="email"
           fullWidth
           variant="standard"
+          helperText={emailDoesNotExist ? emailDoesNotExistMessage : null}
+          error={emailDoesNotExist}
         />
       </DialogContent>
       <DialogActions>

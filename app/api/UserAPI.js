@@ -15,3 +15,11 @@ export const getUserName = async (flickrUserName) => {
     },
   });
 };
+
+export const postLogin = async (email) => {
+  try {
+    return axios.post(process.env.NEXT_PUBLIC_BACKEND_URL + "/login", { email: email })
+  } catch (error) {
+    throw error
+  }  
+  };
