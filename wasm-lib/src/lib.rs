@@ -6,6 +6,9 @@ use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use utils::set_panic_hook;
 
+const MAIN_GROUP: u8 = 1;
+const SECONDARY_GROUP: u8 = 2;
+
 #[wasm_bindgen]
 extern "C" {
     fn alert(s: &str);
@@ -16,7 +19,7 @@ pub fn greet() {
     alert("Hello, wasm-lib!");
 }
 
-#[derive(Serialize, Deserialize)]
+#[derive(Serialize, Deserialize, Clone)]
 struct Node {
     id: String,
     name: String,
@@ -25,12 +28,12 @@ struct Node {
 }
 
 impl Node {
-    pub fn new(id: String) -> Self {
+    pub fn new(id: String, group: u8) -> Self {
         Self {
             id: id.clone(),
             name: id,
             val: 1,
-            group: 1,
+            group: group.clone(),
         }
     }
 }
@@ -54,6 +57,7 @@ impl Edge {
 struct InputNet {
     nodes: Vec<String>,
     edges: Vec<(String, String)>,
+    main_node: String,
 }
 
 #[derive(Serialize, Deserialize)]
@@ -73,7 +77,7 @@ impl OutputNet {
 
 #[wasm_bindgen]
 pub struct SocialNetwork {
-    graph: DiGraph<String, u32>,
+    graph: DiGraph<Node, u32>,
 }
 
 #[wasm_bindgen]
@@ -82,7 +86,7 @@ impl SocialNetwork {
     pub fn new() -> Self {
         set_panic_hook();
         Self {
-            graph: DiGraph::<String, u32>::new()
+            graph: DiGraph::<Node, u32>::new()
         }
     }
 
@@ -92,7 +96,13 @@ impl SocialNetwork {
         let mut indexes: HashMap<String, NodeIndex> = HashMap::new();
         
         for node in net.nodes.iter() {
-            let index: NodeIndex = self.graph.add_node(node.clone());
+            let graph_node: Node;
+            if node == &net.main_node {
+                graph_node = Node::new(node.clone(), MAIN_GROUP)
+            } else {
+                graph_node = Node::new(node.clone(), SECONDARY_GROUP)
+            }
+            let index: NodeIndex = self.graph.add_node(graph_node);
             indexes.insert(node.clone(), index);
         }
         
@@ -106,19 +116,19 @@ impl SocialNetwork {
     pub fn get_net(&mut self) -> String {
         set_panic_hook();
         let mut net: OutputNet = OutputNet::new();
-        let graph_clone_nodes: DiGraph<String, u32> = self.graph.clone();
-        let graph_clone_edges: DiGraph<String, u32> = self.graph.clone();
+        let graph_clone_nodes: DiGraph<Node, u32> = self.graph.clone();
+        let graph_clone_edges: DiGraph<Node, u32> = self.graph.clone();
         graph_clone_nodes.into_nodes_edges().0.iter()
             .for_each(|node| {
-                net.nodes.push(Node::new(node.weight.clone()))
+                net.nodes.push(Node::new(node.weight.id.clone(), node.weight.group.clone()))
             });
         graph_clone_edges.into_nodes_edges().1.iter()
             .for_each(|edge| {
                 let from = edge.source();
                 let to = edge.target();
                 net.links.push(Edge::new(
-                    (*self.graph.node_weight(from).expect("GET_NET: Source node not found")).clone(),
-                    (*self.graph.node_weight(to).expect("GET_NET: Target node not found")).clone()
+                    (*self.graph.node_weight(from).expect("GET_NET: Source node not found")).id.clone(),
+                    (*self.graph.node_weight(to).expect("GET_NET: Target node not found")).id.clone()
                 ))
             });
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
