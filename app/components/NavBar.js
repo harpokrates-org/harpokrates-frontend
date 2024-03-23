@@ -6,6 +6,7 @@ import Button from "@mui/material/Button";
 import LoginDialog from "./LoginDialog";
 import { useSelector } from "react-redux";
 import { selectEmail } from "@/store/HarpokratesUserSlice";
+import ProfileMenu from "./ProfileMenu";
 
 export default function NavBar() {
   let email = useSelector(selectEmail);
@@ -20,7 +21,7 @@ export default function NavBar() {
           <Button color="inherit" href="/">
             Harpokrates
           </Button>
-          {email ? email : <LoginDialog />}
+          {email ? <ProfileMenu /> : <LoginDialog />}
         </Toolbar>
       </AppBar>
     </Box>
