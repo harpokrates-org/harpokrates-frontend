@@ -3,16 +3,17 @@ import { classify, loadLowModel } from "@/app/libs/classifier";
 import { Box, ImageList, ImageListItem } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
-import { useSelector } from "react-redux";
-import { selectName } from "@/store/FlickrUserSlice";
+import { useDispatch, useSelector } from "react-redux";
+import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
 const pixels = require("image-pixels");
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
 
 export default function ImageGallery() {
-  const [photos, setPhotos] = useState([]);
   const [model, setModel] = useState(null);
+  const photos = useSelector(selectPhotos)
   const username = useSelector(selectName);
+  const dispatch = useDispatch()
 
   useEffect(() => {
     const getFilter = async (src) => {
@@ -50,7 +51,7 @@ export default function ImageGallery() {
           filter: await getFilter(size.source)
         };
       }));
-      setPhotos(_photos);
+      dispatch(setPhotos(_photos))
     };
 
     const fetchAll = async () => {
