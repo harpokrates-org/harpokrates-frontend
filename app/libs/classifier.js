@@ -1,5 +1,9 @@
 const tf = require('@tensorflow/tfjs');
 
+// Elimina los mensajes de log de tensorflow
+// https://discuss.tensorflow.org/t/removing-the-standard-hi-there-you-are-using-tensorflow-js/13718/3
+tf.env().set('PROD', true);
+
 export const classify = async (model, pix) => {
     // PREDICCIÓN
     // Uint8Array -> Tensor 3D RGBA [x,y,4]
