@@ -1,10 +1,10 @@
 "use client";
 import { classify, loadLowModel } from "@/app/libs/classifier";
-import { selectName } from "@/store/FlickrUserSlice";
 import { Box, ImageList, ImageListItem } from "@mui/material";
 import Image from "next/image";
 import { useEffect, useState } from "react";
 import { useSelector } from "react-redux";
+import { selectName } from "@/store/FlickrUserSlice";
 const pixels = require("image-pixels");
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
