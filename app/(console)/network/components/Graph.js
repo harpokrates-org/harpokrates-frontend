@@ -1,13 +1,14 @@
 'use client'
 import { useCallback, useRef, useEffect, useState } from 'react';
 import init, { SocialNetwork } from "wasm-lib";
-import { ForceGraph3D } from 'react-force-graph';
+import { ForceGraph2D, ForceGraph3D } from 'react-force-graph';
 import { useSelector } from "react-redux";
 import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
 
+const photosPerFavorite = 1
 const topMenuHeight = 50
 const padding = 60
 const mainNodeColor = 'red'
@@ -28,6 +29,7 @@ export default function Graph() {
         params: {
           username,
           photo_ids: photoIds,
+          photos_per_favorite: photosPerFavorite,
         }
       })
       return response.data
@@ -49,7 +51,6 @@ export default function Graph() {
   }, [photos, username])
 
   const nodeColorHandler = node => {
-    console.log("Node:", node);
     switch (node.group) {
       case 1:
         return mainNodeColor;
@@ -70,7 +71,7 @@ export default function Graph() {
   }, [fgRef]);
 
   return (
-    <ForceGraph3D
+    <ForceGraph2D
       ref={fgRef}
       graphData={net}
       nodeLabel="id"
