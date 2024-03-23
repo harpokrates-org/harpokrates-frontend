@@ -16,7 +16,7 @@ export const harpokratesUserSlice = createSlice({
       return initialState
     },
   },
-})
+}) 
 
 export const {
   changeEmail,
