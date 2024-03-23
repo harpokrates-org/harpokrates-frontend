@@ -10,13 +10,17 @@ export const harpokratesUserSlice = createSlice({
   initialState,
   reducers: {
     changeEmail: (state, action) => {
-      state.name = action.payload
-    }
+      state.email = action.payload
+    },
+    reset: (state, action) => {
+      return initialState
+    },
   },
 })
 
 export const {
   changeEmail,
+  reset
 } = harpokratesUserSlice.actions
 
 export const selectEmail = (state) => state.harpokratesUser.email

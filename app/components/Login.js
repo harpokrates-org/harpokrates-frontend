@@ -14,7 +14,7 @@ import { postLogin } from "@/app/api/UserAPI";
 import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
-import { changeEmail } from "@/store/HarpokratesUserSlice";
+import { changeEmail, reset } from "@/store/HarpokratesUserSlice";
 
 const emailDoesNotExistMessage = "Email no encontrado";
 
@@ -31,8 +31,10 @@ export default function Login({ open, onClose, registerClickHandler }) {
       if (
         error.response.status === 401 &&
         error.response.data.code === "USER_DOESNT_EXIST"
-      )
+      ) {
+        dispatch(reset());
         setEmailDoesNotExist(true);
+      }
       return null;
     }
   };
