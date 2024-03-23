@@ -10,6 +10,8 @@ import { useWindowSize } from '@react-hook/window-size';
 
 const topMenuHeight = 50
 const padding = 60
+const mainNodeColor = 'red'
+const secondaryNodeColor = 'gray'
 
 export default function Graph() {
   const fgRef = useRef();
@@ -34,6 +36,7 @@ export default function Graph() {
     init()
       .then(async () => {
         const inputNet = await getFavorites()
+        inputNet.main_node = username
         const parsed_input = JSON.stringify(inputNet)
         const socialNetwork = new SocialNetwork()
         socialNetwork.set_net(parsed_input)
@@ -44,6 +47,16 @@ export default function Graph() {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
   }, [photos, username])
+
+  const nodeColorHandler = node => {
+    console.log("Node:", node);
+    switch (node.group) {
+      case 1:
+        return mainNodeColor;
+      default:
+        return secondaryNodeColor;
+    }
+  };
 
   const handleClick = useCallback(node => {
     const distance = 40;
@@ -61,7 +74,7 @@ export default function Graph() {
       ref={fgRef}
       graphData={net}
       nodeLabel="id"
-      nodeAutoColorBy="group"
+      nodeColor={nodeColorHandler}
       linkDirectionalArrowLength={3.5}
       linkDirectionalArrowRelPos={1}
       onNodeClick={handleClick}
