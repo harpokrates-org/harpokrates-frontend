@@ -9,6 +9,7 @@ import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
 
 const photosPerFavorite = 1
+const depth = 2
 const topMenuHeight = 50
 const padding = 60
 const mainNodeColor = 'red'
@@ -30,6 +31,7 @@ export default function Graph() {
           username,
           photo_ids: photoIds,
           photos_per_favorite: photosPerFavorite,
+          depth,
         }
       })
       return response.data
