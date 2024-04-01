@@ -6,6 +6,10 @@ const nextConfig = {
         protocol: 'https',
         hostname: 'live.staticflickr.com',
       },
+      {
+        protocol: 'https',
+        hostname: '**.staticflickr.com',
+      },
     ],
   },
 };
