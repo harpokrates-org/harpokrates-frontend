@@ -7,6 +7,8 @@ import LoginDialog from "./LoginDialog";
 import { useSelector } from "react-redux";
 import { selectEmail } from "@/store/HarpokratesUserSlice";
 import ProfileMenu from "./ProfileMenu";
+import UserSearcher from "./UserSearcher";
+import { usePathname } from "next/navigation";
 
 export default function NavBar() {
   let email = useSelector(selectEmail);
@@ -21,6 +23,7 @@ export default function NavBar() {
           <Button color="inherit" href="/">
             Harpokrates
           </Button>
+          {usePathname() === '/' ? null : <UserSearcher /> }
           {email ? <ProfileMenu /> : <LoginDialog />}
         </Toolbar>
       </AppBar>
