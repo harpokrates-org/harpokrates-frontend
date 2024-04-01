@@ -28,7 +28,6 @@ export default function UserSearcher() {
         dispatch(changeId(response.data.id));
       })
       .catch((error) => {
-        console.log('user searcher')
         console.log(error)
         toast.error("Usuario no encontrado");
         dispatch(reset());
