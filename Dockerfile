@@ -42,7 +42,7 @@ ENV ENVVARS=""
 # Paquetes para desarrollo con vscode
 # Solo se instalan localmente, no en render
 RUN if [[ -z "$RENDER" ]]; then \
-    apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+    apk add --no-cache \
         nano \
         git \
         rust-analyzer; \
