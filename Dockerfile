@@ -18,6 +18,9 @@ ARG NEXT_PUBLIC_BACKEND_URL
 # Variables de entorno para npm run build
 ENV NPM_BUILD_ENV=""
 
+# Actualizo los paquetes de alpine
+RUN apk update && apk upgrade
+
 # If you are building your code for production
 # RUN npm ci --only=production
 RUN npm install
