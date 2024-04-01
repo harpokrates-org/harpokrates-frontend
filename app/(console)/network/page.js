@@ -7,7 +7,7 @@ import { useSelector } from 'react-redux';
 import { selectName } from '@/store/FlickrUserSlice';
 import EmptyState from '../components/EmptyState';
 
-const noGraphTitle = 'No encontramos una red'
+const noGraphTitle = 'Busca un usuario'
 const noGraphMessage = 'Para ver una red, necesitas ingresar un nombre de usuario en el buscador superior.'
 
 export default function ClippedDrawer() {
