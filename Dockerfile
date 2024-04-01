@@ -1,4 +1,4 @@
-FROM node:21-alpine3.18
+FROM node:21.7.1-alpine3.19
 
 # Create app directory
 WORKDIR /usr/src/app
@@ -21,16 +21,15 @@ ENV NPM_BUILD_ENV=""
 # Actualizo los paquetes de alpine
 RUN apk update && apk upgrade
 
-# If you are building your code for production
-# RUN npm ci --only=production
-RUN npm install
-
 # Rust
-# Se usa la version /edge porque utiliza rust 1.76 en vez de 1.71 (default en alpine 3.18)
-RUN apk add --no-cache --repository=http://dl-cdn.alpinelinux.org/alpine/edge/main \
+RUN apk add --no-cache \
     rust \
     cargo \
     wasm-pack
+
+# If you are building your code for production
+# RUN npm ci --only=production
+RUN npm install
 
 # Build wasm module
 RUN npm run build:wasm
