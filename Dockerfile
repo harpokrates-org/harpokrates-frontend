@@ -1,5 +1,4 @@
 FROM node:21.7.1-alpine3.19 AS BUILDER
-RUN apk update && apk upgrade
 WORKDIR /usr/src/app
 
 # Rust building
@@ -11,10 +10,13 @@ RUN cd wasm-lib && wasm-pack build --target web --out-dir pkg
 COPY package.json package-lock.json ./
 RUN npm ci --verbose
 COPY . . 
+
+# Traigo las variables de entorno de render
+ARG RENDER
+ARG NEXT_PUBLIC_BACKEND_URL
 RUN npm run build
 
 FROM node:21.7.1-alpine3.19 AS RUNNER
-RUN apk update && apk upgrade
 WORKDIR /usr/src/app
 COPY --from=BUILDER /usr/src/app/.next/standalone ./
 COPY --from=BUILDER /usr/src/app/.next/static ./.next/static
