@@ -62,7 +62,7 @@ export default function Graph() {
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [photos, username])
+  }, [photos, username, dispatch, userID])
 
   const nodeColorHandler = node => {
     switch (node.group) {
