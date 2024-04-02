@@ -20,6 +20,7 @@ const secondaryNodeColor = 'gray'
 export default function Graph() {
   const fgRef = useRef();
   const [net, setNet] = useState({ nodes:[], links:[]})
+  const [wasmInitPromise, setWasmInitPromise] = useState(init())
   const username = useSelector(selectName)
   const userID = useSelector(selectId)
   const photos = useSelector(selectPhotos)
@@ -48,7 +49,7 @@ export default function Graph() {
       return photoIDs
     }
 
-    init()
+    wasmInitPromise
       .then(async () => {
         const photoIDs = await getPhotos(userID)
         const inputNet = await getFavorites(photoIDs)
@@ -62,7 +63,7 @@ export default function Graph() {
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [photos, username, dispatch, userID])
+  }, [photos, username, dispatch, userID, wasmInitPromise])
 
   const nodeColorHandler = node => {
     switch (node.group) {

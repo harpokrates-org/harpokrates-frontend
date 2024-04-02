@@ -1,13 +1,14 @@
 mod utils;
 
 use wasm_bindgen::prelude::*;
-use petgraph::graph::{DiGraph, NodeIndex};
+use petgraph::{Incoming, graph::{DiGraph, NodeIndex}};
 use serde::{Deserialize, Serialize};
 use std::collections::HashMap;
 use utils::set_panic_hook;
 
 const MAIN_GROUP: u8 = 1;
 const SECONDARY_GROUP: u8 = 2;
+const DEFAULT_NEIGHTBORS: usize = 1;
 
 #[wasm_bindgen]
 extern "C" {
@@ -23,16 +24,16 @@ pub fn greet() {
 struct Node {
     id: String,
     name: String,
-    val: u8,
+    val: usize,
     group: u8,
 }
 
 impl Node {
-    pub fn new(id: String, group: u8) -> Self {
+    pub fn new(id: String, neighbors: usize, group: u8) -> Self {
         Self {
             id: id.clone(),
             name: id,
-            val: 1,
+            val: neighbors,
             group: group.clone(),
         }
     }
@@ -78,6 +79,7 @@ impl OutputNet {
 #[wasm_bindgen]
 pub struct SocialNetwork {
     graph: DiGraph<Node, u32>,
+    node_indexes: HashMap<String, NodeIndex>
 }
 
 #[wasm_bindgen]
@@ -86,29 +88,29 @@ impl SocialNetwork {
     pub fn new() -> Self {
         set_panic_hook();
         Self {
-            graph: DiGraph::<Node, u32>::new()
+            graph: DiGraph::<Node, u32>::new(),
+            node_indexes: HashMap::<String, NodeIndex>::new()
         }
     }
 
     pub fn set_net(&mut self, net_json: &str) {
         set_panic_hook();
         let net: InputNet = serde_json::from_str(net_json).expect("SET_NET: Failed to parse input net");
-        let mut indexes: HashMap<String, NodeIndex> = HashMap::new();
         
         for node in net.nodes.iter() {
             let graph_node: Node;
             if node == &net.main_node {
-                graph_node = Node::new(node.clone(), MAIN_GROUP)
+                graph_node = Node::new(node.clone(), DEFAULT_NEIGHTBORS, MAIN_GROUP)
             } else {
-                graph_node = Node::new(node.clone(), SECONDARY_GROUP)
+                graph_node = Node::new(node.clone(), DEFAULT_NEIGHTBORS, SECONDARY_GROUP)
             }
             let index: NodeIndex = self.graph.add_node(graph_node);
-            indexes.insert(node.clone(), index);
+            self.node_indexes.insert(node.clone(), index);
         }
         
         for edge in net.edges.iter() {
-            let from: &NodeIndex = indexes.get(&edge.0).expect("SET_NET: Node not foud");
-            let to: &NodeIndex = indexes.get(&edge.1).expect("SET_NET: Node not foud");
+            let from: &NodeIndex = self.node_indexes.get(&edge.0).expect("SET_NET: Node not foud");
+            let to: &NodeIndex = self.node_indexes.get(&edge.1).expect("SET_NET: Node not foud");
             self.graph.add_edge(*from, *to, 1);
         }
     }
@@ -120,7 +122,12 @@ impl SocialNetwork {
         let graph_clone_edges: DiGraph<Node, u32> = self.graph.clone();
         graph_clone_nodes.into_nodes_edges().0.iter()
             .for_each(|node| {
-                net.nodes.push(Node::new(node.weight.id.clone(), node.weight.group.clone()))
+                let node_index: &NodeIndex = self.node_indexes.get(&node.weight.id).expect("GET_NET: Node index not found");
+                net.nodes.push(Node::new(
+                    node.weight.id.clone(),
+                    self.graph.neighbors_directed(*node_index, Incoming).count(),
+                    node.weight.group.clone()
+                ))
             });
         graph_clone_edges.into_nodes_edges().1.iter()
             .for_each(|edge| {
