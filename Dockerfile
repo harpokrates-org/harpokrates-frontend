@@ -1,4 +1,5 @@
 FROM node:21.7.1-alpine3.19 AS BUILDER
+RUN apk update && apk upgrade
 WORKDIR /usr/src/app
 
 # Rust building
@@ -13,6 +14,7 @@ COPY . .
 RUN npm run build
 
 FROM node:21.7.1-alpine3.19 AS RUNNER
+RUN apk update && apk upgrade
 WORKDIR /usr/src/app
 COPY --from=BUILDER /usr/src/app/.next/standalone ./
 COPY --from=BUILDER /usr/src/app/.next/static ./.next/static
