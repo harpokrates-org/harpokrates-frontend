@@ -6,6 +6,7 @@ import { Grid } from '@mui/material';
 import EmptyState from '../components/EmptyState';
 import { useSelector } from 'react-redux';
 import { selectName } from '@/store/FlickrUserSlice';
+import UserProfile from './components/UserProfile';
 
 const noPhotosTitle = 'Busca un usuario'
 const noPhotosMessage = 'Para analizar las imágines subidas por un usuario, necesitas ingresar su nombre en el buscador superior.'
@@ -18,7 +19,10 @@ export default function ClippedDrawer() {
       <Grid container spacing={2}>
         <Grid item xs={12}>
           { username ? 
-            <ImageGallery /> :
+            <>
+              <UserProfile />
+              <ImageGallery />
+            </> :
             <EmptyState title={noPhotosTitle} message={noPhotosMessage} />
           }
         </Grid>
