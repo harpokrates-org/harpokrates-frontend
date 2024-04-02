@@ -54,7 +54,7 @@ export default function ImageGallery() {
             height: size.height,
             width: size.width,
             filter: filter,
-            prediction: prediction
+            prediction: prediction,
           };
         })
       );
@@ -80,11 +80,9 @@ export default function ImageGallery() {
               style={{ height: 150, filter: photo.filter }}
               loading="lazy"
             />
-            {  
-              photo.prediction > 0.5 ? 
-                <ImageListItemBar subtitle={photo.prediction.toFixed(2)} /> 
-                : null
-            }
+            {photo.prediction > 0.5 ? (
+              <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
+            ) : null}
           </ImageListItem>
         ))}
       </ImageList>
