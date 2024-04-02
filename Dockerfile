@@ -19,4 +19,4 @@ WORKDIR /usr/src/app
 COPY --from=BUILDER /usr/src/app/.next/standalone ./
 COPY --from=BUILDER /usr/src/app/.next/static ./.next/static
 COPY --from=BUILDER /usr/src/app/public ./public
-CMD HOST=0.0.0.0 node server.js
+CMD HOSTNAME=0.0.0.0 node server.js
