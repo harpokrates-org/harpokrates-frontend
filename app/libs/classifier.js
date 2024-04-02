@@ -1,4 +1,5 @@
 const tf = require('@tensorflow/tfjs');
+const pixels = require("image-pixels");
 
 // Elimina los mensajes de log de tensorflow
 // https://discuss.tensorflow.org/t/removing-the-standard-hi-there-you-are-using-tensorflow-js/13718/3
@@ -21,5 +22,11 @@ export const classify = async (model, pix) => {
 export const loadLowModel = async () => {
     await tf.ready();
     return await tf.loadLayersModel('model/low/model.json')
+}
+
+export const getPrediction = async (model, src) => {
+    const pix = await pixels(src);
+    const prediction = await classify(model, pix);
+    return prediction
 }
 
