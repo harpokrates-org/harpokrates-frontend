@@ -11,6 +11,17 @@ export const getUserPhotoSizes = async (username, count) => {
   }
 };
 
+export const getUserPhotos = async (userID, count) => {
+  try {
+    return await axios.get(
+      process.env.NEXT_PUBLIC_BACKEND_URL +
+        `/photos?user_id=${userID}&per_page=${count}`
+    );
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const getUserName = async (flickrUserName) => {
   try {
     const user_url = process.env.NEXT_PUBLIC_BACKEND_URL + "/user";

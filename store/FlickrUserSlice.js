@@ -11,11 +11,12 @@ export const flickrUserSlice = createSlice({
   name: 'flickrUser',
   initialState,
   reducers: {
-    changeName: (state, action) => {
-      state.name = action.payload
-    },
-    changeId: (state, action) => {
-      state.id = action.payload
+    userFound: (state, action) => {
+      return {
+        ...initialState,
+        name: action.payload.name,
+        id: action.payload.id,
+      }
     },
     setPhotos: (state, action) => {
       state.photos = action.payload
@@ -27,8 +28,7 @@ export const flickrUserSlice = createSlice({
 })
 
 export const {
-  changeName,
-  changeId,
+  userFound,
   setPhotos,
   reset,
 } = flickrUserSlice.actions
