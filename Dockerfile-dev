@@ -1,0 +1,25 @@
+FROM node:21.7.1-alpine3.19 AS BUILDER
+WORKDIR /usr/src/app
+
+RUN apk update && apk upgrade
+
+# Rust building
+RUN apk add --no-cache wasm-pack
+ADD wasm-lib wasm-lib 
+RUN cd wasm-lib && wasm-pack build --target web --out-dir pkg
+
+# Nextjs building
+COPY package.json package-lock.json ./
+RUN npm ci --verbose
+
+RUN npm install --verbose
+COPY . .
+
+# Paquetes para desarrollo con vscode
+RUN apk add --no-cache \
+    nano \
+    git \
+    vim \
+    rust-analyzer; 
+
+CMD npm run dev
