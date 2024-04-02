@@ -5,10 +5,9 @@ import { Input } from "@mui/joy";
 import Person from "@mui/icons-material/Person";
 import { useDispatch, useSelector } from "react-redux";
 import {
-  changeName,
-  changeId,
   reset,
   selectName,
+  userFound,
 } from "@/store/FlickrUserSlice";
 import { toast } from "react-hot-toast";
 import { getUserName } from "@/app/api/UserAPI";
@@ -22,16 +21,16 @@ export default function UserSearcher() {
   };
 
   const searchNameHandler = () => {
-    dispatch(changeName(flickrUserName));
     getUserName(flickrUserName)
-      .then((response) => {
-        dispatch(changeId(response.data.id));
-      })
-      .catch((error) => {
-        console.log(error)
-        toast.error("Usuario no encontrado");
-        dispatch(reset());
-      });
+    .then((response) => {
+        dispatch(userFound({
+          name: flickrUserName,
+          id: response.data.id
+        }))
+    }).catch((error) => {
+      toast.error("Usuario no encontrado");
+      dispatch(reset());
+    });
   };
 
   const enterKeyNameHandler = (event) => {

@@ -60,7 +60,7 @@ export default function ImageGallery() {
     };
 
     fetchAll();
-  }, [username, model]);
+  }, [username, model, dispatch]);
 
   return (
     <Box>
