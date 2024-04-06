@@ -35,6 +35,23 @@ export const getUserName = async (flickrUserName) => {
   }
 };
 
+export const getUserFavorites = async (username, photoIDs, photosPerFavorite, depth) => {
+  try {
+    const photoIDsString = JSON.stringify(photoIDs)
+    return await axios.get(
+      process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
+      params: {
+        username,
+        photo_ids: photoIDsString,
+        photos_per_favorite: photosPerFavorite,
+        depth,
+      }
+    })
+  } catch (error) {
+    throw error;
+  }
+};
+
 export const postLogin = async (email) => {
   try {
     return axios.post(process.env.NEXT_PUBLIC_BACKEND_URL + "/login", {
