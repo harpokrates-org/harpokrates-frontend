@@ -2,7 +2,7 @@
 import { getPrediction, loadLowModel } from "@/app/libs/classifier";
 import {
   Box,
-  IconButton,
+  Button,
   ImageList,
   ImageListItem,
   ImageListItemBar,
@@ -11,13 +11,25 @@ import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
 const R = require("ramda");
-import { getUserPhotoSizes } from "@/app/api/UserAPI";
+import { getUserPhotoSizes } from "@/app/api/UserAPI"
+import ImageDialog from "./ImageDialog";
 
 export default function ImageGallery() {
   const [model, setModel] = useState(null);
-  const photos = useSelector(selectPhotos);
+  const [clickedImage, setClickedImage] = useState({ id: '', source: '', title: '', width: 0, height: 0 });
+  const [openImage, setOpenImage] = useState(false);
+  const photos = useSelector(selectPhotos)
   const username = useSelector(selectName);
   const dispatch = useDispatch();
+
+  const imageClickHandler = (photo) => {
+    setClickedImage(photo)
+    setOpenImage(true);
+  };
+
+  const imageCloseHandler = () => {
+    setOpenImage(false);
+  };
 
   useEffect(() => {
     const getFilter = async (prediction) => {
@@ -74,18 +86,21 @@ export default function ImageGallery() {
       <ImageList cols={4}>
         {photos.map((photo) => (
           <ImageListItem key={photo.id}>
-            <img
-              src={photo.source}
-              alt={photo.title}
-              style={{ height: 150, filter: photo.filter }}
-              loading="lazy"
-            />
+            <Button onClick={() => imageClickHandler(photo)}>
+              <img
+                src={photo.source}
+                alt={photo.title}
+                style={{ height: 150, filter: photo.filter }}
+                loading="lazy"
+              />
+            </Button>
             {photo.prediction > 0.5 ? (
               <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
             ) : null}
           </ImageListItem>
         ))}
       </ImageList>
+      <ImageDialog photo={clickedImage} open={openImage} onClose={imageCloseHandler} />
     </Box>
   );
 }

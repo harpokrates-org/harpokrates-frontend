@@ -7,7 +7,7 @@ import { selectId, selectName, selectPhotos, setPhotos } from "@/store/FlickrUse
 import axios from 'axios';
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
-import { getUserPhotos } from '@/app/api/UserAPI';
+import { getUserFavorites, getUserPhotos } from '@/app/api/UserAPI';
 
 const photosPerFavorite = 1
 const depth = 2
@@ -28,16 +28,9 @@ export default function Graph() {
   const dispatch = useDispatch()
 
   useEffect(() => {
-    const getFavorites = async (photoIDs) => {
-      const photoIds = JSON.stringify(photoIDs.map((photo) => photo.id))
-      const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
-        params: {
-          username,
-          photo_ids: photoIds,
-          photos_per_favorite: photosPerFavorite,
-          depth,
-        }
-      })
+    const getFavorites = async (photos) => {
+      const photoIDs = photos.map((photo) => photo.id)
+      const response = await getUserFavorites(username, photoIDs, photosPerFavorite, depth)
       return response.data
     }
 
@@ -51,8 +44,8 @@ export default function Graph() {
 
     wasmInitPromise
       .then(async () => {
-        const photoIDs = await getPhotos(userID)
-        const inputNet = await getFavorites(photoIDs)
+        const photos = await getPhotos(userID)
+        const inputNet = await getFavorites(photos)
         inputNet.main_node = username
         const parsed_input = JSON.stringify(inputNet)
         const socialNetwork = new SocialNetwork()
