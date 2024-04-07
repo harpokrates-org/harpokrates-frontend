@@ -2,9 +2,11 @@ use crate::social_network::edge::Edge;
 use crate::social_network::node::Node;
 use serde::{Deserialize, Serialize};
 
+use super::output_node::OutputNode;
+
 #[derive(Serialize, Deserialize)]
 pub struct OutputNet {
-    pub nodes: Vec<Node>,
+    pub nodes: Vec<OutputNode>,
     pub links: Vec<Edge>,
 }
 

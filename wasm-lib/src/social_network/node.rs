@@ -1,20 +1,20 @@
 use serde::{Deserialize, Serialize};
 
-#[derive(Serialize, Deserialize, Clone)]
+use super::group::Group;
+
+#[derive(Serialize, Deserialize, Clone, Default)]
 pub struct Node {
     pub id: String,
-    name: String,
-    val: usize,
-    pub group: u8,
+    pub name: String,
+    pub group: Group,
 }
 
 impl Node {
-    pub fn new(id: String, neighbors: usize, group: u8) -> Self {
+    pub fn new(id: String, group: Group) -> Self {
         Self {
             id: id.clone(),
             name: id,
-            val: neighbors,
-            group: group,
+            group,
         }
     }
 }

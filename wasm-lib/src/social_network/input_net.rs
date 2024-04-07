@@ -6,4 +6,3 @@ pub struct InputNet {
     pub edges: Vec<(String, String)>,
     pub main_node: String,
 }
-
