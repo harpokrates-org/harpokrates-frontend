@@ -110,3 +110,22 @@ impl SocialNetwork {
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
     }
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::social_network::SocialNetwork;
+
+    #[test]
+    fn given_a_json_graph_it_returns_non_empty_string() {        
+        let data = r#"
+        {
+            "nodes": ["1", "2", "3"],
+            "edges": [["1", "2"], ["2", "3"]],
+            "main_node": "1"
+        }"#;
+        
+        let mut sn = SocialNetwork::new();
+        sn.set_net(data);
+        assert!(!sn.get_net().is_empty());
+    }
+}
