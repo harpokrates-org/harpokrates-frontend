@@ -85,9 +85,9 @@ impl Default for SocialNetwork {
 
 #[cfg(test)]
 mod tests {
-    use crate::social_network::{output_node::OutputNode, SocialNetwork};
-
-    use super::output_net::OutputNet;
+    use crate::social_network::{
+        output_net::OutputNet, output_node::OutputNode, SocialNetwork, 
+    };
 
     #[test]
     fn given_a_json_graph_it_returns_a_net_with_nodes_and_links() {
