@@ -85,7 +85,7 @@ impl Default for SocialNetwork {
 
 #[cfg(test)]
 mod tests {
-    use crate::social_network::{group::Group, output_node::OutputNode, SocialNetwork};
+    use crate::social_network::{output_node::OutputNode, SocialNetwork};
 
     use super::output_net::OutputNet;
 
@@ -106,7 +106,7 @@ mod tests {
     }
 
     #[test]
-    fn given_a_json_graph_it_returns_a_net_nodes_and_its_val_sizes() {
+    fn given_a_json_graph_it_returns_a_net_with_nodes_and_its_val_sizes() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
             "edges": [["1", "2"], ["2", "3"]],

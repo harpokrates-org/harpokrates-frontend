@@ -1,6 +1,6 @@
 use serde::{Deserialize, Serialize};
 
-use super::{group::Group, node::Node};
+use super::{node::Node};
 
 #[derive(Serialize, Deserialize, Clone, Default, Debug)]
 pub struct OutputNode {

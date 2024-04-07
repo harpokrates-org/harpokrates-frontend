@@ -8,7 +8,7 @@ struct Layout {
 }
 
 impl Layout {
-    pub fn from_graph(_graph: &DiGraph<Node, u32>) -> Self {
+    pub fn from_graph(_graph: &DiGraph<Node, ()>) -> Self {
         let graph: ForceGraph<(), ()> = ForceGraph::default();
 
         Self { graph }
