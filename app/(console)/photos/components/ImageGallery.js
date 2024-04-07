@@ -78,6 +78,7 @@ export default function ImageGallery() {
       fetchUserPhotoSizes("Medium");
     };
 
+    setOpenImage(false)
     fetchAll();
   }, [username, model, dispatch]);
 
