@@ -1,5 +1,5 @@
 use crate::social_network::edge::Edge;
-use crate::social_network::node::Node;
+
 use serde::{Deserialize, Serialize};
 
 use super::output_node::OutputNode;

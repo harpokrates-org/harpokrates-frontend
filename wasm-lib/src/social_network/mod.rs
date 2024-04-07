@@ -10,20 +10,11 @@ use crate::social_network::input_net::InputNet;
 use crate::social_network::node::Node;
 use crate::social_network::output_net::OutputNet;
 use crate::social_network::output_node::OutputNode;
-use crate::social_network::{edge::Edge, group::Group};
+use crate::social_network::{group::Group};
 use crate::utils::set_panic_hook;
-use petgraph::data::Build;
-use petgraph::visit::IntoNeighbors;
-use petgraph::{
-    graph::{DiGraph, NodeIndex},
-    Incoming,
-};
+use petgraph::graph::{DiGraph, NodeIndex};
 use std::collections::HashMap;
-use std::hash::Hash;
 use wasm_bindgen::prelude::*;
-
-const MAIN_GROUP: u8 = 1;
-const SECONDARY_GROUP: u8 = 2;
 
 #[wasm_bindgen]
 pub struct SocialNetwork {
@@ -74,6 +65,12 @@ impl SocialNetwork {
         });
 
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
+    }
+}
+
+impl Default for SocialNetwork {
+    fn default() -> Self {
+        Self::new()
     }
 }
 
