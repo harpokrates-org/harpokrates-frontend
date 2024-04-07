@@ -85,7 +85,7 @@ impl Default for SocialNetwork {
 
 #[cfg(test)]
 mod tests {
-    use crate::social_network::{output_node::OutputNode, SocialNetwork};
+    use crate::social_network::{group::Group, output_node::OutputNode, SocialNetwork};
 
     use super::output_net::OutputNet;
 
@@ -101,7 +101,7 @@ mod tests {
         sn.set_net(input);
         let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
 
-        assert_eq!(output.nodes.len(), 3);        
+        assert_eq!(output.nodes.len(), 3);
         assert_eq!(output.links.len(), 2);
     }
 
@@ -125,6 +125,31 @@ mod tests {
                 .collect::<Vec<&OutputNode>>()[0]
                 .val,
             1
-        );    
+        );
+    }
+
+    #[test]
+    fn main_node_should_be_part_of_the_main_group() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["1", "2"], ["2", "3"]],
+            "main_node": "1"
+        }"#;
+
+        let mut sn = SocialNetwork::new();
+        sn.set_net(input);
+        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+
+        assert_eq!(
+            output
+                .nodes
+                .iter()
+                .filter(|&node| node.id == "1")
+                .collect::<Vec<&OutputNode>>()[0]
+                .group
+                .clone(),
+            1
+        );
+        println!("{:?}", output);
     }
 }

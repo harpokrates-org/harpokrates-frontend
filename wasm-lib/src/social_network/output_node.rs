@@ -7,7 +7,7 @@ pub struct OutputNode {
     pub id: String,
     name: String,
     pub val: usize,
-    group: Group,
+    pub group: u8,
 }
 
 impl OutputNode {
@@ -16,7 +16,7 @@ impl OutputNode {
             id: node.id.clone(),
             name: node.name.clone(),
             val: size,
-            group: node.group.clone(),
+            group: node.group.clone() as u8,
         }
     }
 }
