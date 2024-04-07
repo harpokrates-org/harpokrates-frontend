@@ -4,19 +4,38 @@ import {
   Box,
   DialogContent,
   DialogTitle,
+  Link,
   List,
   ListItem,
-  ListItemText,
   Typography,
 } from '@mui/material';
+import { useDispatch } from 'react-redux';
+import toast from 'react-hot-toast';
+import { getUserName } from '@/app/api/UserAPI';
+import { userFound } from '@/store/FlickrUserSlice';
 
 const favoritesCountWidth = 100
 const favoritesCountHeight = 25
 
 export default function ImageInfo({ photo, favorites }) {
+  const dispatch = useDispatch()
+
   const getFavoritosCount = () => {
     if (favorites.length === 10) return '+10'
     return favorites.length
+  }
+
+  const nameClickHandler = (event) => {
+    const flickrUserName = event.target.innerText
+    getUserName(flickrUserName)
+    .then((response) => {
+      dispatch(userFound({
+        name: flickrUserName,
+        id: response.data.id
+      }))
+    }).catch((error) => {
+      toast.error("Usuario no encontrado");
+    });
   }
 
   return (
@@ -42,10 +61,9 @@ export default function ImageInfo({ photo, favorites }) {
           >
             { favorites.map((user) => (
               <ListItem key={user} disablePadding={true}>
-                <ListItemText
-                  primary={user}
-                  key={user}
-                />
+                <Link onClick={nameClickHandler} href="#" underline="hover" color={'inherit'}>
+                  {user}
+                </Link>
               </ListItem>
             ))}
           </List>
