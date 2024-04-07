@@ -90,7 +90,7 @@ mod tests {
     use super::output_net::OutputNet;
 
     #[test]
-    fn given_a_json_graph_it_returns_a_net_with_nodes_with_sizes_and_links() {
+    fn given_a_json_graph_it_returns_a_net_with_nodes_and_links() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
             "edges": [["1", "2"], ["2", "3"]],
@@ -101,16 +101,30 @@ mod tests {
         sn.set_net(input);
         let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
 
-        assert_eq!(output.nodes.len(), 3);
+        assert_eq!(output.nodes.len(), 3);        
+        assert_eq!(output.links.len(), 2);
+    }
+
+    #[test]
+    fn given_a_json_graph_it_returns_a_net_nodes_and_its_val_sizes() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["1", "2"], ["2", "3"]],
+            "main_node": "1"
+        }"#;
+
+        let mut sn = SocialNetwork::new();
+        sn.set_net(input);
+        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+
         assert_eq!(
             output
                 .nodes
                 .iter()
                 .filter(|&node| node.id == "1")
                 .collect::<Vec<&OutputNode>>()[0]
-                .size,
+                .val,
             1
-        );
-        assert_eq!(output.links.len(), 2);
+        );    
     }
 }

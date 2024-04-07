@@ -6,7 +6,7 @@ use super::{group::Group, node::Node};
 pub struct OutputNode {
     pub id: String,
     name: String,
-    pub size: usize,
+    pub val: usize,
     group: Group,
 }
 
@@ -15,7 +15,7 @@ impl OutputNode {
         Self {
             id: node.id.clone(),
             name: node.name.clone(),
-            size,
+            val: size,
             group: node.group.clone(),
         }
     }
