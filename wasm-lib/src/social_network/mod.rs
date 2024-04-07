@@ -150,6 +150,5 @@ mod tests {
                 .clone(),
             1
         );
-        println!("{:?}", output);
     }
 }
