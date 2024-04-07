@@ -2,11 +2,11 @@ use serde::{Deserialize, Serialize};
 
 use super::{group::Group, node::Node};
 
-#[derive(Serialize, Deserialize, Clone, Default)]
+#[derive(Serialize, Deserialize, Clone, Default, Debug)]
 pub struct OutputNode {
     pub id: String,
     name: String,
-    size: usize,
+    pub size: usize,
     group: Group,
 }
 

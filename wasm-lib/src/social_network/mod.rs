@@ -6,13 +6,15 @@ mod node;
 mod output_net;
 mod output_node;
 
+use crate::social_network::edge::Edge;
+use crate::social_network::group::Group;
 use crate::social_network::input_net::InputNet;
 use crate::social_network::node::Node;
 use crate::social_network::output_net::OutputNet;
 use crate::social_network::output_node::OutputNode;
-use crate::social_network::{group::Group};
 use crate::utils::set_panic_hook;
 use petgraph::graph::{DiGraph, NodeIndex};
+use petgraph::visit::EdgeRef;
 use std::collections::HashMap;
 use wasm_bindgen::prelude::*;
 
@@ -64,6 +66,13 @@ impl SocialNetwork {
             net.nodes.push(output_node);
         });
 
+        self.graph.edge_references().for_each(|edge_ref| {
+            let from = edge_ref.source();
+            let to = edge_ref.target();
+            let edge = Edge::from_nodes(&self.graph[from], &self.graph[to]);
+            net.links.push(edge);
+        });
+
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
     }
 }
@@ -76,18 +85,32 @@ impl Default for SocialNetwork {
 
 #[cfg(test)]
 mod tests {
-    use crate::social_network::SocialNetwork;
+    use crate::social_network::{output_node::OutputNode, SocialNetwork};
+
+    use super::output_net::OutputNet;
 
     #[test]
-    fn given_a_json_graph_it_returns_non_empty_string() {
-        let data = r#"{
+    fn given_a_json_graph_it_returns_a_net_with_nodes_with_sizes_and_links() {
+        let input = r#"{
             "nodes": ["1", "2", "3"],
             "edges": [["1", "2"], ["2", "3"]],
             "main_node": "1"
         }"#;
 
         let mut sn = SocialNetwork::new();
-        sn.set_net(data);
-        assert!(!sn.get_net().is_empty());
+        sn.set_net(input);
+        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+
+        assert_eq!(output.nodes.len(), 3);
+        assert_eq!(
+            output
+                .nodes
+                .iter()
+                .filter(|&node| node.id == "1")
+                .collect::<Vec<&OutputNode>>()[0]
+                .size,
+            1
+        );
+        assert_eq!(output.links.len(), 2);
     }
 }

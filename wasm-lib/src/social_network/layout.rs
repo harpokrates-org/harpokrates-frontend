@@ -1,7 +1,7 @@
-use fdg_sim::{ForceGraph};
+use fdg_sim::ForceGraph;
 use petgraph::graph::DiGraph;
 
-use super::{node::Node};
+use super::node::Node;
 
 struct Layout {
     graph: ForceGraph<(), ()>,
