@@ -30,6 +30,7 @@ export default function ImageDialog({ photo, open, onClose }) {
       setFavorites(withoutMainUser)
     };
 
+    setFavorites(null)
     getFavorites();
   }, [username, photo, setFavorites]);
 

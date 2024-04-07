@@ -1,5 +1,5 @@
 "use client";
-import { useState } from "react";
+import { useEffect, useState } from "react";
 import Button from "@mui/material/Button";
 import { Input } from "@mui/joy";
 import Person from "@mui/icons-material/Person";
@@ -13,8 +13,13 @@ import { toast } from "react-hot-toast";
 import { getUserName } from "@/app/api/UserAPI";
 
 export default function UserSearcher() {
-  const [flickrUserName, setFlickrUserName] = useState(useSelector(selectName));
+  const currentFlickrUserName = useSelector(selectName);
+  const [flickrUserName, setFlickrUserName] = useState(currentFlickrUserName);
   const dispatch = useDispatch();
+
+  useEffect(() => {
+    setFlickrUserName(currentFlickrUserName)
+  }, [currentFlickrUserName])
 
   const updateNameHandler = (event) => {
     setFlickrUserName(event.target.value);
