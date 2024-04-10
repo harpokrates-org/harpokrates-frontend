@@ -27,11 +27,12 @@ mod tests {
     };
 
     #[test]
-    fn if_two_nodes_are_in_two_separetes_strongly_connectec_components_then_it_should_return_they_are_in_different_groups() {
+    fn if_two_nodes_are_in_two_separetes_strongly_connectec_components_then_it_should_return_they_are_in_different_groups(
+    ) {
         // ejemplo: https://media.geeksforgeeks.org/wp-content/uploads/20230801122248/scc_fianldrawio.png
         // Node 2: Component A
         // Node 5: Component B
-        
+
         let input = r#"{
             "nodes": ["1", "2", "3", "4", "5", "6", "7"],
             "edges": [
