@@ -60,7 +60,7 @@ export default function Graph() {
 
   const nodeColorHandler = node => {
     switch (node.group) {
-      case 1:
+      case 0:
         return mainNodeColor;
       default:
         return secondaryNodeColor;
