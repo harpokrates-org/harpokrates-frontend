@@ -102,7 +102,7 @@ mod tests {
                 .collect::<Vec<&OutputNode>>()[0]
                 .group
                 .clone(),
-            1
+            0
         );
     }
 }

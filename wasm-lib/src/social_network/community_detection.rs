@@ -54,25 +54,25 @@ mod tests {
 
         let output_net = strongly_connected_components(&graph, output_net);
 
-        let group_2 = output_net
+        let group_node_2 = output_net
             .nodes
             .iter()
             .filter(|&node| node.id == "2")
             .collect::<Vec<&OutputNode>>()[0]
             .group;
 
-        let group_5 = output_net
+        let group_node_5 = output_net
             .nodes
             .iter()
             .filter(|&node| node.id == "5")
             .collect::<Vec<&OutputNode>>()[0]
             .group;
 
-        assert_ne!(group_2, group_5);
+        assert_ne!(group_node_2, group_node_5);
     }
 
     #[test]
-    fn main_node_should_always_be_on_group_1() {
+    fn main_node_should_always_be_on_group_zero() {
         // ejemplo: https://media.geeksforgeeks.org/wp-content/uploads/20230801122248/scc_fianldrawio.png
         let input = r#"{
             "nodes": ["1", "2", "3", "4", "5", "6", "7"],
@@ -96,13 +96,13 @@ mod tests {
 
         let output_net = strongly_connected_components(&graph, output_net);
 
-        let group_1 = output_net
+        let group_node_1 = output_net
             .nodes
             .iter()
             .filter(|&node| node.id == "1")
             .collect::<Vec<&OutputNode>>()[0]
             .group;
 
-        assert_eq!(group_1, 1);
+        assert_eq!(group_node_1, 0);
     }
 }
