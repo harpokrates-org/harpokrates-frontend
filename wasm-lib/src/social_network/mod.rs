@@ -12,7 +12,7 @@ use crate::social_network::node::Node;
 use crate::social_network::output_net::OutputNet;
 
 use crate::utils::set_panic_hook;
-use petgraph::graph::{DiGraph};
+use petgraph::graph::DiGraph;
 
 use wasm_bindgen::prelude::*;
 

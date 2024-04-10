@@ -13,3 +13,35 @@ pub fn degree(graph: &DiGraph<Node, ()>, mut net: OutputNet) -> OutputNet {
     });
     net
 }
+
+#[cfg(test)]
+mod tests {
+    use crate::social_network::{
+        input_net::InputNet, output_net::OutputNet, output_node::OutputNode,
+    };
+
+    use super::degree;
+
+    #[test]
+    fn should_count_node_degree() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["1", "2"], ["1", "3"]],
+            "main_node": "1"
+        }"#;
+        let input_net: InputNet = serde_json::from_str(input).unwrap();
+        let graph = input_net.into_graph();
+        let output_net = OutputNet::from_graph(&graph);
+
+        let output_net = degree(&graph, output_net);
+        assert_eq!(
+            output_net
+                .nodes
+                .iter()
+                .filter(|&node| node.id == "1")
+                .collect::<Vec<&OutputNode>>()[0]
+                .val,
+            2
+        );
+    }
+}
