@@ -48,8 +48,7 @@ export default function Graph() {
         const inputNet = await getFavorites(photos)
         inputNet.main_node = username
         const parsed_input = JSON.stringify(inputNet)
-        const socialNetwork = new SocialNetwork()
-        socialNetwork.set_net(parsed_input)
+        const socialNetwork = new SocialNetwork(parsed_input)
         const net = JSON.parse(socialNetwork.get_net())
         setNet(net)
       })
@@ -63,7 +62,7 @@ export default function Graph() {
       case 0:
         return mainNodeColor;
       default:
-        return secondaryNodeColor;
+        return "#" + node.group.toString(16).padStart(6, '0');
     }
   };
 

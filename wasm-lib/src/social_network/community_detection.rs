@@ -1,21 +1,59 @@
-use petgraph::{algo::tarjan_scc, graph::DiGraph};
+use petgraph::{
+    algo::tarjan_scc,
+    graph::{DiGraph},
+};
 
 use crate::social_network::{group::Group, node::Node, output_net::OutputNet};
+
+const MIN_COMPONENT_LEN: usize = 2;
+const GREY_COLOR_IN_DECIMAL: u32 = 10526880;
+
+fn component_to_color(index: f64, max_components: f64) -> u32 {
+    let max_colors = 16777215.0 - 100000.0; // total colores en 3 bytes = 2^24
+    (((max_colors / max_components) * index).floor()) as u32
+}
+
 pub fn strongly_connected_components(graph: &DiGraph<Node, ()>, mut net: OutputNet) -> OutputNet {
+    // TODO!: Refactor
     let mut references = net.get_node_mut_references();
 
     let components = tarjan_scc(graph);
 
-    for (i, component) in components.iter().enumerate() {
-        for node_idx in component {
+    let colored_components = components
+        .iter()
+        .filter(|&component| component.len() >= MIN_COMPONENT_LEN)
+        .collect::<Vec<_>>();
+
+    for (i, component) in colored_components.iter().enumerate() {
+        for node_idx in *component {
             let id = &graph[*node_idx].id;
             if let Some(node) = references.get_mut(id) {
-                if node.group != Group::Main as u8 {
-                    node.group = (i + 1) as u8;
+                if node.group == Group::Main as u32 {
+                    continue;
                 }
+                node.group =
+                    component_to_color((i + 1) as f64, colored_components.len() as f64) as u32;
             }
         }
     }
+
+    let neutral_components = components
+        .iter()
+        .filter(|&component| component.len() < MIN_COMPONENT_LEN)
+        .collect::<Vec<_>>();
+
+    for component in neutral_components {
+        for node_idx in component {
+            let id = &graph[*node_idx].id;
+            if let Some(node) = references.get_mut(id) {
+                if node.group == Group::Main as u32 {
+                    continue;
+                }
+                node.group = GREY_COLOR_IN_DECIMAL;
+            }
+        }
+    }
+
     net
 }
 
