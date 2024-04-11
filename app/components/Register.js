@@ -72,7 +72,7 @@ export default function Register({ open, onClose }) {
         <TextField
           required
           id="name"
-          name="nombre"
+          name="name"
           label="Nombre"
           fullWidth
           variant="standard"
@@ -81,7 +81,7 @@ export default function Register({ open, onClose }) {
         <TextField
           required
           id="name"
-          name="apellido"
+          name="surname"
           label="Apellido"
           fullWidth
           variant="standard"
