@@ -24,7 +24,7 @@ export default function NavBar() {
             Harpokrates
           </Button>
           {usePathname() === '/' ? null : <UserSearcher /> }
-          {email ? <ProfileMenu /> : <LoginDialog />}
+          {email && <ProfileMenu />}
         </Toolbar>
       </AppBar>
     </Box>

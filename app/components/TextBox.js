@@ -1,6 +1,12 @@
+'use client'
 import { Box, Button, Grid, Typography } from "@mui/material";
+import { useSelector } from "react-redux";
+import { selectEmail } from "@/store/HarpokratesUserSlice";
+import LoginDialog from "./LoginDialog";
 
 export default function TextBox() {
+  let email = useSelector(selectEmail);
+
   return (
     <Box>
       <Grid container spacing={2} p={7}>
@@ -26,9 +32,13 @@ export default function TextBox() {
               Recorré Flick en busqueda de comunidades, influencers y
               comunicación oculta por imagenes
             </Typography>
-            <Button variant="contained" color="inherit" href="/photos">
-              Probá acá
-            </Button>
+            {email ? (
+              <Button variant="contained" color="secondary" href="/photos">
+                Probá acá
+              </Button>
+            ) : (
+              <LoginDialog />
+            )}
           </Grid>
         </Grid>
         <Grid item xs={6}>
