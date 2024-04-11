@@ -15,12 +15,14 @@ import { useState } from "react";
 import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { changeEmail, reset } from "@/store/HarpokratesUserSlice";
+import { useRouter } from 'next/navigation'
 
 const emailDoesNotExistMessage = "Email no encontrado";
 
 export default function Login({ open, onClose, registerClickHandler }) {
   const [emailDoesNotExist, setEmailDoesNotExist] = useState(false);
   const dispatch = useDispatch();
+  const router = useRouter();
 
   const loginUserHandler = async (email) => {
     try {
@@ -52,6 +54,7 @@ export default function Login({ open, onClose, registerClickHandler }) {
           if (!(await loginUserHandler(formJson.email))) return;
           toast.success("Login exitoso");
           onClose();
+          router.push('/photos')
         },
       }}
     >
