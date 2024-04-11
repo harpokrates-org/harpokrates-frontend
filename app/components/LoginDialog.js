@@ -28,7 +28,7 @@ export default function LoginDialog() {
 
   return (
     <>
-      <Button color="inherit" onClick={loginClickHandler}>Login</Button>
+      <Button variant="contained" color="primary" onClick={loginClickHandler}>Accedé a tu cuenta</Button>
       <Login open={openLogin} onClose={loginCloseHandler} registerClickHandler={registerClickHandler}/>
       <Register open={openRegister} onClose={registerCloseHandler}/>
     </>
