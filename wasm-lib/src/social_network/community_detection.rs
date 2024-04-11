@@ -1,6 +1,6 @@
 use petgraph::{
     algo::tarjan_scc,
-    graph::{DiGraph},
+    graph::DiGraph,
 };
 
 use crate::social_network::{group::Group, node::Node, output_net::OutputNet};
