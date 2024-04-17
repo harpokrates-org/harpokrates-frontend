@@ -10,7 +10,7 @@ import { useWindowSize } from '@react-hook/window-size';
 import { getUserFavorites, getUserPhotos } from '@/app/api/UserAPI';
 
 const photosPerFavorite = 1
-const depth = 2
+const depth = 3
 const mainPhotosCount = 12
 const topMenuHeight = 50
 const padding = 60
