@@ -1,99 +1,107 @@
-'use client'
-import { classify, loadLowModel } from "@/app/libs/classifier"
-import { selectId, setPhotos } from "@/store/FlickrUserSlice"
-import { Box, ImageList, ImageListItem } from "@mui/material"
-import axios from "axios"
-import { useEffect, useState } from "react"
-import { useSelector, useDispatch } from "react-redux"
-import SideBar from "../../components/SideBar"
-const pixels = require('image-pixels')
-const R = require('ramda');
-
-const filterSizeByLabel = (sizes, label) => {
-  return sizes.map(size => {
-    const r = R.filter((e) => e.label == label, size.sizes)[0]
-    return r
-  })
-}
-
-const getPhotos = async (userId) => {
-  return await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/photos', {
-    params: { user_id: userId, per_page: 12 }
-  })
-}
-
-const getSizes = async (photoId) => {
-  return await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/sizes', {
-    params: { photo_id: photoId }
-  })
-}
+"use client";
+import { getPrediction, loadLowModel } from "@/app/libs/classifier";
+import {
+  Box,
+  Button,
+  ImageList,
+  ImageListItem,
+  ImageListItemBar,
+} from "@mui/material";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
+const R = require("ramda");
+import { getUserPhotoSizes } from "@/app/api/UserAPI"
+import ImageDialog from "./ImageDialog";
 
 export default function ImageGallery() {
-  const [sizes, setSizes] = useState([])
-  const [model, setModel] = useState(null)
-  const userId = useSelector(selectId)
-  const dispatch = useDispatch()
+  const [model, setModel] = useState(null);
+  const [clickedImage, setClickedImage] = useState({ id: '', source: '', title: '', width: 0, height: 0 });
+  const [openImage, setOpenImage] = useState(false);
+  const photos = useSelector(selectPhotos)
+  const username = useSelector(selectName);
+  const dispatch = useDispatch();
+
+  const imageClickHandler = (photo) => {
+    setClickedImage(photo)
+    setOpenImage(true);
+  };
+
+  const imageCloseHandler = () => {
+    setOpenImage(false);
+  };
 
   useEffect(() => {
-    const getFilter = async (src) => {
-      const pix = await pixels(src);
-      const prediction = await classify(model, pix);
-      const stegoFilter = " grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
+    const getFilter = async (prediction) => {
+      const stegoFilter =
+        "grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
       const filter = prediction > 0.5 ? stegoFilter : "";
       return filter;
-    }
+    };
 
     const fetchModel = async () => {
       if (model) return;
-      const m = await loadLowModel()
-      setModel(m)
-    }
+      const _model = await loadLowModel();
+      setModel(_model);
+    };
 
-    const fetchPhotos = async () => {
-      if (!userId) return;
-      const photos_res = await getPhotos(userId)
-      if (photos_res.status != '200') {
-        toast.error('Error al cargar las fotos')
+    const fetchUserPhotoSizes = async (label) => {
+      if (!username | !model) return;
+      const count = 12;
+      const res = await getUserPhotoSizes(username, count);
+      if (res.status != "200") {
+        toast.error("Error al cargar las fotos");
+        return;
       }
-      dispatch(setPhotos(photos_res.data.photos))
 
-      const sizes_res = await Promise.all(photos_res.data.photos.map(async (photo) => {
-        const r = await getSizes(photo.id)
-        return r.data
-      }))
-
-      const mediums = filterSizeByLabel(sizes_res, 'Medium');
-      const siz = mediums.map(async m => {
-        return { source: m.source, filter: await getFilter(m.source) }
-      })
-
-      setSizes(await Promise.all(siz))
-    }
+      const _photos = await Promise.all(
+        res.data.photos.map(async (p) => {
+          const size = R.filter((e) => e.label == label, p.sizes)[0];
+          const prediction = await getPrediction(model, size.source);
+          const filter = await getFilter(prediction);
+          return {
+            id: p.id,
+            title: p.title,
+            source: size.source,
+            height: size.height,
+            width: size.width,
+            filter: filter,
+            prediction: prediction,
+          };
+        })
+      );
+      dispatch(setPhotos(_photos));
+    };
 
     const fetchAll = async () => {
       await fetchModel();
-      fetchPhotos()
-    }
+      fetchUserPhotoSizes("Medium");
+    };
 
+    setOpenImage(false)
     fetchAll();
-  }, [userId, model])
+  }, [username, model, dispatch]);
 
   return (
     <Box>
       <ImageList cols={4}>
-        {
-          sizes.map((photo) => (
-            <ImageListItem key={photo.source}>
+        {photos.map((photo) => (
+          <ImageListItem key={photo.id}>
+            <Button onClick={() => imageClickHandler(photo)}>
               <img
-                srcSet={photo.source}
                 src={photo.source}
-                alt={photo.source}
+                alt={photo.title}
                 style={{ height: 150, filter: photo.filter }}
+                loading="lazy"
               />
-            </ImageListItem>
-          ))
-        }
+            </Button>
+            {photo.prediction > 0.5 ? (
+              <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
+            ) : null}
+          </ImageListItem>
+        ))}
       </ImageList>
+      <ImageDialog photo={clickedImage} open={openImage} onClose={imageCloseHandler} />
     </Box>
-  )
+  );
 }

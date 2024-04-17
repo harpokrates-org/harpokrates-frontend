@@ -3,7 +3,7 @@ import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import HubIcon from '@mui/icons-material/Hub';
 
-const drawerWidth = 180;
+export const drawerWidth = 180;
 
 export default function SideBar() {
   return (

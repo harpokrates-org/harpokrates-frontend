@@ -1,44 +1,70 @@
 'use client'
-import Box from '@mui/material/Box';
 import { useCallback, useRef, useEffect, useState } from 'react';
 import init, { SocialNetwork } from "wasm-lib";
-import { ForceGraph3D } from 'react-force-graph';
-import { useSelector } from "react-redux";
-import { selectName, selectPhotos } from "@/store/FlickrUserSlice"
+import { ForceGraph2D, ForceGraph3D } from 'react-force-graph';
+import { useDispatch, useSelector } from "react-redux";
+import { selectId, selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice"
 import axios from 'axios';
+import { drawerWidth } from '../../components/SideBar';
+import { useWindowSize } from '@react-hook/window-size';
+import { getUserFavorites, getUserPhotos } from '@/app/api/UserAPI';
+
+const photosPerFavorite = 1
+const depth = 2
+const mainPhotosCount = 12
+const topMenuHeight = 50
+const padding = 60
+const mainNodeColor = 'red'
+const secondaryNodeColor = 'gray'
 
 export default function Graph() {
   const fgRef = useRef();
   const [net, setNet] = useState({ nodes:[], links:[]})
+  const [wasmInitPromise, setWasmInitPromise] = useState(init())
   const username = useSelector(selectName)
+  const userID = useSelector(selectId)
   const photos = useSelector(selectPhotos)
-
-  const getFavorites = async () => {
-    if (photos.length === 0) return
-    const photoIds = JSON.stringify(photos.map((photo) => photo.id))
-    const response = await axios.get(process.env.NEXT_PUBLIC_BACKEND_URL + '/favorites', {
-      params: {
-        username,
-        photo_ids: photoIds,
-      }
-    })
-    return response.data
-  }
+  const [width, height] = useWindowSize();
+  const dispatch = useDispatch()
 
   useEffect(() => {
-    init()
+    const getFavorites = async (photos) => {
+      const photoIDs = photos.map((photo) => photo.id)
+      const response = await getUserFavorites(username, photoIDs, photosPerFavorite, depth)
+      return response.data
+    }
+
+    const getPhotos = async (userID) => {
+      if (photos.length > 0) return photos
+      const response = await getUserPhotos(userID, mainPhotosCount)
+      const photoIDs = response.data.photos
+      dispatch(setPhotos(photoIDs))
+      return photoIDs
+    }
+
+    wasmInitPromise
       .then(async () => {
-        const inputNet = await getFavorites()
+        const photos = await getPhotos(userID)
+        const inputNet = await getFavorites(photos)
+        inputNet.main_node = username
         const parsed_input = JSON.stringify(inputNet)
-        const socialNetwork = new SocialNetwork()
-        socialNetwork.set_net(parsed_input)
+        const socialNetwork = new SocialNetwork(parsed_input)
         const net = JSON.parse(socialNetwork.get_net())
         setNet(net)
       })
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [])
+  }, [photos, username, dispatch, userID, wasmInitPromise])
+
+  const nodeColorHandler = node => {
+    switch (node.group) {
+      case 0:
+        return mainNodeColor;
+      default:
+        return "#" + node.group.toString(16).padStart(6, '0');
+    }
+  };
 
   const handleClick = useCallback(node => {
     const distance = 40;
@@ -52,16 +78,16 @@ export default function Graph() {
   }, [fgRef]);
 
   return (
-    <Box>
-      <ForceGraph3D
-        ref={fgRef}
-        graphData={net}
-        nodeLabel="id"
-        nodeAutoColorBy="group"
-        linkDirectionalArrowLength={3.5}
-        linkDirectionalArrowRelPos={1}
-        onNodeClick={handleClick}
-      />
-    </Box>
+    <ForceGraph2D
+      ref={fgRef}
+      graphData={net}
+      nodeLabel="id"
+      nodeColor={nodeColorHandler}
+      linkDirectionalArrowLength={3.5}
+      linkDirectionalArrowRelPos={1}
+      // onNodeClick={handleClick}
+      width={width - drawerWidth - padding}
+      height={height- topMenuHeight - padding}
+    />
   )
 }

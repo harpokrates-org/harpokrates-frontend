@@ -1,8 +1,8 @@
 import { configureStore } from '@reduxjs/toolkit'
 import flickrUserReducer from "./FlickrUserSlice";
-import searchAlertReducer from "./SearchAlertSlice";
+import harpokratesUserReducer from "./HarpokratesUserSlice";
 import storage from 'redux-persist/lib/storage';
-import { persistReducer, persistStore } from 'redux-persist';
+import { persistStore, FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER } from 'redux-persist';
 import persistCombineReducers from "redux-persist/es/persistCombineReducers";
 
 const persistConfig = {
@@ -12,11 +12,17 @@ const persistConfig = {
 
 const persistedReducer = persistCombineReducers(persistConfig, {
   flickrUser: flickrUserReducer,
-  searchAlert: searchAlertReducer,
+  harpokratesUser: harpokratesUserReducer,
 });
 
 export const store = configureStore({
   reducer: persistedReducer,
+  middleware: getDefaultMiddleware =>
+    getDefaultMiddleware({
+      serializableCheck: {
+        ignoredActions: [FLUSH, REHYDRATE, PAUSE, PERSIST, PURGE, REGISTER],
+      },
+  }),
 })
 
 export const persistor = persistStore(store)
