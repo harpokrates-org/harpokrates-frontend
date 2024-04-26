@@ -42,7 +42,7 @@ export default function NetworkSideBar() {
           helperText={depth < 0 || depth > 3 ? "Profunidad entre 0 y 3" : " "}
         />
         <Button type="submit" onClick={handleSubmit}>
-          SUBMIT
+          APLICAR
         </Button>
       </FormControl>
     </Box>
