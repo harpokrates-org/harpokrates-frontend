@@ -1,16 +1,15 @@
 'use client'
 import { useCallback, useRef, useEffect, useState } from 'react';
 import init, { SocialNetwork } from "wasm-lib";
-import { ForceGraph2D, ForceGraph3D } from 'react-force-graph';
+import { ForceGraph2D } from 'react-force-graph';
 import { useDispatch, useSelector } from "react-redux";
 import { selectId, selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice"
-import axios from 'axios';
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
 import { getUserFavorites, getUserPhotos } from '@/app/api/UserAPI';
+import { selectGraphConfig } from '@/store/HarpokratesUserSlice';
 
 const photosPerFavorite = 1
-const depth = 3
 const mainPhotosCount = 12
 const topMenuHeight = 50
 const padding = 60
@@ -26,6 +25,9 @@ export default function Graph() {
   const photos = useSelector(selectPhotos)
   const [width, height] = useWindowSize();
   const dispatch = useDispatch()
+  const graphConfig = useSelector(selectGraphConfig);
+  const depth = graphConfig.depth;
+
 
   useEffect(() => {
     const getFavorites = async (photos) => {
@@ -55,7 +57,7 @@ export default function Graph() {
       .catch((e) => {
         console.log(`Error al crear grafo en WASM: ${e}`)
       });
-  }, [photos, username, dispatch, userID, wasmInitPromise])
+  }, [photos, username, dispatch, userID, wasmInitPromise, depth])
 
   const nodeColorHandler = node => {
     switch (node.group) {
