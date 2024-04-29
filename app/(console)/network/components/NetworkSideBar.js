@@ -5,6 +5,7 @@ import { useState } from "react";
 import {
   changeColor,
   changeDepth,
+  changeSize,
   selectColor,
   selectDepth,
   selectSize,
