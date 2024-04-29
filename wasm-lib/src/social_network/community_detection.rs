@@ -1,12 +1,10 @@
-use petgraph::{
-    algo::tarjan_scc,
-    graph::DiGraph,
-};
+use petgraph::{algo::tarjan_scc, graph::DiGraph};
 
 use crate::social_network::{group::Group, node::Node, output_net::OutputNet};
 
+use super::group::GREY_COLOR_IN_DECIMAL;
+
 const MIN_COMPONENT_LEN: usize = 2;
-const GREY_COLOR_IN_DECIMAL: u32 = 10526880;
 
 fn component_to_color(index: f64, max_components: f64) -> u32 {
     let max_colors = 16777215.0 - 100000.0; // total colores en 3 bytes = 2^24

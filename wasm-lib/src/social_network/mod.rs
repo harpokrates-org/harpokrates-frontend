@@ -2,6 +2,7 @@ mod community_detection;
 mod edge;
 mod group;
 mod input_net;
+mod network_config;
 mod node;
 mod output_net;
 mod output_node;
@@ -15,6 +16,8 @@ use crate::utils::set_panic_hook;
 use petgraph::graph::DiGraph;
 
 use wasm_bindgen::prelude::*;
+
+use self::network_config::NetworkConfig;
 
 #[wasm_bindgen]
 pub struct SocialNetwork {
@@ -33,11 +36,22 @@ impl SocialNetwork {
         }
     }
 
-    pub fn get_net(&mut self) -> String {
+    pub fn get_net(&mut self, config_json: &str) -> String {
         set_panic_hook();
+        let config: NetworkConfig =
+            serde_json::from_str(config_json).expect("SET_CONFIG: Failed to parse input config");
         let net = OutputNet::from_graph(&self.graph);
-        let net = ranking::degree(&self.graph, net);
-        let net = community_detection::strongly_connected_components(&self.graph, net);
+
+        let net = match config.color.as_str() {
+            "community" => community_detection::strongly_connected_components(&self.graph, net),
+            &_ => net,
+        };
+
+        let net = match config.size.as_str() {
+            "degree" => ranking::degree(&self.graph, net),
+            &_ => net,
+        };
+
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
     }
 }
@@ -53,24 +67,32 @@ mod tests {
             "edges": [["1", "2"], ["2", "3"]],
             "main_node": "1"
         }"#;
+        let config = r#"{
+            "color": "no-community",
+            "size": "no-size"
+        }"#;
 
         let mut sn = SocialNetwork::from_net(input);
-        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+        let output: OutputNet = serde_json::from_str(&sn.get_net(config)).unwrap();
 
         assert_eq!(output.nodes.len(), 3);
         assert_eq!(output.links.len(), 2);
     }
 
     #[test]
-    fn given_a_json_graph_it_returns_a_net_with_nodes_and_its_val_sizes() {
+    fn given_a_json_graph_it_returns_a_net_with_nodes_and_its_val_sizes_when_dregree_is_marked() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
             "edges": [["1", "2"], ["2", "3"]],
             "main_node": "1"
         }"#;
+        let config = r#"{
+            "color": "no-community",
+            "size": "degree"
+        }"#;
 
         let mut sn = SocialNetwork::from_net(input);
-        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+        let output: OutputNet = serde_json::from_str(&sn.get_net(config)).unwrap();
 
         assert_eq!(
             output
@@ -84,15 +106,19 @@ mod tests {
     }
 
     #[test]
-    fn main_node_should_be_part_of_the_main_group() {
+    fn main_node_should_be_part_of_the_main_group_when_config_has_colored_community() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
             "edges": [["1", "2"], ["2", "3"]],
             "main_node": "1"
         }"#;
-
         let mut sn = SocialNetwork::from_net(input);
-        let output: OutputNet = serde_json::from_str(&sn.get_net()).unwrap();
+
+        let config = r#"{
+            "color": "community",
+            "size": "no-size"
+        }"#;
+        let output: OutputNet = serde_json::from_str(&sn.get_net(config)).unwrap();
 
         assert_eq!(
             output
