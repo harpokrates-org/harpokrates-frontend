@@ -7,7 +7,7 @@ import { selectId, selectName, selectPhotos, setPhotos } from "@/store/FlickrUse
 import { drawerWidth } from '../../components/SideBar';
 import { useWindowSize } from '@react-hook/window-size';
 import { getUserFavorites, getUserPhotos } from '@/app/api/UserAPI';
-import { selectGraphDepth } from '@/store/HarpokratesUserSlice';
+import { selectDepth } from '@/store/NetworkSlice';
 
 const photosPerFavorite = 1
 const mainPhotosCount = 12
@@ -25,7 +25,7 @@ export default function Graph() {
   const photos = useSelector(selectPhotos)
   const [width, height] = useWindowSize();
   const dispatch = useDispatch()
-  const depth = useSelector(selectGraphDepth);
+  const depth = useSelector(selectDepth);
 
 
   useEffect(() => {
