@@ -3,8 +3,7 @@ import { useWindowSize } from '@react-hook/window-size';
 import { drawerWidth } from './SideBar';
 import Image from 'next/image';
 
-
-export default function EmptyState({ title, message }) {
+export default function EmptyState({ title, message, topMargin }) {
   const [width, height] = useWindowSize();
 
   return (
@@ -12,8 +11,8 @@ export default function EmptyState({ title, message }) {
       style={{
         position: 'absolute',
         left: `${(width - drawerWidth)/2 + drawerWidth}px`,
-        top: '50%',
-        transform: 'translate(-50%, -50%)'
+        top: `${(height - topMargin)/2 + topMargin}px`,
+        transform: `translate(-50%, 0px)`
       }}
     >
       <Image

@@ -13,6 +13,7 @@ import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
 import ImageDialog from "./ImageDialog";
+import { selectMaxDate, selectMinDate } from "@/store/PhotosFilterSlice";
 
 export default function ImageGallery() {
   const [model, setModel] = useState(null);
@@ -20,6 +21,8 @@ export default function ImageGallery() {
   const [openImage, setOpenImage] = useState(false);
   const photos = useSelector(selectPhotos)
   const username = useSelector(selectName);
+  const minDate = useSelector(selectMinDate);
+  const maxDate = useSelector(selectMaxDate);
   const dispatch = useDispatch();
 
   const imageClickHandler = (photo) => {
@@ -48,7 +51,12 @@ export default function ImageGallery() {
     const fetchUserPhotoSizes = async (label) => {
       if (!username | !model) return;
       const count = 12;
-      const res = await getUserPhotoSizes(username, count);
+      const res = await getUserPhotoSizes(
+        username,
+        count,
+        Date.parse(minDate),
+        Date.parse(maxDate),
+      );
       if (res.status != "200") {
         toast.error("Error al cargar las fotos");
         return;
@@ -80,7 +88,7 @@ export default function ImageGallery() {
 
     setOpenImage(false)
     fetchAll();
-  }, [username, model, dispatch]);
+  }, [username, model, minDate, maxDate, dispatch]);
 
   return (
     <Box>

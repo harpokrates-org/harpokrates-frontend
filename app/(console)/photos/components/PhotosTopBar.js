@@ -1,0 +1,55 @@
+"use client";
+import {
+  Box,
+  Button,
+  FormControl,
+  Typography,
+} from "@mui/material";
+import { Input } from "@mui/joy";
+import 'react-date-range/dist/styles.css';
+import 'react-date-range/dist/theme/default.css';
+import { useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
+import CalendarDialog from "./CalendarDialog";
+import { selectMaxDate, selectMinDate, setDates } from "@/store/PhotosFilterSlice";
+
+export const margin = 30;
+export const barHeight = 200;
+export const titleHeight = 25;
+
+export default function PhotosTopBar() {
+  const dispatch = useDispatch();
+  const [openCalendar, setOpenCalendar] = useState(false)
+  const [dateRange, setDateRange] = useState(
+    {
+      minDate: useSelector(selectMinDate), 
+      maxDate: useSelector(selectMaxDate),
+    }
+  );
+
+  const handleSubmit = (e) => {
+    e.preventDefault();
+    dispatch(setDates(dateRange));
+  };
+
+  return (
+    <Box sx={{ minWidth: 120, height: `${barHeight}px`, backgroundColor: '#f4f4f4', marginBottom: `${margin}px`}}>
+      <FormControl>
+        <Typography variant="h6" marginLeft={`${margin}px`} marginTop={`${margin}px`} height={`${titleHeight}`}>Fecha de publicación</Typography>
+        <Input
+          sx={{ marginLeft: `${margin}px` }}
+          readOnly={true}
+          endDecorator={
+            <Button onClick={() => setOpenCalendar(true)}>Seleccionar</Button>
+          }
+          size="sm"
+          value={`${dateRange.minDate.split('T')[0]} / ${dateRange.maxDate.split('T')[0]}`}
+        ></Input>
+        <CalendarDialog open={openCalendar} onClose={() => setOpenCalendar(false)} dateRange={dateRange} maxDate={new Date()} onChange={setDateRange} />
+        <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: `${margin}px`, width: '80px' }}>
+          Aplicar
+        </Button>
+    </FormControl>
+    </Box>
+  );
+}
