@@ -20,14 +20,14 @@ export default function PhotosTopBar() {
   const [openCalendar, setOpenCalendar] = useState(false)
   const [dateRange, setDateRange] = useState(
     {
-      startDate: useSelector(selectMinDate), 
-      endDate: useSelector(selectMaxDate),
+      minDate: useSelector(selectMinDate), 
+      maxDate: useSelector(selectMaxDate),
     }
   );
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(setDates(dateRange.startDate, dateRange.endDate));
+    dispatch(setDates(dateRange));
   };
 
   return (
@@ -41,7 +41,7 @@ export default function PhotosTopBar() {
             <Button onClick={() => setOpenCalendar(true)}>Seleccionar</Button>
           }
           size="sm"
-          value={`${dateRange.startDate.split('T')[0]} / ${dateRange.endDate.split('T')[0]}`}
+          value={`${dateRange.minDate.split('T')[0]} / ${dateRange.maxDate.split('T')[0]}`}
         ></Input>
         <CalendarDialog open={openCalendar} onClose={() => setOpenCalendar(false)} dateRange={dateRange} maxDate={new Date()} onChange={setDateRange} />
         <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: margin, width: '80px' }}>

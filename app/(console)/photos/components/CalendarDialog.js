@@ -25,13 +25,13 @@ export default function CalendarDialog({ dateRange, maxDate, open, onChange, onC
       <DateRange
         editableDateInputs={true}
         onChange={item => onChange({
-          startDate: item.selection.startDate.toISOString(),
-          endDate: item.selection.endDate.toISOString()
+          minDate: item.selection.startDate.toISOString(),
+          maxDate: item.selection.endDate.toISOString()
         })}
         moveRangeOnFirstSelection={false}
         ranges={[{
-          startDate: new Date(dateRange.startDate),
-          endDate: new Date(dateRange.endDate),
+          startDate: new Date(dateRange.minDate),
+          endDate: new Date(dateRange.maxDate),
           key: 'selection'
         }]}
         maxDate={maxDate}

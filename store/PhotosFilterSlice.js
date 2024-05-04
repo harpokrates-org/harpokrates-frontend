@@ -11,8 +11,11 @@ export const photosFilterSlice = createSlice({
   initialState,
   reducers: {
     setDates: (state, action) => {
-      state.minDate = action.minDate
-      state.maxDate = action.maxDate
+      return {
+        ...initialState,
+        minDate: action.payload.minDate,
+        maxDate: action.payload.maxDate,
+      }
     },
   },
 })
