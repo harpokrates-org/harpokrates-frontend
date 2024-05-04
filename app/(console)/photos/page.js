@@ -7,15 +7,14 @@ import EmptyState from '../components/EmptyState';
 import { useSelector } from 'react-redux';
 import { selectName } from '@/store/FlickrUserSlice';
 import UserProfile from './components/UserProfile';
-import PhotosTopBar from './components/PhotosTopBar';
-
-export const margin = 4;
+import PhotosTopBar, { barHeight, margin, titleHeight } from './components/PhotosTopBar';
 
 const noPhotosTitle = 'Busca un usuario'
 const noPhotosMessage = 'Para analizar las imágines subidas por un usuario, necesitas ingresar su nombre en el buscador superior.'
 
 export default function ClippedDrawer() {
   const username = useSelector(selectName)
+  const topMargin = barHeight - titleHeight - margin
 
   return (
     <Box>
@@ -28,7 +27,7 @@ export default function ClippedDrawer() {
               <UserProfile />
               <ImageGallery />
             </> :
-            <EmptyState title={noPhotosTitle} message={noPhotosMessage} />
+            <EmptyState title={noPhotosTitle} message={noPhotosMessage} topMargin={topMargin} />
           }
         </Grid>
       </Grid>

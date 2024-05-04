@@ -13,7 +13,9 @@ import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
 import { selectMaxDate, selectMinDate, setDates } from "@/store/PhotosFilterSlice";
 
-export const margin = 4;
+export const margin = 30;
+export const barHeight = 200;
+export const titleHeight = 25;
 
 export default function PhotosTopBar() {
   const dispatch = useDispatch();
@@ -31,11 +33,11 @@ export default function PhotosTopBar() {
   };
 
   return (
-    <Box sx={{ minWidth: 120, backgroundColor: '#f4f4f4'}}>
+    <Box sx={{ minWidth: 120, height: `${barHeight}px`, backgroundColor: '#f4f4f4', marginBottom: `${margin}px`}}>
       <FormControl>
-        <Typography variant="h6" marginLeft={margin}>Fecha de publicación</Typography>
+        <Typography variant="h6" marginLeft={`${margin}px`} marginTop={`${margin}px`} height={`${titleHeight}`}>Fecha de publicación</Typography>
         <Input
-          sx={{ marginLeft: margin }}
+          sx={{ marginLeft: `${margin}px` }}
           readOnly={true}
           endDecorator={
             <Button onClick={() => setOpenCalendar(true)}>Seleccionar</Button>
@@ -44,7 +46,7 @@ export default function PhotosTopBar() {
           value={`${dateRange.minDate.split('T')[0]} / ${dateRange.maxDate.split('T')[0]}`}
         ></Input>
         <CalendarDialog open={openCalendar} onClose={() => setOpenCalendar(false)} dateRange={dateRange} maxDate={new Date()} onChange={setDateRange} />
-        <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: margin, width: '80px' }}>
+        <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: `${margin}px`, width: '80px' }}>
           Aplicar
         </Button>
     </FormControl>

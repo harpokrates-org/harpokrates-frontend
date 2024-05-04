@@ -15,6 +15,7 @@ const noGraphMessage =
 export default function ClippedDrawer() {
   const Graph = dynamic(() => import("./components/Graph"), { ssr: false });
   const username = useSelector(selectName);
+  const topMargin = 0
 
   return (
     <Box>
@@ -22,7 +23,7 @@ export default function ClippedDrawer() {
         <Grid item xs={9}>
           { username ? 
             <Graph /> :
-            <EmptyState title={noGraphTitle} message={noGraphMessage} />
+            <EmptyState title={noGraphTitle} message={noGraphMessage} topMargin={topMargin} />
           }
         </Grid>
         <Grid item xs={3}>
