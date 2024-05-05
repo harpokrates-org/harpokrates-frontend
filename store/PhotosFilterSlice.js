@@ -4,24 +4,26 @@ const today = new Date()
 const initialState = {
   minDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6).toISOString(),
   maxDate: today.toISOString(),
+  modelName: ''
 }
 
 export const photosFilterSlice = createSlice({
   name: 'photosFilter',
   initialState,
   reducers: {
-    setDates: (state, action) => {
+    setFilters: (state, action) => {
       return {
         ...initialState,
         minDate: action.payload.minDate,
         maxDate: action.payload.maxDate,
+        modelName: action.payload.modelName
       }
     },
   },
 })
 
 export const {
-  setDates,
+  setFilters,
 } = photosFilterSlice.actions
 
 export const selectMinDate = (state) => state.photosFilter.minDate
