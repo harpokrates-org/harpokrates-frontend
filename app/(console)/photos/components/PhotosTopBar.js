@@ -11,8 +11,9 @@ import 'react-date-range/dist/theme/default.css';
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
-import { selectMaxDate, selectMinDate, setFilters } from "@/store/PhotosFilterSlice";
+import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
 import { KeyboardArrowDown } from "@mui/icons-material";
+import { modelNames } from "@/app/libs/modelIndex";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -26,11 +27,12 @@ const formItemStyle = {
 export default function PhotosTopBar() {
   const dispatch = useDispatch();
   const [openCalendar, setOpenCalendar] = useState(false)
-  const [modelName, setModelName] = useState(null)
+  const filters = useSelector(selectFilters)
+  const [modelName, setModelName] = useState(filters.modelName)
   const [dateRange, setDateRange] = useState(
     {
-      minDate: useSelector(selectMinDate), 
-      maxDate: useSelector(selectMaxDate),
+      minDate: filters.minDate, 
+      maxDate: filters.maxDate,
     }
   );
 
@@ -66,11 +68,11 @@ export default function PhotosTopBar() {
               Modelo clasificador
             </FormLabel>
             <Select
-              onChange={(e) => {
-                setModelName(e.target.value);
+              onChange={(event, newModelName) => {
+                setModelName(newModelName);
               }}
               indicator={<KeyboardArrowDown />}
-              defaultValue={''}
+              value={modelName}
               sx={{
                 width: 270,
                 [`& .${selectClasses.indicator}`]: {
@@ -81,8 +83,8 @@ export default function PhotosTopBar() {
                 },
               }}
             >
-              <Option value="">No clasificar</Option>
-              <Option value="low">Base</Option>
+              <Option value={modelNames.NO_MODEL}>No clasificar</Option>
+              <Option value={modelNames.LOW_MODEL}>Base</Option>
             </Select>
             <FormHelperText >
               CNN para estegoanálisis de imagenes.

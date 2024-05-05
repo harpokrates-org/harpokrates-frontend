@@ -1,5 +1,4 @@
 "use client";
-import { getPrediction, loadLowModel } from "@/app/libs/classifier";
 import {
   Box,
   Button,
@@ -13,7 +12,8 @@ import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
 import ImageDialog from "./ImageDialog";
-import { selectMaxDate, selectMinDate } from "@/store/PhotosFilterSlice";
+import { selectFilters } from "@/store/PhotosFilterSlice";
+import { models } from "@/app/libs/modelIndex";
 
 export default function ImageGallery() {
   const [model, setModel] = useState(null);
@@ -21,8 +21,7 @@ export default function ImageGallery() {
   const [openImage, setOpenImage] = useState(false);
   const photos = useSelector(selectPhotos)
   const username = useSelector(selectName);
-  const minDate = useSelector(selectMinDate);
-  const maxDate = useSelector(selectMaxDate);
+  const filters = useSelector(selectFilters);
   const dispatch = useDispatch();
 
   const imageClickHandler = (photo) => {
@@ -43,8 +42,9 @@ export default function ImageGallery() {
     };
 
     const fetchModel = async () => {
-      if (model) return;
-      const _model = await loadLowModel();
+      if (!filters.modelName) setModel(models['']);
+      const _model = models[filters.modelName];
+      await _model.load();
       setModel(_model);
     };
 
@@ -54,8 +54,8 @@ export default function ImageGallery() {
       const res = await getUserPhotoSizes(
         username,
         count,
-        Date.parse(minDate),
-        Date.parse(maxDate),
+        Date.parse(filters.minDate),
+        Date.parse(filters.maxDate),
       );
       if (res.status != "200") {
         toast.error("Error al cargar las fotos");
@@ -65,7 +65,7 @@ export default function ImageGallery() {
       const _photos = await Promise.all(
         res.data.photos.map(async (p) => {
           const size = R.filter((e) => e.label == label, p.sizes)[0];
-          const prediction = await getPrediction(model, size.source);
+          const prediction = await model.getPrediction(size.source);
           const filter = await getFilter(prediction);
           return {
             id: p.id,
@@ -77,7 +77,8 @@ export default function ImageGallery() {
             prediction: prediction,
           };
         })
-      );
+      )
+      
       dispatch(setPhotos(_photos));
     };
 
@@ -88,7 +89,7 @@ export default function ImageGallery() {
 
     setOpenImage(false)
     fetchAll();
-  }, [username, model, minDate, maxDate, dispatch]);
+  }, [username, model, filters, dispatch]);
 
   return (
     <Box>
