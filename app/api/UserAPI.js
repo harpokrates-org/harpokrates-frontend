@@ -1,8 +1,8 @@
 import axios from "axios";
 
-export const getUserPhotoSizes = async (username, count, minDate, maxDate) => {
+export const getUserPhotoSizes = async (userID, count, minDate, maxDate) => {
   try {
-    const user_photo_sizes_url = process.env.NEXT_PUBLIC_BACKEND_URL + `/user/${username}/photos`;
+    const user_photo_sizes_url = process.env.NEXT_PUBLIC_BACKEND_URL + `/user/${userID}/photos`;
     return await axios.get(user_photo_sizes_url, {
       params: {
         count,

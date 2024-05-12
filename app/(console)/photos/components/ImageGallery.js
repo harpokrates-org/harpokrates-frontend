@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
+import { selectId, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
 import ImageDialog from "./ImageDialog";
@@ -19,7 +19,7 @@ export default function ImageGallery() {
   const [clickedImage, setClickedImage] = useState({ id: '', source: '', title: '', width: 0, height: 0 });
   const [openImage, setOpenImage] = useState(false);
   const photos = useSelector(selectPhotos)
-  const username = useSelector(selectName);
+  const userID = useSelector(selectId);
   const filters = useSelector(selectFilters);
   const dispatch = useDispatch();
 
@@ -47,10 +47,10 @@ export default function ImageGallery() {
     };
 
     const fetchUserPhotoSizes = async (label) => {
-      if (!username) return;
+      if (!userID) return;
       const count = 12;
       const res = await getUserPhotoSizes(
-        username,
+        userID,
         count,
         Date.parse(filters.minDate),
         Date.parse(filters.maxDate),
@@ -102,7 +102,7 @@ export default function ImageGallery() {
     };
 
     modelPrediction()
-  }, [username, filters, dispatch]);
+  }, [userID, filters, dispatch]);
 
 
   return (
