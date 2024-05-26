@@ -17,7 +17,7 @@ import { userFound } from '@/store/FlickrUserSlice';
 const favoritesCountWidth = 100
 const favoritesCountHeight = 25
 
-export default function ImageInfo({ photo, favorites }) {
+export default function ImageInfo({ photo, favorites, onNameClick }) {
   const dispatch = useDispatch()
 
   const getFavoritosCount = () => {
@@ -29,6 +29,7 @@ export default function ImageInfo({ photo, favorites }) {
     const flickrUserName = event.target.innerText
     getUserName(flickrUserName)
     .then((response) => {
+      onNameClick()
       dispatch(userFound({
         name: flickrUserName,
         id: response.data.id
