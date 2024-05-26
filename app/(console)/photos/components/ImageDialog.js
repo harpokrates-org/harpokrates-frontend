@@ -57,7 +57,7 @@ export default function ImageDialog({ photo, open, onClose }) {
             >
               <CloseIcon />
             </IconButton>
-            <ImageInfo photo={photo} favorites={favorites} />
+            <ImageInfo photo={photo} favorites={favorites} onNameClick={closeHandler} />
           </>
       }
     </Dialog>
