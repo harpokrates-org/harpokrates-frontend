@@ -13,7 +13,7 @@ class LowModel {
   async load() {
     if (this.model) return this.model
     await tf.ready();
-    this.model = await tf.loadLayersModel("model/low/model.json");
+    this.model = await tf.loadGraphModel("model/low/model.json");
     return this.model
   };
   
