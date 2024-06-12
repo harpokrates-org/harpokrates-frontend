@@ -85,6 +85,7 @@ export default function PhotosTopBar() {
             >
               <Option value={modelNames.NO_MODEL}>No clasificar</Option>
               <Option value={modelNames.LOW_MODEL}>Base</Option>
+              <Option value={modelNames.EFFICIENTNETV2S_MODEL}>EfficientnetV2S</Option>
             </Select>
             <FormHelperText >
               CNN para estegoanálisis de imagenes.
