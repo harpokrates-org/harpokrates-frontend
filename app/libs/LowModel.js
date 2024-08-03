@@ -5,9 +5,12 @@ const pixels = require("image-pixels");
 // https://discuss.tensorflow.org/t/removing-the-standard-hi-there-you-are-using-tensorflow-js/13718/3
 tf.env().set("PROD", true);
 
+const THRESHOLD = 0.5;
+
 class LowModel {
   constructor() {
     this.model = null
+    this.threshold = THRESHOLD
   }
   
   async load() {
