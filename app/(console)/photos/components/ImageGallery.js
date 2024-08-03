@@ -36,7 +36,7 @@ export default function ImageGallery() {
   const getFilter = async (prediction) => {
     const stegoFilter =
       "grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
-    const filter = prediction > 0.5 ? stegoFilter : "";
+    const filter = prediction >= filters.modelThreshold ? stegoFilter : "";
     return filter;
   };
 
@@ -119,7 +119,7 @@ export default function ImageGallery() {
                 loading="lazy"
               />
             </Button>
-            {photo.prediction > 0.5 ? (
+            {photo.prediction >= filters.modelThreshold ? (
               <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
             ) : null}
           </ImageListItem>
