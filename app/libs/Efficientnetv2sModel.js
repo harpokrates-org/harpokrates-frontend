@@ -5,11 +5,13 @@ const pixels = require("image-pixels");
 // https://discuss.tensorflow.org/t/removing-the-standard-hi-there-you-are-using-tensorflow-js/13718/3
 tf.env().set("PROD", true);
 
-const IMG_SIZE = 280;
+const IMG_SIZE = 512;
+const THRESHOLD = 0.731941;
 
 class Efficientnetv2s {
   constructor() {
     this.model = null
+    this.threshold = THRESHOLD
   }
   
   async load() {

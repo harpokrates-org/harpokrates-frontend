@@ -6,6 +6,7 @@ const initialState = {
   minDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6).toISOString(),
   maxDate: today.toISOString(),
   modelName: modelNames.NO_MODEL,
+  modelThreshold: 1,
   shouldUpdatePhotos: true
 }
 
@@ -18,6 +19,7 @@ export const photosFilterSlice = createSlice({
         minDate: action.payload.minDate,
         maxDate: action.payload.maxDate,
         modelName: action.payload.modelName,
+        modelThreshold: action.payload.modelThreshold,
       }
       if (action.payload.minDate != state.minDate || action.payload.maxDate != state.maxDate) {
         modifiedState.shouldUpdatePhotos = true

@@ -13,7 +13,7 @@ import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
 import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
 import { KeyboardArrowDown } from "@mui/icons-material";
-import { modelNames } from "@/app/libs/modelIndex";
+import { modelNames, models } from "@/app/libs/modelIndex";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -38,7 +38,7 @@ export default function PhotosTopBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    dispatch(setFilters({...dateRange, modelName}));
+    dispatch(setFilters({...dateRange, modelName, modelThreshold: models[modelName].threshold || 1}));
   };
 
   return (
