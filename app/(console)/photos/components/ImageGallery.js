@@ -8,7 +8,7 @@ import {
 } from "@mui/material";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectId, selectPhotos, selectUserChanged, setPhotos } from "@/store/FlickrUserSlice";
+import { selectId, selectPhotos, selectUserChanged, setPhotos, userWasEstablished } from "@/store/FlickrUserSlice";
 const R = require("ramda");
 import { getUserPhotoSizes } from "@/app/api/UserAPI"
 import ImageDialog from "./ImageDialog";
@@ -93,7 +93,8 @@ export default function ImageGallery() {
         })
       )
       dispatch(setPhotos(_photos));
-      dispatch(photosUpdated())
+      dispatch(photosUpdated());
+      dispatch(userWasEstablished());
     }
 
     const modelPrediction = async () => {
