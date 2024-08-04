@@ -72,7 +72,7 @@ export default function Graph() {
     };
 
     getSocialNetwork();
-  }, [userID, photos, username, dispatch, userID, wasmInitPromise, depth]);
+  }, [userID, photos, username, dispatch, wasmInitPromise, depth]);
 
   useEffect(() => {
     if (!socialNetwork) return;
