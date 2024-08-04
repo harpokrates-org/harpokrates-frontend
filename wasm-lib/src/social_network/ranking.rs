@@ -8,7 +8,7 @@ pub fn degree(graph: &DiGraph<Node, ()>, mut net: OutputNet) -> OutputNet {
     graph.node_indices().for_each(|i| {
         let id = &graph[i].id;
         if let Some(node) = references.get_mut(id) {
-            node.val = graph.neighbors(i).count()
+            node.val = graph.neighbors_undirected(i).count()
         }
     });
     net
