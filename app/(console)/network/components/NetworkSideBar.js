@@ -53,6 +53,8 @@ export default function NetworkSideBar() {
         >
           <MenuItem value={"no-size"}>Sin Tamaño</MenuItem>
           <MenuItem value={"degree"}>Grado</MenuItem>
+          <MenuItem value={"popularity"}>Popularidad</MenuItem>
+          <MenuItem value={"follower"}>Favoritos dados</MenuItem>
         </TextField>
         <TextField
           select
