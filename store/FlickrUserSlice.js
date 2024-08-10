@@ -4,7 +4,7 @@ const initialState = {
   name: '',
   id: '',
   photos: [],
-  userChanged: false,
+  photosAreUpdated: true,
 }
 
 export const flickrUserSlice = createSlice({
@@ -16,14 +16,15 @@ export const flickrUserSlice = createSlice({
         ...initialState,
         name: action.payload.name,
         id: action.payload.id,
-        userChanged: true,
+        photosAreUpdated: false,
       }
     },
     setPhotos: (state, action) => {
       state.photos = action.payload
+      state.photosAreUpdated = true
     },
-    userWasEstablished: (state, action) => {
-      state.userChanged = false
+    mustUpdatePhotos: (state, action) => {
+      state.photosAreUpdated = false
     },
     reset: (state, action) => {
       return initialState
@@ -34,13 +35,14 @@ export const flickrUserSlice = createSlice({
 export const {
   userFound,
   setPhotos,
-  userWasEstablished,
+  mustUpdatePhotos,
   reset,
 } = flickrUserSlice.actions
 
 export const selectName = (state) => state.flickrUser.name
 export const selectId = (state) => state.flickrUser.id
 export const selectPhotos = (state) => state.flickrUser.photos
-export const selectUserChanged = (state) => state.flickrUser.userChanged
+export const selectNetwork = (state) => state.flickrUser.network
+export const selectPhotosAreUpdated = (state) => state.flickrUser.photosAreUpdated
 
 export default flickrUserSlice.reducer

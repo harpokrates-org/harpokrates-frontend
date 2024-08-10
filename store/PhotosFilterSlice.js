@@ -1,5 +1,6 @@
 import { modelNames } from '@/app/libs/modelIndex'
 import { createSlice } from '@reduxjs/toolkit'
+import { useDispatch } from 'react-redux'
 
 const today = new Date()
 const initialState = {
@@ -7,7 +8,6 @@ const initialState = {
   maxDate: today.toISOString(),
   modelName: modelNames.NO_MODEL,
   modelThreshold: 1,
-  shouldUpdatePhotos: true
 }
 
 export const photosFilterSlice = createSlice({
@@ -20,9 +20,6 @@ export const photosFilterSlice = createSlice({
         maxDate: action.payload.maxDate,
         modelName: action.payload.modelName,
         modelThreshold: action.payload.modelThreshold,
-      }
-      if (action.payload.minDate != state.minDate || action.payload.maxDate != state.maxDate) {
-        modifiedState.shouldUpdatePhotos = true
       }
       return modifiedState
     },
