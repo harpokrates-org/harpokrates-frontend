@@ -49,6 +49,8 @@ impl SocialNetwork {
 
         let net = match config.size.as_str() {
             "degree" => ranking::degree(&self.graph, net),
+            "popularity" => ranking::popularity(&self.graph, net),
+            "follower" => ranking::follower(&self.graph, net),
             &_ => net,
         };
 
