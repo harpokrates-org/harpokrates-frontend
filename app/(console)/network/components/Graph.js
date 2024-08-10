@@ -18,7 +18,7 @@ const photosPerFavorite = 1;
 const mainPhotosCount = 12;
 const topMenuHeight = 50;
 const padding = 60;
-const mainNodeColor = "red";
+const mainNodeColor = "blue";
 const secondaryNodeColor = "gray";
 
 export default function Graph() {
