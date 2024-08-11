@@ -14,7 +14,7 @@ import CalendarDialog from "./CalendarDialog";
 import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import { modelNames, models } from "@/app/libs/modelIndex";
-import { mustUpdatePhotos } from "@/store/FlickrUserSlice";
+import { mustUpdateNetwork, mustUpdatePhotos } from "@/store/FlickrUserSlice";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -41,7 +41,10 @@ export default function PhotosTopBar() {
     e.preventDefault();
     const mustUpdate = dateRange.minDate != filters.minDate || dateRange.maxDate != filters.maxDate
     dispatch(setFilters({...dateRange, modelName, modelThreshold: models[modelName].threshold || 1}));
-    if (mustUpdate) dispatch(mustUpdatePhotos());
+    if (mustUpdate) {
+      dispatch(mustUpdatePhotos());
+      dispatch(mustUpdateNetwork());
+    }
   };
 
   return (
