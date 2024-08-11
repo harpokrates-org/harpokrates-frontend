@@ -10,7 +10,6 @@ import {
   selectNetworkIsUpdated,
   selectPhotos,
   setNetwork,
-  setPhotos,
 } from "@/store/FlickrUserSlice";
 import { drawerWidth } from "../../components/SideBar";
 import { useWindowSize } from "@react-hook/window-size";
@@ -30,7 +29,7 @@ export default function Graph() {
   const [wasmInitPromise, setWasmInitPromise] = useState(init());
   const username = useSelector(selectName);
   const userID = useSelector(selectId);
-  const photos = useSelector(selectPhotos);
+  const [photos, setPhotos] = useState(useSelector(selectPhotos));
   const network = useSelector(selectNetwork);
   const networkIsUpdated = useSelector(selectNetworkIsUpdated);
   const [width, height] = useWindowSize();
@@ -46,7 +45,7 @@ export default function Graph() {
       if (photos.length > 0) return photos;
       const response = await getUserPhotos(userID, mainPhotosCount);
       const photoIDs = response.data.photos;
-      dispatch(setPhotos(photoIDs));
+      setPhotos(photoIDs);
       return photoIDs;
     };
 
