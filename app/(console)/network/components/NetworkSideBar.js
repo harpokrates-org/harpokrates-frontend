@@ -11,10 +11,12 @@ import {
   selectSize,
 } from "@/store/NetworkSlice.js";
 import { useDispatch, useSelector } from "react-redux";
+import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
 
 export const drawerWidth = 180;
 
 export default function NetworkSideBar() {
+  const currentDepth = useSelector(selectDepth);
   const [depth, setDepth] = useState(useSelector(selectDepth));
   const [size, setSize] = useState(useSelector(selectSize));
   const [color, setColor] = useState(useSelector(selectColor));
@@ -22,9 +24,11 @@ export default function NetworkSideBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
+    const mustUpdate = depth != currentDepth
     dispatch(changeDepth(depth));
     dispatch(changeColor(color));
     dispatch(changeSize(size));
+    if (mustUpdate) dispatch(mustUpdateNetwork())
   };
 
   return (

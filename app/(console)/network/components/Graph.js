@@ -6,8 +6,10 @@ import { useDispatch, useSelector } from "react-redux";
 import {
   selectId,
   selectName,
+  selectNetwork,
+  selectNetworkIsUpdated,
   selectPhotos,
-  setPhotos,
+  setNetwork,
 } from "@/store/FlickrUserSlice";
 import { drawerWidth } from "../../components/SideBar";
 import { useWindowSize } from "@react-hook/window-size";
@@ -27,7 +29,9 @@ export default function Graph() {
   const [wasmInitPromise, setWasmInitPromise] = useState(init());
   const username = useSelector(selectName);
   const userID = useSelector(selectId);
-  const photos = useSelector(selectPhotos);
+  const [photos, setPhotos] = useState(useSelector(selectPhotos));
+  const network = useSelector(selectNetwork);
+  const networkIsUpdated = useSelector(selectNetworkIsUpdated);
   const [width, height] = useWindowSize();
   const dispatch = useDispatch();
   const [socialNetwork, setSocialNetwork] = useState(null);
@@ -41,7 +45,7 @@ export default function Graph() {
       if (photos.length > 0) return photos;
       const response = await getUserPhotos(userID, mainPhotosCount);
       const photoIDs = response.data.photos;
-      dispatch(setPhotos(photoIDs));
+      setPhotos(photoIDs);
       return photoIDs;
     };
 
@@ -53,6 +57,7 @@ export default function Graph() {
         photosPerFavorite,
         depth
       );
+      dispatch(setNetwork(response.data));
       return response.data;
     };
 
@@ -60,7 +65,7 @@ export default function Graph() {
       wasmInitPromise
       .then(async () => {
         const photos = await getPhotos(userID);
-        const inputNet = await getFavorites(photos);
+        let inputNet = networkIsUpdated ? { ...network } : {...(await getFavorites(photos))};
         inputNet.main_node = username;
         const parsed_input = JSON.stringify(inputNet);
         const socialNetwork = new SocialNetwork(parsed_input);
@@ -72,7 +77,7 @@ export default function Graph() {
     };
 
     getSocialNetwork();
-  }, [userID, photos, username, dispatch, wasmInitPromise, depth]);
+  }, [userID, photos, username, dispatch, wasmInitPromise, depth, network, networkIsUpdated]);
 
   useEffect(() => {
     if (!socialNetwork) return;
