@@ -93,6 +93,7 @@ export default function PhotosTopBar() {
               <Option value={modelNames.LOW_MODEL}>Base</Option>
               <Option value={modelNames.EFFICIENTNETV2S_MODEL}>EfficientnetV2S</Option>
               <Option value={modelNames.MOBILENETV3S_MODEL}>MobilenetV3S</Option>
+              <Option value={modelNames.RESNET_MODEL}>Resnet</Option>
             </Select>
             <FormHelperText >
               CNN para estegoanálisis de imagenes.
