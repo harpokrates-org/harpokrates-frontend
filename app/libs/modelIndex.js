@@ -8,6 +8,7 @@ const modelNames = {
   LOW_MODEL: 'low_model',
   EFFICIENTNETV2S_MODEL: 'efficientnetv2s',
   MOBILENETV3S_MODEL: 'mobilenetv3s',
+  RESNET_MODEL: 'resnet',
 }
 
 const modelsData = {
@@ -35,6 +36,12 @@ const modelsData = {
     path: MAIN_PATH + '/mobilenetv3s/model.json',
     threshold: 0.724572
   },
+  RESNET_MODEL: {
+    name: modelNames.RESNET_MODEL,
+    imgSize: 512,
+    path: MAIN_PATH + '/resnet/model.json',
+    threshold: 0.724572
+  },
 }
 
 module.exports = {
@@ -43,6 +50,7 @@ module.exports = {
     [modelsData.LOW_MODEL.name]: new Model(modelsData.LOW_MODEL.imgSize, modelsData.LOW_MODEL.path, modelsData.LOW_MODEL.threshold),
     [modelsData.EFFICIENTNETV2S_MODEL.name]: new Model(modelsData.EFFICIENTNETV2S_MODEL.imgSize, modelsData.EFFICIENTNETV2S_MODEL.path, modelsData.EFFICIENTNETV2S_MODEL.threshold),
     [modelsData.MOBILENETV3S_MODEL.name]: new Model(modelsData.MOBILENETV3S_MODEL.imgSize, modelsData.MOBILENETV3S_MODEL.path, modelsData.MOBILENETV3S_MODEL.threshold),
+    [modelsData.RESNET_MODEL.name]: new Model(modelsData.RESNET_MODEL.imgSize, modelsData.RESNET_MODEL.path, modelsData.RESNET_MODEL.threshold),
   },
   modelNames
 }
