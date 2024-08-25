@@ -95,6 +95,7 @@ export default function PhotosTopBar() {
               <Option value={modelNames.MOBILENETV3L_MODEL}>MobilenetV3L</Option>
               <Option value={modelNames.INCEPTIONV3_MODEL}>InceptionV3</Option>
               <Option value={modelNames.VGG16_MODEL}>VGG16</Option>
+              <Option value={modelNames.RESNET_MODEL}>Resnet</Option>
             </Select>
             <FormHelperText >
               CNN para estegoanálisis de imagenes.

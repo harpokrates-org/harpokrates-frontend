@@ -10,6 +10,7 @@ const modelNames = {
   MOBILENETV3L_MODEL: 'mobilenetv3l',
   INCEPTIONV3_MODEL: 'inceptionv3',
   VGG16_MODEL: 'vgg16',
+  RESNET_MODEL: 'resnet',
 }
 
 const modelsData = {
@@ -49,6 +50,12 @@ const modelsData = {
     path: MAIN_PATH + '/vgg16/model.json',
     threshold: 0.756955
   },
+  RESNET_MODEL: {
+    name: modelNames.RESNET_MODEL,
+    imgSize: 512,
+    path: MAIN_PATH + '/resnet/model.json',
+    threshold: 0.724572
+  },
 }
 
 module.exports = {
@@ -59,6 +66,7 @@ module.exports = {
     [modelsData.MOBILENETV3L_MODEL.name]: new Model(modelsData.MOBILENETV3L_MODEL.imgSize, modelsData.MOBILENETV3L_MODEL.path, modelsData.MOBILENETV3L_MODEL.threshold),
     [modelsData.INCEPTIONV3_MODEL.name]: new Model(modelsData.INCEPTIONV3_MODEL.imgSize, modelsData.INCEPTIONV3_MODEL.path, modelsData.INCEPTIONV3_MODEL.threshold),
     [modelsData.VGG16_MODEL.name]: new Model(modelsData.VGG16_MODEL.imgSize, modelsData.VGG16_MODEL.path, modelsData.VGG16_MODEL.threshold),
+    [modelsData.RESNET_MODEL.name]: new Model(modelsData.RESNET_MODEL.imgSize, modelsData.RESNET_MODEL.path, modelsData.RESNET_MODEL.threshold),
   },
   modelNames
 }
