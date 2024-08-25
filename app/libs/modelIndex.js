@@ -39,7 +39,7 @@ const modelsData = {
   RESNET_MODEL: {
     name: modelNames.RESNET_MODEL,
     imgSize: 512,
-    path: MAIN_PATH + '/mobilenetv3s/model.json',
+    path: MAIN_PATH + '/resnet/model.json',
     threshold: 0.724572
   },
 }
