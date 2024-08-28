@@ -59,6 +59,7 @@ export default function NetworkSideBar() {
           <MenuItem value={"degree"}>Grado</MenuItem>
           <MenuItem value={"popularity"}>Popularidad</MenuItem>
           <MenuItem value={"follower"}>Favoritos dados</MenuItem>
+          <MenuItem value={"stego-count"}>Img Estego Compartidas</MenuItem>
         </TextField>
         <TextField
           select

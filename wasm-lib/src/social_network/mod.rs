@@ -47,14 +47,17 @@ impl SocialNetwork {
             &_ => net,
         };
 
-        let net = match config.size.as_str() {
-            "degree" => ranking::degree(&self.graph, net),
-            "popularity" => ranking::popularity(&self.graph, net),
-            "follower" => ranking::follower(&self.graph, net),
-            &_ => net,
-        };
+        let net = ranking::match_ranking(&self.graph, config.size.as_str(), net);
 
         serde_json::to_string(&net).expect("GET_NET: Failed converting net to string")
+    }
+
+    pub fn get_top_users(&self, ranking_type: &str, count: usize) -> String {
+        let net = OutputNet::from_graph(&self.graph);
+        let mut net = ranking::match_ranking(&self.graph, ranking_type, net);
+        net.nodes.sort_by(|a, b| a.val.cmp(&b.val));
+        let top = &net.nodes[0..count];
+        serde_json::to_string(top).expect("GET_NET: Failed converting rank to string")
     }
 }
 

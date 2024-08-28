@@ -15,6 +15,7 @@ import { drawerWidth } from "../../components/SideBar";
 import { useWindowSize } from "@react-hook/window-size";
 import { getUserFavorites, getUserPhotos } from "@/app/api/UserAPI";
 import { selectColor, selectDepth, selectSize } from "@/store/NetworkSlice";
+import { loadUserWeights } from "../utils/loadUserWeights";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -38,7 +39,7 @@ export default function Graph() {
   const depth = useSelector(selectDepth);
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
-
+  const [stegoCountPerUser, setStegoCountPerUser] = useState({});
 
   useEffect(() => {
     const getPhotos = async (userID) => {
@@ -81,7 +82,8 @@ export default function Graph() {
 
   useEffect(() => {
     if (!socialNetwork) return;
-    const config = JSON.stringify({ color: color, size, size });
+    const userWeights = loadUserWeights(socialNetwork, size); 
+    const config = JSON.stringify({ color: color, size: size });
     const net = JSON.parse(socialNetwork.get_net(config))
     setNet(net)
   }, [socialNetwork, size, color])
