@@ -8,6 +8,8 @@ mod output_net;
 mod output_node;
 mod ranking;
 
+use std::cmp::min;
+
 use crate::social_network::input_net::InputNet;
 use crate::social_network::node::Node;
 use crate::social_network::output_net::OutputNet;
@@ -56,8 +58,12 @@ impl SocialNetwork {
         let net = OutputNet::from_graph(&self.graph);
         let mut net = ranking::match_ranking(&self.graph, ranking_type, net);
         net.nodes.sort_by(|a, b| a.val.cmp(&b.val));
-        let top = &net.nodes[0..count];
-        serde_json::to_string(top).expect("GET_NET: Failed converting rank to string")
+        let count = min(count, net.nodes.len() - 1);
+        let top = net.nodes[0..count]
+            .iter()
+            .map(|node| &node.id)
+            .collect::<Vec<&String>>();
+        serde_json::to_string(&top).expect("GET_NET: Failed converting rank to string")
     }
 }
 
