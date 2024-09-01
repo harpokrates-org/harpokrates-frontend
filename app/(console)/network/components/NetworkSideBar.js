@@ -1,17 +1,19 @@
 "use client";
+import { modelNames } from '@/app/libs/modelIndex';
 import { Box, Button, FormControl, MenuItem, TextField } from "@mui/material";
 
-import { useState } from "react";
+import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
 import {
   changeColor,
   changeDepth,
   changeSize,
   selectColor,
   selectDepth,
-  selectSize,
+  selectModelName,
+  selectSize
 } from "@/store/NetworkSlice.js";
-import { useDispatch, useSelector } from "react-redux";
-import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
+import { useState } from "react";
+import { useSelector } from "react-redux";
 
 export const drawerWidth = 180;
 
@@ -20,15 +22,14 @@ export default function NetworkSideBar() {
   const [depth, setDepth] = useState(useSelector(selectDepth));
   const [size, setSize] = useState(useSelector(selectSize));
   const [color, setColor] = useState(useSelector(selectColor));
-  const dispatch = useDispatch();
-
+  const [modelName, setModelName] = useState(useSelector(selectModelName))
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mustUpdate = depth != currentDepth
+    const mustUpdate = depth != currentDepth;
     dispatch(changeDepth(depth));
     dispatch(changeColor(color));
     dispatch(changeSize(size));
-    if (mustUpdate) dispatch(mustUpdateNetwork())
+    if (mustUpdate) dispatch(mustUpdateNetwork());
   };
 
   return (
@@ -59,8 +60,24 @@ export default function NetworkSideBar() {
           <MenuItem value={"degree"}>Grado</MenuItem>
           <MenuItem value={"popularity"}>Popularidad</MenuItem>
           <MenuItem value={"follower"}>Favoritos dados</MenuItem>
-          <MenuItem value={"stego-count"}>Img Estego Compartidas</MenuItem>
+          <MenuItem value={"stego-count"}>Esteganografía compartida</MenuItem>
         </TextField>
+        {size == "stego-count" ? (
+          <TextField
+            select
+            label="Modelo"
+            variant="outlined"
+            value={modelName}
+            helperText="Modelo de esteganalisis"
+            onChange={(e) => {
+              setModelName(e.target.value);
+            }}
+          >
+            <MenuItem value={modelNames.NO_MODEL}>Sin Modelo</MenuItem>
+            <MenuItem value={modelNames.EFFICIENTNETV2B0_MODEL}>EfficientNet</MenuItem>
+          </TextField>
+        ) : null}
+
         <TextField
           select
           label="Color"

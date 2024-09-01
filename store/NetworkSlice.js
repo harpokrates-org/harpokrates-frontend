@@ -1,9 +1,12 @@
+import { modelNames } from '@/app/libs/modelIndex';
 import { createSlice } from "@reduxjs/toolkit";
+
 
 const initialState = {
   depth: 2,
   size: "degree",
   color: "community",
+  modelName: modelNames.NO_MODEL
 };
 
 export const networkSlice = createSlice({
@@ -30,6 +33,6 @@ export const { changeDepth, changeSize, changeColor, reset } = networkSlice.acti
 export const selectDepth = (state) => state.network.depth;
 export const selectSize = (state) => state.network.size;
 export const selectColor = (state) => state.network.color;
-
+export const selectModelName = (state) => state.network.modelName;
 
 export default networkSlice.reducer;

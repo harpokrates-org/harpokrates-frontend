@@ -1,8 +1,5 @@
 "use client";
-import { useCallback, useRef, useEffect, useState } from "react";
-import init, { SocialNetwork } from "wasm-lib";
-import { ForceGraph2D } from "react-force-graph";
-import { useDispatch, useSelector } from "react-redux";
+import { getUserFavorites, getUserPhotos } from "@/app/api/UserAPI";
 import {
   selectId,
   selectName,
@@ -11,10 +8,13 @@ import {
   selectPhotos,
   setNetwork,
 } from "@/store/FlickrUserSlice";
-import { drawerWidth } from "../../components/SideBar";
-import { useWindowSize } from "@react-hook/window-size";
-import { getUserFavorites, getUserPhotos } from "@/app/api/UserAPI";
 import { selectColor, selectDepth, selectSize } from "@/store/NetworkSlice";
+import { useWindowSize } from "@react-hook/window-size";
+import { useCallback, useEffect, useRef, useState } from "react";
+import { ForceGraph2D } from "react-force-graph";
+import { useDispatch, useSelector } from "react-redux";
+import init, { SocialNetwork } from "wasm-lib";
+import { drawerWidth } from "../../components/SideBar";
 import { loadUserWeights } from "../utils/loadUserWeights";
 
 const photosPerFavorite = 1;
@@ -64,29 +64,40 @@ export default function Graph() {
 
     const getSocialNetwork = async () => {
       wasmInitPromise
-      .then(async () => {
-        const photos = await getPhotos(userID);
-        let inputNet = networkIsUpdated ? { ...network } : {...(await getFavorites(photos))};
-        inputNet.main_node = username;
-        const parsed_input = JSON.stringify(inputNet);
-        const socialNetwork = new SocialNetwork(parsed_input);
-        setSocialNetwork(socialNetwork);
-      })
-      .catch((e) => {
-        console.log(`Error al crear grafo en WASM: ${e}`);
-      });
+        .then(async () => {
+          const photos = await getPhotos(userID);
+          let inputNet = networkIsUpdated
+            ? { ...network }
+            : { ...(await getFavorites(photos)) };
+          inputNet.main_node = username;
+          const parsed_input = JSON.stringify(inputNet);
+          const socialNetwork = new SocialNetwork(parsed_input);
+          setSocialNetwork(socialNetwork);
+        })
+        .catch((e) => {
+          console.log(`Error al crear grafo en WASM: ${e}`);
+        });
     };
 
     getSocialNetwork();
-  }, [userID, photos, username, dispatch, wasmInitPromise, depth, network, networkIsUpdated]);
+  }, [
+    userID,
+    photos,
+    username,
+    dispatch,
+    wasmInitPromise,
+    depth,
+    network,
+    networkIsUpdated,
+  ]);
 
   useEffect(() => {
     if (!socialNetwork) return;
-    const userWeights = loadUserWeights(socialNetwork, size); 
+    const userWeights = loadUserWeights(socialNetwork, size);
     const config = JSON.stringify({ color: color, size: size });
-    const net = JSON.parse(socialNetwork.get_net(config))
-    setNet(net)
-  }, [socialNetwork, size, color])
+    const net = JSON.parse(socialNetwork.get_net(config));
+    setNet(net);
+  }, [socialNetwork, size, color]);
 
   const nodeColorHandler = (node) => {
     switch (node.group) {
