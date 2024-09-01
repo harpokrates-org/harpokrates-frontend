@@ -55,12 +55,12 @@ impl SocialNetwork {
     }
 
     pub fn get_top_users(&self, ranking_type: &str, count: usize) -> String {
+        set_panic_hook();
         let net = OutputNet::from_graph(&self.graph);
         let mut net = ranking::match_ranking(&self.graph, ranking_type, net);
         net.nodes.sort_by(|a, b| a.val.cmp(&b.val));
         let count = min(count, net.nodes.len() - 1);
-        let top = net.nodes[0..count]
-            .iter()
+        let top = net.nodes.iter().take(count)
             .map(|node| &node.id)
             .collect::<Vec<&String>>();
         serde_json::to_string(&top).expect("GET_NET: Failed converting rank to string")

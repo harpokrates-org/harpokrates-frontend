@@ -7,17 +7,19 @@ import {
   changeColor,
   changeDepth,
   changeSize,
+  changeModelName,
   selectColor,
   selectDepth,
   selectModelName,
   selectSize
 } from "@/store/NetworkSlice.js";
 import { useState } from "react";
-import { useSelector } from "react-redux";
+import { useDispatch, useSelector } from "react-redux";
 
 export const drawerWidth = 180;
 
 export default function NetworkSideBar() {
+  const dispatch = useDispatch();
   const currentDepth = useSelector(selectDepth);
   const [depth, setDepth] = useState(useSelector(selectDepth));
   const [size, setSize] = useState(useSelector(selectSize));
@@ -29,6 +31,7 @@ export default function NetworkSideBar() {
     dispatch(changeDepth(depth));
     dispatch(changeColor(color));
     dispatch(changeSize(size));
+    dispatch(changeModelName(modelName));
     if (mustUpdate) dispatch(mustUpdateNetwork());
   };
 

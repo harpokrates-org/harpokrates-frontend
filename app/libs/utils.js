@@ -1,5 +1,6 @@
 import { models } from "@/app/libs/modelIndex";
 import { getUserPhotoSizes } from "../api/UserAPI";
+const R = require("ramda");
 
 export const fetchModel = async (modelName) => {
   const model = models[modelName];
@@ -13,7 +14,7 @@ export const getFilter = async (prediction, modelThreshold) => {
   const filter = prediction >= modelThreshold ? stegoFilter : "";
   return filter;
 };
-export const fetchUserPhotoSizes = async (userID, minDate, maxDate) => {
+export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
   if (!userID) return;
   const count = 12;
   const res = await getUserPhotoSizes(

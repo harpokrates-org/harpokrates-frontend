@@ -8,21 +8,26 @@ import {
   selectPhotos,
   setNetwork,
 } from "@/store/FlickrUserSlice";
-import { selectColor, selectDepth, selectSize } from "@/store/NetworkSlice";
+import {
+  selectColor,
+  selectDepth,
+  selectModelName,
+  selectSize,
+} from "@/store/NetworkSlice";
 import { useWindowSize } from "@react-hook/window-size";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph2D } from "react-force-graph";
 import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
-import { loadUserWeights } from "../utils/loadUserWeights";
+import { buildNet, loadUserWeights } from "../utils/net";
+import { fetchModel } from "@/app/libs/utils";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
 const topMenuHeight = 50;
 const padding = 60;
 const mainNodeColor = "blue";
-const secondaryNodeColor = "gray";
 
 export default function Graph() {
   const fgRef = useRef();
@@ -30,16 +35,21 @@ export default function Graph() {
   const [wasmInitPromise, setWasmInitPromise] = useState(init());
   const username = useSelector(selectName);
   const userID = useSelector(selectId);
+
   const [photos, setPhotos] = useState(useSelector(selectPhotos));
   const network = useSelector(selectNetwork);
   const networkIsUpdated = useSelector(selectNetworkIsUpdated);
+
   const [width, height] = useWindowSize();
   const dispatch = useDispatch();
+
   const [socialNetwork, setSocialNetwork] = useState(null);
   const depth = useSelector(selectDepth);
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
-  const [stegoCountPerUser, setStegoCountPerUser] = useState({});
+
+  const [model, setModel] = useState();
+  const modelName = useSelector(selectModelName);
 
   useEffect(() => {
     const getPhotos = async (userID) => {
@@ -69,6 +79,7 @@ export default function Graph() {
           let inputNet = networkIsUpdated
             ? { ...network }
             : { ...(await getFavorites(photos)) };
+          console.log('inputNet:', inputNet)
           inputNet.main_node = username;
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
@@ -92,12 +103,14 @@ export default function Graph() {
   ]);
 
   useEffect(() => {
-    if (!socialNetwork) return;
-    const userWeights = loadUserWeights(socialNetwork, size);
-    const config = JSON.stringify({ color: color, size: size });
-    const net = JSON.parse(socialNetwork.get_net(config));
-    setNet(net);
-  }, [socialNetwork, size, color]);
+    const buildAndSetNet = async () => {
+      if (!socialNetwork) return;
+      const model = await fetchModel(modelName);
+      const net = await buildNet(socialNetwork, size, color, model);
+      setNet(net);
+    };
+    buildAndSetNet().catch(console.error);
+  }, [socialNetwork, size, color, modelName]);
 
   const nodeColorHandler = (node) => {
     switch (node.group) {

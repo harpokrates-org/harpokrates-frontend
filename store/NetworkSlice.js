@@ -22,13 +22,16 @@ export const networkSlice = createSlice({
     changeColor: (state, action) => {
       state.color = action.payload;
     },
+    changeModelName: (state, action) => {
+      state.modelName = action.payload;
+    },
     reset: (state, action) => {
       return initialState;
     },
   },
 });
 
-export const { changeDepth, changeSize, changeColor, reset } = networkSlice.actions;
+export const { changeDepth, changeSize, changeColor, changeModelName, reset } = networkSlice.actions;
 
 export const selectDepth = (state) => state.network.depth;
 export const selectSize = (state) => state.network.size;

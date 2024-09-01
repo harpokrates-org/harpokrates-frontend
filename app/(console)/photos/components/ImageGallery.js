@@ -35,7 +35,7 @@ export default function ImageGallery() {
   useEffect(() => {
     const modelPrediction = async () => {
       const model = await fetchModel(filters.modelName);
-      const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate)
+      const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate, 'Medium')
       const _photos = await predict(model, filters.modelThreshold, updatedPhotos);
       dispatch(setPhotos(_photos));
     };
