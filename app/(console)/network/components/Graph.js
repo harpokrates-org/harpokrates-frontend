@@ -1,5 +1,9 @@
 "use client";
-import { getUserFavorites, getUserPhotos } from "@/app/api/UserAPI";
+import {
+  getUserFavorites,
+  getUserName,
+  getUserPhotos,
+} from "@/app/api/UserAPI";
 import {
   selectId,
   selectName,
@@ -21,7 +25,7 @@ import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { buildNet, loadUserWeights } from "../utils/net";
-import { fetchModel } from "@/app/libs/utils";
+import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -50,6 +54,7 @@ export default function Graph() {
 
   const [model, setModel] = useState();
   const modelName = useSelector(selectModelName);
+  const [networkPhotos, setNetworkPhotos] = useState();
 
   useEffect(() => {
     const getPhotos = async (userID) => {
@@ -79,7 +84,7 @@ export default function Graph() {
           let inputNet = networkIsUpdated
             ? { ...network }
             : { ...(await getFavorites(photos)) };
-          console.log('inputNet:', inputNet)
+          console.log("inputNet:", inputNet);
           inputNet.main_node = username;
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
@@ -103,14 +108,56 @@ export default function Graph() {
   ]);
 
   useEffect(() => {
-    const buildAndSetNet = async () => {
+    const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
+      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 20));
+      const _networkPhotos = await Promise.all(
+        topUsers.map(async (flickrUserName) => {
+          try {
+            const resUserName = await getUserName(flickrUserName);
+            const userID = resUserName.data.id;
+            const today = new Date().toJSON();
+            const photoSizes = await fetchUserPhotoSizes(
+              userID,
+              "1970-01-01",
+              today,
+              "Medium"
+            );
+            const res = {
+              userID: userID,
+              flickrUserName: flickrUserName,
+              photoSizes: photoSizes,
+            };
+            return res;
+          } catch (err) {
+            return {
+              userID: userID,
+              flickrUserName: userID,
+              photoSizes: [],
+            };
+          }
+        })
+      );
+      setNetworkPhotos(_networkPhotos);
+    };
+    getNetworkPhotos(socialNetwork)
+  }, [socialNetwork]);
+
+  useEffect(() => {
+    const buildAndSetNet = async () => {
+      if (!socialNetwork || !networkPhotos) return;
       const model = await fetchModel(modelName);
-      const net = await buildNet(socialNetwork, size, color, model);
+      const net = await buildNet(
+        socialNetwork,
+        size,
+        color,
+        model,
+        networkPhotos
+      );
       setNet(net);
     };
     buildAndSetNet().catch(console.error);
-  }, [socialNetwork, size, color, modelName]);
+  }, [socialNetwork, networkPhotos, size, color, modelName]);
 
   const nodeColorHandler = (node) => {
     switch (node.group) {

@@ -59,7 +59,7 @@ impl SocialNetwork {
         let net = OutputNet::from_graph(&self.graph);
         let mut net = ranking::match_ranking(&self.graph, ranking_type, net);
         net.nodes.sort_by(|a, b| a.val.cmp(&b.val));
-        let count = min(count, net.nodes.len() - 1);
+        let count = min(count, net.nodes.len());
         let top = net.nodes.iter().take(count)
             .map(|node| &node.id)
             .collect::<Vec<&String>>();

@@ -17,33 +17,37 @@ export const getFilter = async (prediction, modelThreshold) => {
 export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
   if (!userID) return;
   const count = 12;
-  const res = await getUserPhotoSizes(
-    userID,
-    count,
-    Date.parse(minDate),
-    Date.parse(maxDate)
-  );
-  if (res.status != "200") {
-    toast.error("Error al cargar las fotos");
-    return;
+  try {
+    const res = await getUserPhotoSizes(
+      userID,
+      count,
+      Date.parse(minDate),
+      Date.parse(maxDate)
+    )
+    if (res.status != "200") {
+      toast.error("Error al cargar las fotos");
+      return;
+    }
+
+    const _photos = await Promise.all(
+      res.data.photos.map(async (p) => {
+        const size = R.filter((e) => e.label == label, p.sizes)[0];
+        const filter = await getFilter(0);
+        return {
+          id: p.id,
+          title: p.title,
+          source: size.source,
+          height: size.height,
+          width: size.width,
+          filter,
+        };
+      })
+    );
+    return _photos;
+  } catch (err) {
+    console.log(err)
+    return []
   }
-
-  const _photos = await Promise.all(
-    res.data.photos.map(async (p) => {
-      const size = R.filter((e) => e.label == label, p.sizes)[0];
-      const filter = await getFilter(0);
-      return {
-        id: p.id,
-        title: p.title,
-        source: size.source,
-        height: size.height,
-        width: size.width,
-        filter,
-      };
-    })
-  );
-
-  return _photos;
 };
 
 export const predict = async (model, modelThreshold, photos) => {

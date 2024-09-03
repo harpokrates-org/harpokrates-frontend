@@ -78,6 +78,10 @@ export default function NetworkSideBar() {
           >
             <MenuItem value={modelNames.NO_MODEL}>Sin Modelo</MenuItem>
             <MenuItem value={modelNames.EFFICIENTNETV2B0_MODEL}>EfficientNet</MenuItem>
+            <MenuItem value={modelNames.MOBILENETV3L_MODEL}>MobileNet</MenuItem>
+            <MenuItem value={modelNames.INCEPTIONV3_MODEL}>InceptionNet</MenuItem>
+            <MenuItem value={modelNames.VGG16_MODEL}>VGG16</MenuItem>
+            <MenuItem value={modelNames.RESNET_MODEL}>ResNet</MenuItem>
           </TextField>
         ) : null}
 
