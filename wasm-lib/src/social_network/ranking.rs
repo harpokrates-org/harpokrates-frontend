@@ -1,22 +1,32 @@
-use petgraph::{graph::{ DiGraph, Graph }, Direction, Undirected, Directed, EdgeType};
+use petgraph::{
+    graph::{DiGraph, Graph},
+    Directed, Direction, EdgeType, Undirected,
+};
 
 use crate::social_network::{node::Node, output_net::OutputNet};
 
 pub fn degree(graph: &DiGraph<Node, ()>, net: OutputNet) -> OutputNet {
-    let undirected_graph = <DiGraph<Node, ()> as Clone>::clone(&graph).into_edge_type::<Undirected>();
+    let undirected_graph =
+        <DiGraph<Node, ()> as Clone>::clone(graph).into_edge_type::<Undirected>();
     get_net_with_neighbors_as_val::<Undirected>(&undirected_graph, net, Direction::Incoming)
 }
 
 pub fn popularity(graph: &DiGraph<Node, ()>, net: OutputNet) -> OutputNet {
-    get_net_with_neighbors_as_val::<Directed>(&graph, net, Direction::Incoming)
+    get_net_with_neighbors_as_val::<Directed>(graph, net, Direction::Incoming)
 }
 
 pub fn follower(graph: &DiGraph<Node, ()>, net: OutputNet) -> OutputNet {
-    get_net_with_neighbors_as_val::<Directed>(&graph, net, Direction::Outgoing)
+    get_net_with_neighbors_as_val::<Directed>(graph, net, Direction::Outgoing)
 }
 
-pub fn get_net_with_neighbors_as_val<T>(graph: &Graph<Node, (), T>, mut net: OutputNet,
-direction: Direction) -> OutputNet where T: EdgeType {
+pub fn get_net_with_neighbors_as_val<T>(
+    graph: &Graph<Node, (), T>,
+    mut net: OutputNet,
+    direction: Direction,
+) -> OutputNet
+where
+    T: EdgeType,
+{
     let mut references = net.get_node_mut_references();
 
     graph.node_indices().for_each(|i| {
@@ -28,10 +38,22 @@ direction: Direction) -> OutputNet where T: EdgeType {
     net
 }
 
+pub fn match_ranking(graph: &DiGraph<Node, ()>, ranking_type: &str, net: OutputNet) -> OutputNet {
+    match ranking_type {
+        "degree" => degree(graph, net),
+        "popularity" => popularity(graph, net),
+        "follower" => follower(graph, net),
+        &_ => net,
+    }
+}
+
 #[cfg(test)]
 mod tests {
     use crate::social_network::{
-        input_net::InputNet, output_net::OutputNet, output_node::OutputNode,
+        input_net::InputNet,
+        output_net::OutputNet,
+        output_node::OutputNode,
+        ranking::{follower, popularity},
     };
 
     use super::degree;
@@ -72,7 +94,7 @@ mod tests {
     fn should_count_node_popularity() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
-            "edges": [["1", "2"], ["1", "3"]]],
+            "edges": [["1", "2"], ["1", "3"]],
             "main_node": "1"
         }"#;
         let input_net: InputNet = serde_json::from_str(input).unwrap();

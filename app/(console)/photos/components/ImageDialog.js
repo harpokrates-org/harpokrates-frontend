@@ -1,14 +1,14 @@
 'use client';
-import { useEffect, useState } from 'react';
-import { useSelector } from 'react-redux';
+import { getUserFavorites } from '@/app/api/UserAPI';
+import { selectName } from '@/store/FlickrUserSlice';
+import CloseIcon from '@mui/icons-material/Close';
 import {
   Dialog, IconButton,
 } from '@mui/material';
-import { getUserFavorites } from '@/app/api/UserAPI'
-import { selectName } from '@/store/FlickrUserSlice';
-import ImageLoading from './ImageLoading';
+import { useEffect, useState } from 'react';
+import { useSelector } from 'react-redux';
 import ImageInfo from './ImageInfo';
-import CloseIcon from '@mui/icons-material/Close';
+import ImageLoading from './ImageLoading';
 
 
 export default function ImageDialog({ photo, open, onClose }) {
