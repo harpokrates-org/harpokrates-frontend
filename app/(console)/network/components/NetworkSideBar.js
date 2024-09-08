@@ -7,6 +7,7 @@ import {
   changeColor,
   changeDepth,
   changeSize,
+  changeModelName,
   changeSpanningTreeK,
   selectColor,
   selectDepth,
