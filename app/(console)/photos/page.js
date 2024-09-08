@@ -1,13 +1,12 @@
 'use client'
-import * as React from 'react';
-import Box from '@mui/material/Box';
-import ImageGallery from './components/ImageGallery';
-import { Grid, Typography } from '@mui/material';
-import EmptyState from '../components/EmptyState';
-import { useSelector } from 'react-redux';
 import { selectName } from '@/store/FlickrUserSlice';
-import UserProfile from './components/UserProfile';
+import { Grid, Typography } from '@mui/material';
+import Box from '@mui/material/Box';
+import { useSelector } from 'react-redux';
+import EmptyState from '../components/EmptyState';
+import ImageGallery from './components/ImageGallery';
 import PhotosTopBar, { barHeight, margin, titleHeight } from './components/PhotosTopBar';
+import UserProfile from './components/UserProfile';
 
 const noPhotosTitle = 'Busca un usuario'
 const noPhotosMessage = 'Para analizar las imágines subidas por un usuario, necesitas ingresar su nombre en el buscador superior.'

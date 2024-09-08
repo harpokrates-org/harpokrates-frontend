@@ -6,7 +6,7 @@ const initialState = {
   photos: [],
   network: { nodes:[], edges:[] },
   photosAreUpdated: true,
-  networkIsUpdated: true,
+  networkIsUpdated: true
 }
 
 export const flickrUserSlice = createSlice({

@@ -1,7 +1,8 @@
 "use client";
+import { modelNames } from '@/app/libs/modelIndex';
 import { Box, Button, FormControl, MenuItem, TextField } from "@mui/material";
 
-import { useState } from "react";
+import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
 import {
   changeColor,
   changeDepth,
@@ -9,30 +10,32 @@ import {
   changeSpanningTreeK,
   selectColor,
   selectDepth,
+  selectModelName,
   selectSize,
-  selectSpanningTreeK,
+  selectSpanningTreeK
 } from "@/store/NetworkSlice.js";
+import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
 
 export const drawerWidth = 180;
 
 export default function NetworkSideBar() {
+  const dispatch = useDispatch();
   const currentDepth = useSelector(selectDepth);
   const [depth, setDepth] = useState(useSelector(selectDepth));
   const [size, setSize] = useState(useSelector(selectSize));
   const [color, setColor] = useState(useSelector(selectColor));
   const [spanningTreeK, setSpanningTreeK] = useState(useSelector(selectSpanningTreeK));
-  const dispatch = useDispatch();
-
+  const [modelName, setModelName] = useState(useSelector(selectModelName))
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mustUpdate = depth != currentDepth
+    const mustUpdate = depth != currentDepth;
     dispatch(changeDepth(depth));
     dispatch(changeColor(color));
     dispatch(changeSize(size));
     dispatch(changeSpanningTreeK(spanningTreeK));
-    if (mustUpdate) dispatch(mustUpdateNetwork())
+    dispatch(changeModelName(modelName));
+    if (mustUpdate) dispatch(mustUpdateNetwork());
   };
 
   return (
@@ -63,7 +66,28 @@ export default function NetworkSideBar() {
           <MenuItem value={"degree"}>Grado</MenuItem>
           <MenuItem value={"popularity"}>Popularidad</MenuItem>
           <MenuItem value={"follower"}>Favoritos dados</MenuItem>
+          <MenuItem value={"stego-count"}>Esteganografía compartida</MenuItem>
         </TextField>
+        {size == "stego-count" ? (
+          <TextField
+            select
+            label="Modelo"
+            variant="outlined"
+            value={modelName}
+            helperText="Modelo de esteganalisis"
+            onChange={(e) => {
+              setModelName(e.target.value);
+            }}
+          >
+            <MenuItem value={modelNames.NO_MODEL}>Sin Modelo</MenuItem>
+            <MenuItem value={modelNames.EFFICIENTNETV2B0_MODEL}>EfficientNet</MenuItem>
+            <MenuItem value={modelNames.MOBILENETV3L_MODEL}>MobileNet</MenuItem>
+            <MenuItem value={modelNames.INCEPTIONV3_MODEL}>InceptionNet</MenuItem>
+            <MenuItem value={modelNames.VGG16_MODEL}>VGG16</MenuItem>
+            <MenuItem value={modelNames.RESNET_MODEL}>ResNet</MenuItem>
+          </TextField>
+        ) : null}
+
         <TextField
           select
           label="Color"

@@ -1,20 +1,20 @@
 "use client";
+import { modelNames, models } from "@/app/libs/modelIndex";
+import { mustUpdateNetwork, mustUpdatePhotos } from "@/store/FlickrUserSlice";
+import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
+import { KeyboardArrowDown } from "@mui/icons-material";
+import { FormHelperText, FormLabel, Input, Option } from "@mui/joy";
+import Select, { selectClasses } from '@mui/joy/Select';
 import {
   Box,
   Button,
   FormControl,
 } from "@mui/material";
-import { FormHelperText, FormLabel, Input, Option } from "@mui/joy";
-import Select, { selectClasses } from '@mui/joy/Select';
+import { useState } from "react";
 import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
-import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
-import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
-import { KeyboardArrowDown } from "@mui/icons-material";
-import { modelNames, models } from "@/app/libs/modelIndex";
-import { mustUpdateNetwork, mustUpdatePhotos } from "@/store/FlickrUserSlice";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -95,6 +95,7 @@ export default function PhotosTopBar() {
               <Option value={modelNames.MOBILENETV3L_MODEL}>MobilenetV3L</Option>
               <Option value={modelNames.INCEPTIONV3_MODEL}>InceptionV3</Option>
               <Option value={modelNames.VGG16_MODEL}>VGG16</Option>
+              <Option value={modelNames.RESNET_MODEL}>Resnet</Option>
             </Select>
             <FormHelperText >
               CNN para estegoanálisis de imagenes.
