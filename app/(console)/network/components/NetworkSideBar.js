@@ -72,6 +72,7 @@ export default function NetworkSideBar() {
         >
           <MenuItem value={"no-color"}>Sin Color</MenuItem>
           <MenuItem value={"community"}>Comunidad</MenuItem>
+          <MenuItem value={"spanning_tree"}>Spannign Tree</MenuItem>
         </TextField>
         <Button type="submit" onClick={handleSubmit}>
           APLICAR

@@ -34,7 +34,7 @@ mod tests {
         input_net::InputNet, output_net::OutputNet, output_node::OutputNode,
     };
 
-    use super::degree;
+    use super::{degree, popularity, follower};
 
     #[test]
     fn should_count_node_degree() {
@@ -72,7 +72,7 @@ mod tests {
     fn should_count_node_popularity() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
-            "edges": [["1", "2"], ["1", "3"]]],
+            "edges": [["1", "2"], ["1", "3"]],
             "main_node": "1"
         }"#;
         let input_net: InputNet = serde_json::from_str(input).unwrap();
