@@ -44,6 +44,7 @@ impl SocialNetwork {
 
         let net = match config.color.as_str() {
             "community" => community_detection::strongly_connected_components(&self.graph, net),
+            "spanning_tree" => community_detection::k_spanning_tree(&self.graph, net, config.spanning_tree_k),
             &_ => net,
         };
 
@@ -71,7 +72,8 @@ mod tests {
         }"#;
         let config = r#"{
             "color": "no-community",
-            "size": "no-size"
+            "size": "no-size",
+            "spanning_tree_k": 0
         }"#;
 
         let mut sn = SocialNetwork::from_net(input);
@@ -90,7 +92,8 @@ mod tests {
         }"#;
         let config = r#"{
             "color": "no-community",
-            "size": "degree"
+            "size": "degree",
+            "spanning_tree_k": 0
         }"#;
 
         let mut sn = SocialNetwork::from_net(input);
@@ -118,7 +121,8 @@ mod tests {
 
         let config = r#"{
             "color": "community",
-            "size": "no-size"
+            "size": "no-size",
+            "spanning_tree_k": 0
         }"#;
         let output: OutputNet = serde_json::from_str(&sn.get_net(config)).unwrap();
 
