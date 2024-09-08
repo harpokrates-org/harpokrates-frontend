@@ -6,9 +6,11 @@ import {
   changeColor,
   changeDepth,
   changeSize,
+  changeSpanningTreeK,
   selectColor,
   selectDepth,
   selectSize,
+  selectSpanningTreeK,
 } from "@/store/NetworkSlice.js";
 import { useDispatch, useSelector } from "react-redux";
 import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
@@ -20,6 +22,7 @@ export default function NetworkSideBar() {
   const [depth, setDepth] = useState(useSelector(selectDepth));
   const [size, setSize] = useState(useSelector(selectSize));
   const [color, setColor] = useState(useSelector(selectColor));
+  const [spanningTreeK, setSpanningTreeK] = useState(useSelector(selectSpanningTreeK));
   const dispatch = useDispatch();
 
   const handleSubmit = (e) => {
@@ -28,6 +31,7 @@ export default function NetworkSideBar() {
     dispatch(changeDepth(depth));
     dispatch(changeColor(color));
     dispatch(changeSize(size));
+    dispatch(changeSpanningTreeK(spanningTreeK));
     if (mustUpdate) dispatch(mustUpdateNetwork())
   };
 
@@ -72,8 +76,21 @@ export default function NetworkSideBar() {
         >
           <MenuItem value={"no-color"}>Sin Color</MenuItem>
           <MenuItem value={"community"}>Comunidad</MenuItem>
-          <MenuItem value={"spanning_tree"}>Spannign Tree</MenuItem>
+          <MenuItem value={"spanning_tree"}>K Spanning Tree</MenuItem>
         </TextField>
+        { color == "spanning_tree" &&
+          <TextField
+            label="K"
+            variant="outlined"
+            type="number"
+            value={spanningTreeK}
+            onChange={(e) => {
+              setSpanningTreeK(parseInt(e.target.value));
+            }}
+            error={spanningTreeK <= 1}
+            helperText={spanningTreeK <= 1 ? "K mayor a 1" : "Numero de comunidades"}
+          />
+        }
         <Button type="submit" onClick={handleSubmit}>
           APLICAR
         </Button>

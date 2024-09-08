@@ -14,7 +14,7 @@ import {
 import { drawerWidth } from "../../components/SideBar";
 import { useWindowSize } from "@react-hook/window-size";
 import { getUserFavorites, getUserPhotos } from "@/app/api/UserAPI";
-import { selectColor, selectDepth, selectSize } from "@/store/NetworkSlice";
+import { selectColor, selectDepth, selectSize, selectSpanningTreeK } from "@/store/NetworkSlice";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -38,6 +38,7 @@ export default function Graph() {
   const depth = useSelector(selectDepth);
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
+  const spanningTreeK = useSelector(selectSpanningTreeK);
 
 
   useEffect(() => {
@@ -81,10 +82,10 @@ export default function Graph() {
 
   useEffect(() => {
     if (!socialNetwork) return;
-    const config = JSON.stringify({ color: color, size, size });
+    const config = JSON.stringify({ color, size, spanning_tree_k: spanningTreeK });
     const net = JSON.parse(socialNetwork.get_net(config))
     setNet(net)
-  }, [socialNetwork, size, color])
+  }, [socialNetwork, size, color, spanningTreeK])
 
   const nodeColorHandler = (node) => {
     switch (node.group) {
