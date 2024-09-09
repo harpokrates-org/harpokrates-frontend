@@ -17,6 +17,7 @@ import {
   selectDepth,
   selectModelName,
   selectSize,
+  selectSpanningTreeK,
 } from "@/store/NetworkSlice";
 import { useWindowSize } from "@react-hook/window-size";
 import { useCallback, useEffect, useRef, useState } from "react";
@@ -51,6 +52,7 @@ export default function Graph() {
   const depth = useSelector(selectDepth);
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
+  const spanningTreeK = useSelector(selectSpanningTreeK);
 
   const [model, setModel] = useState();
   const modelName = useSelector(selectModelName);
@@ -151,13 +153,14 @@ export default function Graph() {
         socialNetwork,
         size,
         color,
+        spanningTreeK,
         model,
         networkPhotos
       );
       setNet(net);
     };
     buildAndSetNet().catch(console.error);
-  }, [socialNetwork, networkPhotos, size, color, modelName]);
+  }, [socialNetwork, networkPhotos, size, color, spanningTreeK, modelName]);
 
   const nodeColorHandler = (node) => {
     switch (node.group) {

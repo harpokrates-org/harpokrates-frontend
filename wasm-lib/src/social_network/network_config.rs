@@ -4,4 +4,5 @@ use serde::{Deserialize, Serialize};
 pub struct NetworkConfig {
     pub color: String,
     pub size: String,
+    pub spanning_tree_k: usize,
 }

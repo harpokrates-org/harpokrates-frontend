@@ -41,9 +41,9 @@ const buildNetStegoCount = async (socialNetwork, model, config, networkPhotos) =
   return net
 };
 
-export const buildNet = async (socialNetwork, size, color, model, networkPhotos) => {
+export const buildNet = async (socialNetwork, size, color, spanningTreeK, model, networkPhotos) => {
   let net;
-  const config = JSON.stringify({ color: color, size: size });
+  const config = JSON.stringify({ color: color, size: size, spanning_tree_k: spanningTreeK });
 
   if (size == "stego-count" && model != modelNames.NO_MODEL) {
     net = await buildNetStegoCount(socialNetwork, model, config, networkPhotos);

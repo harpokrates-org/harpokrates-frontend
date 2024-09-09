@@ -6,6 +6,7 @@ const initialState = {
   depth: 2,
   size: "degree",
   color: "community",
+  spanningTreeK: 10,
   modelName: modelNames.NO_MODEL
 };
 
@@ -22,6 +23,9 @@ export const networkSlice = createSlice({
     changeColor: (state, action) => {
       state.color = action.payload;
     },
+    changeSpanningTreeK: (state, action) => {
+      state.spanningTreeK = action.payload;
+    },
     changeModelName: (state, action) => {
       state.modelName = action.payload;
     },
@@ -31,11 +35,12 @@ export const networkSlice = createSlice({
   },
 });
 
-export const { changeDepth, changeSize, changeColor, changeModelName, reset } = networkSlice.actions;
+export const { changeDepth, changeSize, changeColor, changeModelName, changeSpanningTreeK, reset } = networkSlice.actions;
 
 export const selectDepth = (state) => state.network.depth;
 export const selectSize = (state) => state.network.size;
 export const selectColor = (state) => state.network.color;
+export const selectSpanningTreeK = (state) => state.network.spanningTreeK;
 export const selectModelName = (state) => state.network.modelName;
 
 export default networkSlice.reducer;
