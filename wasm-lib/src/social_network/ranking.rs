@@ -56,7 +56,7 @@ mod tests {
         ranking::{follower, popularity},
     };
 
-    use super::{degree, popularity, follower};
+    use super::degree;
 
     #[test]
     fn should_count_node_degree() {
