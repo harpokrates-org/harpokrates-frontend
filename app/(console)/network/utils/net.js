@@ -3,10 +3,10 @@ import modelIndex, { modelNames } from "@/app/libs/modelIndex";
 import { fetchUserPhotoSizes, predict } from "@/app/libs/utils";
 const R = require("ramda");
 
-const setNewVals = (net, newVals) => {
+const setNodeWeights = (net, weightKey, weights) => {
   for (let node of net.nodes) {
-    if (Object.keys(newVals).includes(node.id)) {
-      node.val = newVals[node.id]
+    if (Object.keys(weights).includes(node.id)) {
+      node[weightKey] = weights[node.id]
     }
   }
   return net
@@ -37,7 +37,7 @@ const buildNetStegoCount = async (socialNetwork, model, config, networkPhotos) =
   //  Mergea todos los { user: id, val: } en un unico objecto
   const positiveUsers = Object.assign({}, ...positives);
   let net = JSON.parse(socialNetwork.get_net(config));
-  net = setNewVals(net, positiveUsers);
+  net = setNodeWeights(net, 'vals', positiveUsers);
   return net
 };
 

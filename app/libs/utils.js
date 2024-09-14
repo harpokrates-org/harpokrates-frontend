@@ -26,7 +26,7 @@ export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
     )
     if (res.status != "200") {
       toast.error("Error al cargar las fotos");
-      return;
+      return [];
     }
 
     const _photos = await Promise.all(
