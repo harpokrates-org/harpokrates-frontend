@@ -1,6 +1,7 @@
 import { models } from "@/app/libs/modelIndex";
 import { getUserPhotoSizes } from "../api/UserAPI";
 const R = require("ramda");
+import { toast } from "react-hot-toast";
 
 export const fetchModel = async (modelName) => {
   const model = models[modelName];
@@ -18,19 +19,15 @@ export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
   if (!userID) return;
   const count = 12;
   try {
-    const res = await getUserPhotoSizes(
+    const data = await getUserPhotoSizes(
       userID,
       count,
       Date.parse(minDate),
       Date.parse(maxDate)
     )
-    if (res.status != "200") {
-      toast.error("Error al cargar las fotos");
-      return [];
-    }
 
     const _photos = await Promise.all(
-      res.data.photos.map(async (p) => {
+      data.photos.map(async (p) => {
         const size = R.filter((e) => e.label == label, p.sizes)[0];
         const filter = await getFilter(0);
         return {

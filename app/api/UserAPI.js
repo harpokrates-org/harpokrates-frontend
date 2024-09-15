@@ -9,9 +9,10 @@ export const getUserPhotoSizes = async (userID, count, minDate, maxDate) => {
         min_date: minDate,
         max_date: maxDate,
       },
-    })
+    }).then(res => res.data)
   } catch (err) {
     console.log(err)
+    return { photos: [] }
   }
 
 };
@@ -21,9 +22,10 @@ export const getUserPhotos = async (userID, count) => {
     return await axios.get(
       process.env.NEXT_PUBLIC_BACKEND_URL +
         `/photos?user_id=${userID}&per_page=${count}`
-    );
+    ).then(res => res.data);
   } catch (error) {
     console.log(error);
+    return { photos: [] }
   }
 };
 

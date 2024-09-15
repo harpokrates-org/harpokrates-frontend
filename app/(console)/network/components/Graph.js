@@ -61,8 +61,8 @@ export default function Graph() {
   useEffect(() => {
     const getPhotos = async (userID) => {
       if (photos.length > 0) return photos;
-      const response = await getUserPhotos(userID, mainPhotosCount);
-      const photoIDs = response.data.photos;
+      const data = await getUserPhotos(userID, mainPhotosCount);
+      const photoIDs = data.photos;
       setPhotos(photoIDs);
       return photoIDs;
     };
