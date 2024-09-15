@@ -46,17 +46,17 @@ export class NetBuilder {
     return positiveUsers;
   }
 
-  async _AddPositivesAsignedToKey(net, model, networkPhotos, key) {
+  async _addPositivesAsignedToKey(net, model, networkPhotos, key) {
     const positives = await this._countPositivesInNetwork(model, networkPhotos);
     return this._setNodeWeights(net, key, positives);
   }
 
   async _updateSizesByStegoCount(net, model, networkPhotos) {
-    return this._AddPositivesAsignedToKey(net, model, networkPhotos, SIZE_KEY);
+    return this._addPositivesAsignedToKey(net, model, networkPhotos, SIZE_KEY);
   }
 
   async _updateColorsByStegoCount(net, model, networkPhotos) {
-    return this._AddPositivesAsignedToKey(net, model, networkPhotos, COLOR_KEY);
+    return this._addPositivesAsignedToKey(net, model, networkPhotos, COLOR_KEY);
   }
 
   async build(socialNetwork, size, color, spanningTreeK, model, networkPhotos) {
