@@ -86,7 +86,6 @@ export default function Graph() {
           let inputNet = networkIsUpdated
             ? { ...network }
             : { ...(await getFavorites(photos)) };
-          console.log("inputNet:", inputNet);
           inputNet.main_node = username;
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
@@ -112,7 +111,7 @@ export default function Graph() {
   useEffect(() => {
     const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
-      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 20));
+      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 10));
       const _networkPhotos = await Promise.all(
         topUsers.map(async (flickrUserName) => {
           try {
