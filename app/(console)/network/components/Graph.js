@@ -4,6 +4,7 @@ import {
   getUserName,
   getUserPhotos,
 } from "@/app/api/UserAPI";
+import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
 import {
   selectId,
   selectName,
@@ -25,8 +26,7 @@ import { ForceGraph2D } from "react-force-graph";
 import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
-import { buildNet, loadUserWeights } from "../utils/net";
-import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
+import { NetBuilder } from "../utils/NetBuilder";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -149,7 +149,7 @@ export default function Graph() {
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
       const model = await fetchModel(modelName);
-      const net = await buildNet(
+      const net = await new NetBuilder().build(
         socialNetwork,
         size,
         color,
