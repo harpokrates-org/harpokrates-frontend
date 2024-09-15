@@ -4,6 +4,7 @@ import {
   getUserName,
   getUserPhotos,
 } from "@/app/api/UserAPI";
+import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
 import {
   selectId,
   selectName,
@@ -25,8 +26,7 @@ import { ForceGraph2D } from "react-force-graph";
 import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
-import { buildNet, loadUserWeights } from "../utils/net";
-import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
+import { NetBuilder } from "../utils/NetBuilder";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -61,8 +61,8 @@ export default function Graph() {
   useEffect(() => {
     const getPhotos = async (userID) => {
       if (photos.length > 0) return photos;
-      const response = await getUserPhotos(userID, mainPhotosCount);
-      const photoIDs = response.data.photos;
+      const data = await getUserPhotos(userID, mainPhotosCount);
+      const photoIDs = data.photos;
       setPhotos(photoIDs);
       return photoIDs;
     };
@@ -86,7 +86,6 @@ export default function Graph() {
           let inputNet = networkIsUpdated
             ? { ...network }
             : { ...(await getFavorites(photos)) };
-          console.log("inputNet:", inputNet);
           inputNet.main_node = username;
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
@@ -112,7 +111,7 @@ export default function Graph() {
   useEffect(() => {
     const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
-      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 20));
+      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 10));
       const _networkPhotos = await Promise.all(
         topUsers.map(async (flickrUserName) => {
           try {
@@ -149,7 +148,7 @@ export default function Graph() {
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
       const model = await fetchModel(modelName);
-      const net = await buildNet(
+      const net = await new NetBuilder().build(
         socialNetwork,
         size,
         color,
