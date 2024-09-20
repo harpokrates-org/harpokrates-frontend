@@ -15,6 +15,9 @@ import 'react-date-range/dist/styles.css';
 import 'react-date-range/dist/theme/default.css';
 import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
+import { putPreferencies } from "@/app/api/UserAPI";
+import { selectEmail } from "@/store/HarpokratesUserSlice";
+import toast from "react-hot-toast";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -29,6 +32,7 @@ export default function PhotosTopBar() {
   const dispatch = useDispatch();
   const [openCalendar, setOpenCalendar] = useState(false)
   const filters = useSelector(selectFilters)
+  const email = useSelector(selectEmail);
   const [modelName, setModelName] = useState(filters.modelName)
   const [dateRange, setDateRange] = useState(
     {
@@ -45,6 +49,17 @@ export default function PhotosTopBar() {
       dispatch(mustUpdatePhotos());
       dispatch(mustUpdateNetwork());
     }
+  };
+
+  const handleSave = (e) => {
+    putPreferencies(email, modelName)
+    .then((response) => {
+      if (Object.keys(response.preferencies).length === 0) {
+        toast.error("No pudimos guardar tus preferencias. Vuelve a intentar más tarde");
+        return
+      }
+      toast.success("Preferencias guardadas exitosamente");
+    })
   };
 
   return (
@@ -103,9 +118,14 @@ export default function PhotosTopBar() {
           </div>
         </div>
 
-        <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: `${margin}px`, width: '80px' }}>
-          Aplicar
-        </Button>
+        <div style={{ display: 'flex', flexDirection: 'row' }}>
+          <Button type="submit" onClick={handleSubmit} variant="contained" sx={{ margin: `${margin}px`, width: '80px' }}>
+            Aplicar
+          </Button>
+          <Button type="button" onClick={handleSave} variant="contained" sx={{ margin: `${margin}px`, width: '220px' }}>
+            Guardar preferencias
+          </Button>
+        </div>
     </FormControl>
     </Box>
   );

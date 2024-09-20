@@ -69,3 +69,17 @@ export const postLogin = async (email) => {
     console.log(error);
   }
 };
+
+export const putPreferencies = async (email, model) => {
+  try {
+    return await axios.put(process.env.NEXT_PUBLIC_BACKEND_URL + "/preferencies", {
+      email: email,
+      preferencies: {
+          model: model
+      }
+    }).then(res => res.data);
+  } catch (error) {
+    console.log(error);
+    return { preferencies: {} }
+  }
+};
