@@ -12,7 +12,7 @@ export class NetBuilder {
       return value; 
     })
     const maxPositiveValue = R.apply(Math.max, positiveValues);
-    const scale = chroma.scale(['white', 'red'])
+    const scale = chroma.scale(['gray', 'red'])
 
     const userColors = Object.entries(positives).map(entry => {
       const key = entry[0]
