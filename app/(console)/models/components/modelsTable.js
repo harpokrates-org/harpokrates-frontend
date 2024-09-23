@@ -30,6 +30,10 @@ const rows = [
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function ModelsTable() {
+  const setRowSelectionModel = (row) => {
+    console.log(row)
+  }
+
   return (
     <Paper sx={{ height: 400, width: "100%" }}>
       <DataGrid
@@ -39,6 +43,9 @@ export default function ModelsTable() {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         sx={{ border: 0 }}
+        onRowSelectionModelChange={(newRowSelectionModel) => {
+          setRowSelectionModel(newRowSelectionModel);
+        }}
       />
     </Paper>
   );

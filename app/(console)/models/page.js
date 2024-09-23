@@ -15,7 +15,7 @@ export default function Models() {
           alignItems: "flex-start",
         }}
       >
-        <Grid item xs={8}>
+        <Grid xs={8}>
           <Typography>Modelos del Usuario</Typography>
         </Grid>
         <Grid
@@ -26,7 +26,7 @@ export default function Models() {
           }}
           spacing={0.5}
         >
-          <Grid item>
+          <Grid>
             <Button variant="contained" color="success" startIcon={<AddIcon />}>
               Agregar
             </Button>
@@ -42,7 +42,7 @@ export default function Models() {
           </Grid>
         </Grid>
       </Grid>
-      <Grid item xs={12}>
+      <Grid container xs={12}>
         <ModelsTable />
       </Grid>
     </Grid>
