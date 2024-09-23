@@ -1,7 +1,7 @@
 "use client";
-import * as React from "react";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
+import { useState } from "react";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
@@ -9,29 +9,31 @@ const columns = [
   { field: "url", headerName: "URL", width: 600 },
 ];
 
-const rows = [
-  {
-    id: 1,
-    modelName: "MobileNet-Stego",
-    url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-  },
-  {
-    id: 2,
-    modelName: "EfficientNet-Stego",
-    url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-  },
-  {
-    id: 3,
-    modelName: "ResNet-Stego",
-    url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-  },
-];
+// const rows = [
+//   {
+//     id: 1,
+//     modelName: "MobileNet-Stego",
+//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
+//   },
+//   {
+//     id: 2,
+//     modelName: "EfficientNet-Stego",
+//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
+//   },
+//   {
+//     id: 3,
+//     modelName: "ResNet-Stego",
+//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
+//   },
+// ];
 
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function ModelsTable() {
-  const setRowSelectionModel = (row) => {
-    console.log(row)
+  const [rows, setRows] = useState();
+
+  const setRowSelectionModel = (rowIDs) => {
+    console.log(rowIDs)
   }
 
   return (
