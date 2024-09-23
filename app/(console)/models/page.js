@@ -1,6 +1,8 @@
-import { Box, Button, Typography } from "@mui/material";
-import ModelsTable from "./components/modelsTable";
+import AddIcon from "@mui/icons-material/Add";
+import DeleteIcon from "@mui/icons-material/Delete";
 import { Grid } from "@mui/joy";
+import { Button, Typography } from "@mui/material";
+import ModelsTable from "./components/modelsTable";
 
 export default function Models() {
   return (
@@ -25,12 +27,16 @@ export default function Models() {
           spacing={0.5}
         >
           <Grid item>
-            <Button variant="contained" color="success">
+            <Button variant="contained" color="success" startIcon={<AddIcon />}>
               Agregar
             </Button>
           </Grid>
           <Grid>
-            <Button variant="contained" color="error">
+            <Button
+              variant="contained"
+              color="error"
+              startIcon={<DeleteIcon />}
+            >
               Quitar
             </Button>
           </Grid>
