@@ -1,6 +1,8 @@
 "use client";
-import { modelNames, models } from "@/app/libs/modelIndex";
+import { putPreferencies } from "@/app/api/UserAPI";
+import { collectModelNames, collectModels } from "@/app/libs/ModelCollection";
 import { mustUpdateNetwork, mustUpdatePhotos } from "@/store/FlickrUserSlice";
+import { selectEmail, selectModels } from "@/store/HarpokratesUserSlice";
 import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
 import { KeyboardArrowDown } from "@mui/icons-material";
 import { FormHelperText, FormLabel, Input, Option } from "@mui/joy";
@@ -9,11 +11,9 @@ import { Box, Button, FormControl } from "@mui/material";
 import { useState } from "react";
 import "react-date-range/dist/styles.css";
 import "react-date-range/dist/theme/default.css";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import CalendarDialog from "./CalendarDialog";
-import { putPreferencies } from "@/app/api/UserAPI";
-import { selectEmail } from "@/store/HarpokratesUserSlice";
-import toast from "react-hot-toast";
 
 export const margin = 30;
 export const barHeight = 200;
@@ -29,15 +29,15 @@ export default function PhotosTopBar() {
   const [openCalendar, setOpenCalendar] = useState(false);
   const filters = useSelector(selectFilters);
   const email = useSelector(selectEmail);
+  const userModels = useSelector(selectModels);
   const [modelName, setModelName] = useState(filters.modelName);
   const [dateRange, setDateRange] = useState({
     minDate: filters.minDate,
     maxDate: filters.maxDate,
   });
 
-  const objToList = (obj) => {
-    return Object.keys(obj).map((key) => [key, obj[key]]);
-  };
+  const modelNames = collectModelNames(userModels);
+  const models = collectModels(userModels);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -122,10 +122,10 @@ export default function PhotosTopBar() {
                 },
               }}
             >
-              {Object.keys(modelNames).map((modelName) => {
+              {modelNames.map((name) => {
                 return (
-                  <Option key={modelName} value={modelNames[modelName]}>
-                    {modelNames[modelName]}
+                  <Option key={name} value={name}>
+                    {name}
                   </Option>
                 );
               })}

@@ -35,7 +35,6 @@ export default function ModelsTable() {
     const fetchModels = async () => {
       try {
         const data = await getUserModels(email);
-        console.log(data.models)
         const _models = data.models.map((model) => {
           return {
             id: model._id,

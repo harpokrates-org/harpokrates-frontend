@@ -12,6 +12,8 @@ import {
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ImageDialog from "./ImageDialog";
+import { collectModels } from "@/app/libs/ModelCollection";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 const R = require("ramda");
 
 export default function ImageGallery() {
@@ -22,6 +24,7 @@ export default function ImageGallery() {
   const filters = useSelector(selectFilters);
   const photosAreUpdated = useSelector(selectPhotosAreUpdated);
   const dispatch = useDispatch();
+  const userModels = useSelector(selectModels);
 
   const imageClickHandler = (photo) => {
     setClickedImage(photo)
@@ -34,7 +37,9 @@ export default function ImageGallery() {
 
   useEffect(() => {
     const modelPrediction = async () => {
-      const model = await fetchModel(filters.modelName);
+      const modelCollection = collectModels(userModels);
+      console.log('modelCollection', modelCollection)
+      const model = await fetchModel(modelCollection, filters.modelName);
       const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate, 'Medium')
       const _photos = await predict(model, filters.modelThreshold, updatedPhotos);
       dispatch(setPhotos(_photos));

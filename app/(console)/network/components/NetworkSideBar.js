@@ -1,5 +1,5 @@
 "use client";
-import { modelNames } from "@/app/libs/modelIndex";
+import { modelNames } from "@/app/libs/AppModelIndex";
 import { Box, Button, FormControl, MenuItem, TextField } from "@mui/material";
 
 import { mustUpdateNetwork } from "@/store/FlickrUserSlice";

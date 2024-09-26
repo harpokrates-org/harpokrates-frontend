@@ -6,17 +6,20 @@ const pixels = require("image-pixels");
 tf.env().set("PROD", true);
 
 class Model {
-  constructor(imgSize, path, threshold) {
+  constructor(imgSize, path, threshold, fromTFHub) {
     this.model = null;
     this.imgSize = imgSize;
     this.path = path;
     this.threshold = threshold;
+    this.fromTFHub = fromTFHub;
   }
 
   async load() {
     if (this.model) return this.model;
     await tf.ready();
-    this.model = await tf.loadGraphModel(this.path);
+    this.model = await tf.loadGraphModel(this.path, {
+      fromTFHub: this.fromTFHub,
+    });
     return this.model;
   }
 
