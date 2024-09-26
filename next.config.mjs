@@ -12,7 +12,7 @@ const nextConfig = {
         hostname: '**.staticflickr.com',
       },
     ],
-  },
+  }
 };
 
 export default nextConfig;

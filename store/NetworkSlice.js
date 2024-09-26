@@ -1,17 +1,16 @@
-import { modelNames } from '@/app/libs/modelIndex';
+import { appModelNames } from "@/app/libs/AppModelIndex";
 import { createSlice } from "@reduxjs/toolkit";
-
 
 const initialState = {
   depth: 2,
   size: "degree",
   color: "community",
   spanningTreeK: 10,
-  modelName: modelNames.NO_MODEL
+  modelName: appModelNames.NO_MODEL,
 };
 
 export const networkSlice = createSlice({
-  name: 'network',
+  name: "network",
   initialState,
   reducers: {
     changeDepth: (state, action) => {
@@ -35,7 +34,14 @@ export const networkSlice = createSlice({
   },
 });
 
-export const { changeDepth, changeSize, changeColor, changeModelName, changeSpanningTreeK, reset } = networkSlice.actions;
+export const {
+  changeDepth,
+  changeSize,
+  changeColor,
+  changeModelName,
+  changeSpanningTreeK,
+  reset,
+} = networkSlice.actions;
 
 export const selectDepth = (state) => state.network.depth;
 export const selectSize = (state) => state.network.size;
