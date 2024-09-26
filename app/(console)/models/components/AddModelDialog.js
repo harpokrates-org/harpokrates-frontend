@@ -16,24 +16,38 @@ export default function AddModelDialog({ open, onClose, setRows }) {
   const dispatch = useDispatch();
   const email = useSelector(selectEmail);
 
-  const postModelHandler = async (email, modelName, modelURL) => {
+  const postModelHandler = async (
+    email,
+    modelName,
+    modelURL,
+    modelImageSize,
+    modelThreshold
+  ) => {
     try {
-      const data = await postModel(email, modelName, modelURL);
-      const _models = data.models.map(model => {
+      const data = await postModel(
+        email,
+        modelName,
+        modelURL,
+        modelImageSize,
+        modelThreshold
+      );
+      const _models = data.models.map((model) => {
         return {
           id: model._id,
           name: model.name,
-          url: model.url
-        }
-      })
-      console.log('data', data)
+          url: model.url,
+          imageSize: model.imageSize,
+          threshold: model.threshold
+        };
+      });
+      console.log("data", data);
       dispatch(changeModels(_models));
       toast.success("Modelo agregado");
     } catch (err) {
       toast.error("No fue posible agregar el modelo");
       console.log(err);
     }
-    onClose()
+    onClose();
   };
 
   return (
@@ -51,7 +65,9 @@ export default function AddModelDialog({ open, onClose, setRows }) {
             !(await postModelHandler(
               email,
               formJson.modelName,
-              formJson.modelURL
+              formJson.modelURL,
+              formJson.modelImageSize,
+              formJson.modelThreshold
             ))
           )
             return;
@@ -70,6 +86,34 @@ export default function AddModelDialog({ open, onClose, setRows }) {
           label="Nombre del Modelo"
           fullWidth
           variant="standard"
+        />
+      </DialogContent>
+      <DialogContent>
+        <TextField
+          autoFocus
+          required
+          id="modelImageSize"
+          name="modelImageSize"
+          label="Tamaño de la Imagen"
+          fullWidth
+          type="number"
+          variant="standard"
+        />
+      </DialogContent>
+      <DialogContent>
+        <TextField
+          autoFocus
+          required
+          id="modelThreshold"
+          name="modelThreshold"
+          label="Umbral"
+          fullWidth
+          type="number"
+          variant="standard"
+          inputProps={{
+            maxLength: 1,
+            step: "0.1"
+          }}
         />
       </DialogContent>
       <DialogContent>

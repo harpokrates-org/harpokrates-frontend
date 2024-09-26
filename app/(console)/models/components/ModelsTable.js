@@ -8,11 +8,14 @@ import {
 import Paper from "@mui/material/Paper";
 import { DataGrid } from "@mui/x-data-grid";
 import { useEffect, useState } from "react";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 
 const columns = [
-  { field: "_id", headerName: "ID", width: 70 },
+  { field: "id", headerName: "ID", width: 70 },
   { field: "name", headerName: "Modelo", width: 160 },
+  { field: "imageSize", headerName: "Tamaño de Imagen", width: 100 },
+  { field: "threshold", headerName: "Umbral", width: 100 },
   { field: "url", headerName: "URL", width: 600 },
 ];
 
@@ -25,20 +28,27 @@ export default function ModelsTable() {
   const models = useSelector(selectModels);
 
   const setRowSelectionModel = (rowIDs) => {
-    console.log(rowIDs);
+    //console.log(rowIDs);
   };
 
   useEffect(() => {
     const fetchModels = async () => {
-      const data = await getUserModels(email);
-      const _models = data.models.map(model => {
-        return {
-          id: model._id,
-          name: model.name,
-          url: model.url
-        }
-      })
-      dispatch(changeModels(_models));
+      try {
+        const data = await getUserModels(email);
+        console.log(data.models)
+        const _models = data.models.map((model) => {
+          return {
+            id: model._id,
+            name: model.name,
+            imageSize: model.imageSize,
+            threshold: model.threshold,
+            url: model.url,
+          };
+        });
+        dispatch(changeModels(_models));
+      } catch (err) {
+        toast.error("No se pudo cargar los modelos");
+      }
     };
     fetchModels();
   }, []);

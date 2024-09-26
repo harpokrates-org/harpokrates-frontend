@@ -93,13 +93,21 @@ export const putPreferencies = async (email, model) => {
   }
 };
 
-export const postModel = async (email, modelName, modelURL) => {
+export const postModel = async (
+  email,
+  modelName,
+  modelURL,
+  modelImageSize,
+  modelThreshold
+) => {
   try {
     return await axios
       .post(process.env.NEXT_PUBLIC_BACKEND_URL + "/models", {
         email,
         modelName,
         modelURL,
+        modelImageSize,
+        modelThreshold,
       })
       .then((res) => res.data);
   } catch (error) {
