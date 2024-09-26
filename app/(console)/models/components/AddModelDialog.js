@@ -1,4 +1,6 @@
 "use client";
+import { postModel } from "@/app/api/UserAPI";
+import { selectEmail } from "@/store/HarpokratesUserSlice";
 import {
   Button,
   Dialog,
@@ -8,10 +10,19 @@ import {
   TextField,
 } from "@mui/material";
 import toast from "react-hot-toast";
+import { useSelector } from "react-redux";
 
 export default function AddModelDialog({ open, onClose }) {
-  const addModelHandler = async (model) => {
-    console.log("Modelo agregado");
+  const email = useSelector(selectEmail);
+
+  const postModelHandler = async (email, modelName, modelURL) => {
+    try {
+      const res = await postModel(email, modelName, modelURL);
+      toast.success("Modelo agregado");
+    } catch (err) {
+      toast.error("No fue posible agregar el modelo");
+      console.log(err);
+    }
   };
 
   return (
@@ -25,6 +36,14 @@ export default function AddModelDialog({ open, onClose }) {
           const formData = new FormData(event.currentTarget);
           const formJson = Object.fromEntries(formData.entries());
           console.log(formJson);
+          if (
+            !(await postModelHandler(
+              email,
+              formJson.modelName,
+              formJson.modelURL
+            ))
+          )
+            return;
           toast.success("Modelo agregado");
           onClose();
         },

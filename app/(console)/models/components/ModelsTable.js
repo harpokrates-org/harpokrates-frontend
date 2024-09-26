@@ -1,40 +1,43 @@
 "use client";
 import { DataGrid } from "@mui/x-data-grid";
 import Paper from "@mui/material/Paper";
-import { useState } from "react";
+import { useEffect, useState } from "react";
+import { getUserModels } from "@/app/api/UserAPI";
+import { useSelector } from "react-redux";
+import { selectEmail } from "@/store/HarpokratesUserSlice";
 
 const columns = [
   { field: "id", headerName: "ID", width: 70 },
-  { field: "modelName", headerName: "Modelo", width: 160 },
+  { field: "name", headerName: "Modelo", width: 160 },
   { field: "url", headerName: "URL", width: 600 },
 ];
-
-// const rows = [
-//   {
-//     id: 1,
-//     modelName: "MobileNet-Stego",
-//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-//   },
-//   {
-//     id: 2,
-//     modelName: "EfficientNet-Stego",
-//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-//   },
-//   {
-//     id: 3,
-//     modelName: "ResNet-Stego",
-//     url: "https://www.kaggle.com/models/vbravo/mobilenet-stego/TfJs/default/1",
-//   },
-// ];
 
 const paginationModel = { page: 0, pageSize: 5 };
 
 export default function ModelsTable() {
   const [rows, setRows] = useState();
+  const [models, setModels] = useState();
+
+  const email = useSelector(selectEmail);
 
   const setRowSelectionModel = (rowIDs) => {
     console.log(rowIDs)
   }
+
+  useEffect(() => {
+    const fetchModels = async () => {
+      const data = await getUserModels(email);
+      const _rows = data.models.map(model => {
+        return {
+          id: model._id,
+          name: model.modelName,
+          url: model.modelURL
+        }
+      })
+      setRows(_rows)
+    };
+    fetchModels()
+  }, []);
 
   return (
     <Paper sx={{ height: 400, width: "100%" }}>
