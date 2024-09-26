@@ -1,4 +1,4 @@
-import { modelNames } from "@/app/libs/AppModelIndex";
+import { appModelNames } from "@/app/libs/AppModelIndex";
 import { predict } from "@/app/libs/utils";
 import chroma from "chroma-js";
 const R = require("ramda");
@@ -90,7 +90,7 @@ export class NetBuilder {
       spanning_tree_k: spanningTreeK,
     });
     let net = JSON.parse(socialNetwork.get_net(config));
-    if (model == modelNames.NO_MODEL) {
+    if (model == appModelNames.NO_MODEL) {
       return net;
     }
 

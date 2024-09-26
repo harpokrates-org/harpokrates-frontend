@@ -27,6 +27,8 @@ import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { NetBuilder } from "../utils/NetBuilder";
+import { collectModels } from "@/app/libs/ModelCollection";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -57,6 +59,8 @@ export default function Graph() {
   const [model, setModel] = useState();
   const modelName = useSelector(selectModelName);
   const [networkPhotos, setNetworkPhotos] = useState();
+
+  const userModels = useSelector(selectModels);
 
   useEffect(() => {
     const getPhotos = async (userID) => {
@@ -148,7 +152,9 @@ export default function Graph() {
   useEffect(() => {
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
-      const model = await fetchModel(modelName);
+      const modelCollection = collectModels(userModels);
+      console.log('modelCollection', modelCollection)
+      const model = await fetchModel(modelCollection, modelName);
       const net = await new NetBuilder().build(
         socialNetwork,
         size,

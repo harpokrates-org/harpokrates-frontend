@@ -17,6 +17,8 @@ import {
 } from "@/store/NetworkSlice.js";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
+import { collectModelNames, collectModels } from "@/app/libs/ModelCollection";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 
 export const drawerWidth = 180;
 
@@ -30,6 +32,11 @@ export default function NetworkSideBar() {
     useSelector(selectSpanningTreeK)
   );
   const [modelName, setModelName] = useState(useSelector(selectModelName));
+  const userModels = useSelector(selectModels);
+
+  const modelNames = collectModelNames(userModels);
+  const models = collectModels(userModels);
+
   const handleSubmit = (e) => {
     e.preventDefault();
     const mustUpdate = depth != currentDepth;
@@ -84,16 +91,13 @@ export default function NetworkSideBar() {
               setModelName(e.target.value);
             }}
           >
-            <MenuItem value={modelNames.NO_MODEL}>Sin Modelo</MenuItem>
-            <MenuItem value={modelNames.EFFICIENTNETV2B0_MODEL}>
-              EfficientNet
-            </MenuItem>
-            <MenuItem value={modelNames.MOBILENETV3L_MODEL}>MobileNet</MenuItem>
-            <MenuItem value={modelNames.INCEPTIONV3_MODEL}>
-              InceptionNet
-            </MenuItem>
-            <MenuItem value={modelNames.VGG16_MODEL}>VGG16</MenuItem>
-            <MenuItem value={modelNames.RESNET_MODEL}>ResNet</MenuItem>
+            {modelNames.map((name) => {
+              return (
+                <MenuItem key={name} value={name}>
+                  {name}
+                </MenuItem>
+              );
+            })}
           </TextField>
         )}
 
@@ -110,7 +114,9 @@ export default function NetworkSideBar() {
           <MenuItem value={"no-color"}>Sin Color</MenuItem>
           <MenuItem value={"community"}>Comunidad</MenuItem>
           <MenuItem value={"spanning_tree"}>K Spanning Tree</MenuItem>
-          <MenuItem value={"stego-count"} disabled={size == "stego-count"}>Esteganografía compartida</MenuItem>
+          <MenuItem value={"stego-count"} disabled={size == "stego-count"}>
+            Esteganografía compartida
+          </MenuItem>
         </TextField>
         {color == "spanning_tree" && (
           <TextField
@@ -138,16 +144,13 @@ export default function NetworkSideBar() {
               setModelName(e.target.value);
             }}
           >
-            <MenuItem value={modelNames.NO_MODEL}>Sin Modelo</MenuItem>
-            <MenuItem value={modelNames.EFFICIENTNETV2B0_MODEL}>
-              EfficientNet
-            </MenuItem>
-            <MenuItem value={modelNames.MOBILENETV3L_MODEL}>MobileNet</MenuItem>
-            <MenuItem value={modelNames.INCEPTIONV3_MODEL}>
-              InceptionNet
-            </MenuItem>
-            <MenuItem value={modelNames.VGG16_MODEL}>VGG16</MenuItem>
-            <MenuItem value={modelNames.RESNET_MODEL}>ResNet</MenuItem>
+           {modelNames.map((name) => {
+              return (
+                <MenuItem key={name} value={name}>
+                  {name}
+                </MenuItem>
+              );
+            })}
           </TextField>
         )}
         <Button type="submit" onClick={handleSubmit}>
