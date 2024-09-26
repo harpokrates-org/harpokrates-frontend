@@ -1,13 +1,17 @@
 "use client";
-import { DataGrid } from "@mui/x-data-grid";
-import Paper from "@mui/material/Paper";
-import { useEffect, useState } from "react";
 import { getUserModels } from "@/app/api/UserAPI";
-import { useSelector } from "react-redux";
-import { selectEmail } from "@/store/HarpokratesUserSlice";
+import {
+  changeModels,
+  selectEmail,
+  selectModels,
+} from "@/store/HarpokratesUserSlice";
+import Paper from "@mui/material/Paper";
+import { DataGrid } from "@mui/x-data-grid";
+import { useEffect, useState } from "react";
+import { useDispatch, useSelector } from "react-redux";
 
 const columns = [
-  { field: "id", headerName: "ID", width: 70 },
+  { field: "_id", headerName: "ID", width: 70 },
   { field: "name", headerName: "Modelo", width: 160 },
   { field: "url", headerName: "URL", width: 600 },
 ];
@@ -16,33 +20,33 @@ const paginationModel = { page: 0, pageSize: 5 };
 
 export default function ModelsTable() {
   const [rows, setRows] = useState();
-  const [models, setModels] = useState();
-
+  const dispatch = useDispatch();
   const email = useSelector(selectEmail);
+  const models = useSelector(selectModels);
 
   const setRowSelectionModel = (rowIDs) => {
-    console.log(rowIDs)
-  }
+    console.log(rowIDs);
+  };
 
   useEffect(() => {
     const fetchModels = async () => {
       const data = await getUserModels(email);
-      const _rows = data.models.map(model => {
+      const _models = data.models.map(model => {
         return {
           id: model._id,
-          name: model.modelName,
-          url: model.modelURL
+          name: model.name,
+          url: model.url
         }
       })
-      setRows(_rows)
+      dispatch(changeModels(_models));
     };
-    fetchModels()
+    fetchModels();
   }, []);
 
   return (
     <Paper sx={{ height: 400, width: "100%" }}>
       <DataGrid
-        rows={rows}
+        rows={models}
         columns={columns}
         initialState={{ pagination: { paginationModel } }}
         pageSizeOptions={[5, 10]}
