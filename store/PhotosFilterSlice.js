@@ -29,10 +29,17 @@ export const photosFilterSlice = createSlice({
     photosUpdated(state) {
       state.shouldUpdatePhotos = false;
     },
+    changePreferencies(state, action) {
+      state.modelName = action.payload.modelName
+    }
   },
 });
 
-export const { setFilters, photosUpdated } = photosFilterSlice.actions;
+export const {
+  setFilters,
+  photosUpdated,
+  changePreferencies,
+} = photosFilterSlice.actions
 
 export const selectFilters = (state) => state.photosFilter;
 
