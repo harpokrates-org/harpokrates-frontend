@@ -126,3 +126,15 @@ export const getUserModels = async (email) => {
     throw error;
   }
 };
+
+export const deleteModel = async (email, modelID) => {
+  try {
+    return await axios
+      .delete(process.env.NEXT_PUBLIC_BACKEND_URL + "/models", {
+        params: { email, modelID },
+      })
+      .then((res) => res.data);
+  } catch (err) {
+    throw err;
+  }
+};
