@@ -1,10 +1,10 @@
-import { models } from "@/app/libs/modelIndex";
+import { models } from "@/app/libs/AppModelIndex";
 import { getUserPhotoSizes } from "../api/UserAPI";
+import { collectModels } from "./ModelCollection";
 const R = require("ramda");
-import { toast } from "react-hot-toast";
 
-export const fetchModel = async (modelName) => {
-  const model = models[modelName];
+export const fetchModel = async (modelCollection, modelName) => {
+  const model = modelCollection[modelName];
   await model.load();
   return model;
 };
@@ -24,7 +24,7 @@ export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
       count,
       Date.parse(minDate),
       Date.parse(maxDate)
-    )
+    );
 
     const _photos = await Promise.all(
       data.photos.map(async (p) => {
@@ -42,8 +42,8 @@ export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
     );
     return _photos;
   } catch (err) {
-    console.log(err)
-    return []
+    console.log(err);
+    return [];
   }
 };
 

@@ -1,17 +1,20 @@
-import { modelNames } from '@/app/libs/modelIndex'
-import { createSlice } from '@reduxjs/toolkit'
-import { useDispatch } from 'react-redux'
+import { appModelNames } from "@/app/libs/AppModelIndex";
+import { createSlice } from "@reduxjs/toolkit";
 
-const today = new Date()
+const today = new Date();
 const initialState = {
-  minDate: new Date(today.getFullYear(), today.getMonth(), today.getDate() - 6).toISOString(),
+  minDate: new Date(
+    today.getFullYear(),
+    today.getMonth(),
+    today.getDate() - 6
+  ).toISOString(),
   maxDate: today.toISOString(),
-  modelName: modelNames.NO_MODEL,
+  modelName: appModelNames.NO_MODEL,
   modelThreshold: 1,
-}
+};
 
 export const photosFilterSlice = createSlice({
-  name: 'photosFilter',
+  name: "photosFilter",
   initialState,
   reducers: {
     setFilters: (state, action) => {
@@ -20,17 +23,17 @@ export const photosFilterSlice = createSlice({
         maxDate: action.payload.maxDate,
         modelName: action.payload.modelName,
         modelThreshold: action.payload.modelThreshold,
-      }
-      return modifiedState
+      };
+      return modifiedState;
     },
     photosUpdated(state) {
-      state.shouldUpdatePhotos = false
+      state.shouldUpdatePhotos = false;
     },
     changePreferencies(state, action) {
       state.modelName = action.payload.modelName
     }
   },
-})
+});
 
 export const {
   setFilters,
@@ -38,6 +41,6 @@ export const {
   changePreferencies,
 } = photosFilterSlice.actions
 
-export const selectFilters = (state) => state.photosFilter
+export const selectFilters = (state) => state.photosFilter;
 
-export default photosFilterSlice.reducer
+export default photosFilterSlice.reducer;

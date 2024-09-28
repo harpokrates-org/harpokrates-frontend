@@ -2,6 +2,7 @@
 import { Box, Drawer, List, ListItem, ListItemButton, ListItemIcon, ListItemText, Toolbar } from "@mui/material";
 import PhotoLibraryIcon from '@mui/icons-material/PhotoLibrary';
 import HubIcon from '@mui/icons-material/Hub';
+import GrainIcon from '@mui/icons-material/Grain';
 
 export const drawerWidth = 180;
 
@@ -32,6 +33,14 @@ export default function SideBar() {
                 <HubIcon />
               </ListItemIcon>
               <ListItemText primary='Red' />
+            </ListItemButton>
+          </ListItem>
+          <ListItem key='Models' disablePadding>
+            <ListItemButton href="/models">
+              <ListItemIcon>
+                <GrainIcon />
+              </ListItemIcon>
+              <ListItemText primary='Modelos' />
             </ListItemButton>
           </ListItem>
         </List>
