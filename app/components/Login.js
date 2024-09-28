@@ -16,6 +16,7 @@ import { toast } from "react-hot-toast";
 import { useDispatch } from "react-redux";
 import { changeEmail, reset } from "@/store/HarpokratesUserSlice";
 import { useRouter } from 'next/navigation'
+import { changePreferencies } from "@/store/PhotosFilterSlice";
 
 const emailDoesNotExistMessage = "Email no encontrado";
 
@@ -28,6 +29,7 @@ export default function Login({ open, onClose, registerClickHandler }) {
     try {
       const res = await postLogin(email);
       dispatch(changeEmail(email));
+      if (res.data.preferencies) dispatch(changePreferencies({modelName: res.data.preferencies.model}));
       return res;
     } catch (error) {
       if (
