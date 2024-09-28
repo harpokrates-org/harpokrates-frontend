@@ -21,14 +21,14 @@ const columns = [
 
 const paginationModel = { page: 0, pageSize: 5 };
 
-export default function ModelsTable() {
+export default function ModelsTable({ setSelectedRows }) {
   const [rows, setRows] = useState();
   const dispatch = useDispatch();
   const email = useSelector(selectEmail);
   const models = useSelector(selectModels);
 
   const setRowSelectionModel = (rowIDs) => {
-    //console.log(rowIDs);
+    setSelectedRows(rowIDs)
   };
 
   useEffect(() => {
@@ -61,9 +61,7 @@ export default function ModelsTable() {
         pageSizeOptions={[5, 10]}
         checkboxSelection
         sx={{ border: 0 }}
-        onRowSelectionModelChange={(newRowSelectionModel) => {
-          setRowSelectionModel(newRowSelectionModel);
-        }}
+        onRowSelectionModelChange={setRowSelectionModel}
       />
     </Paper>
   );
