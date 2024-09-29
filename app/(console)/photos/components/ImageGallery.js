@@ -1,6 +1,6 @@
 "use client";
-import { fetchModel, fetchUserPhotoSizes, predict } from "@/app/libs/utils";
-import { selectId, selectPhotos, selectPhotosAreUpdated, setPhotos } from "@/store/FlickrUserSlice";
+import { fetchModel, fetchUserFavorites, fetchUserPhotoSizes, predict } from "@/app/libs/utils";
+import { selectId, selectName, selectPhotos, selectPhotosAreUpdated, setFavorites, setPhotos } from "@/store/FlickrUserSlice";
 import { selectFilters } from "@/store/PhotosFilterSlice";
 import {
   Box,
@@ -21,6 +21,7 @@ export default function ImageGallery() {
   const [openImage, setOpenImage] = useState(false);
   const photos = useSelector(selectPhotos)
   const userID = useSelector(selectId);
+  const username = useSelector(selectName);
   const filters = useSelector(selectFilters);
   const photosAreUpdated = useSelector(selectPhotosAreUpdated);
   const dispatch = useDispatch();
@@ -37,10 +38,14 @@ export default function ImageGallery() {
 
   useEffect(() => {
     const modelPrediction = async () => {
+      // if (!userID) return
       const modelCollection = collectModels(userModels);
       const model = await fetchModel(modelCollection, filters.modelName);
       const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate, 'Medium')
       const _photos = await predict(model, filters.modelThreshold, updatedPhotos);
+      const stegoPhotoIDs = _photos.filter((photo) => photo.prediction >= filters.modelThreshold)
+                                    .map((photo) => photo.id)
+      fetchUserFavorites(username, stegoPhotoIDs).then(favorites => dispatch(setFavorites(favorites)))
       dispatch(setPhotos(_photos));
     };
 

@@ -5,6 +5,7 @@ const initialState = {
   id: '',
   photos: [],
   network: { nodes:[], edges:[] },
+  favorites: {},
   photosAreUpdated: true,
   networkIsUpdated: true
 }
@@ -30,6 +31,9 @@ export const flickrUserSlice = createSlice({
       state.network = action.payload
       state.networkIsUpdated = true
     },
+    setFavorites: (state, action) => {
+      state.favorites = action.payload
+    },
     mustUpdatePhotos: (state, action) => {
       state.photosAreUpdated = false
     },
@@ -46,6 +50,7 @@ export const {
   userFound,
   setPhotos,
   setNetwork,
+  setFavorites,
   mustUpdatePhotos,
   mustUpdateNetwork,
   reset,
@@ -55,6 +60,7 @@ export const selectName = (state) => state.flickrUser.name
 export const selectId = (state) => state.flickrUser.id
 export const selectPhotos = (state) => state.flickrUser.photos
 export const selectNetwork = (state) => state.flickrUser.network
+export const selectFavorites = (state) => state.flickrUser.favorites
 export const selectPhotosAreUpdated = (state) => state.flickrUser.photosAreUpdated
 export const selectNetworkIsUpdated = (state) => state.flickrUser.networkIsUpdated
 

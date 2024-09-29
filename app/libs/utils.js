@@ -1,5 +1,5 @@
 import { models } from "@/app/libs/AppModelIndex";
-import { getUserPhotoSizes } from "../api/UserAPI";
+import { getUserFavorites, getUserPhotoSizes } from "../api/UserAPI";
 import { collectModels } from "./ModelCollection";
 const R = require("ramda");
 
@@ -44,6 +44,34 @@ export const fetchUserPhotoSizes = async (userID, minDate, maxDate, label) => {
   } catch (err) {
     console.log(err);
     return [];
+  }
+};
+
+export const fetchUserFavorites = async (username, photoIDs) => {
+  if (!username) return;
+  const photosPerFavorite = 0;
+  const depth = 1;
+  const originIndex = 0;
+  try {
+    const response = await getUserFavorites(
+      username,
+      photoIDs,
+      photosPerFavorite,
+      depth
+    );
+
+    const favorites = response.data.edges.reduce(
+      (accumulator, currentValue) => {
+        accumulator[currentValue[originIndex]] = (accumulator[currentValue[originIndex]] || 0) + 1
+        return accumulator
+      },
+      {},
+    );
+
+    return favorites;
+  } catch (err) {
+    console.log(err);
+    return {};
   }
 };
 
