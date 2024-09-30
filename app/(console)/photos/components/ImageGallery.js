@@ -14,11 +14,34 @@ import { useDispatch, useSelector } from "react-redux";
 import ImageDialog from "./ImageDialog";
 import { collectModels } from "@/app/libs/ModelCollection";
 import { selectModels } from "@/store/HarpokratesUserSlice";
+import JSZip from "jszip";
+import { saveAs } from "file-saver";
 const R = require("ramda");
+
+const downloadStegoImages = async (stegoPhotos) => {
+  const zip = new JSZip();
+  const images = stegoPhotos.map(async (photo) => {
+    const response = await fetch(photo.source);
+    const data = await response.blob();
+    const name = photo.title.replaceAll(' ', '_');
+    const type = photo.source.split('.').pop();
+    zip.file(`${name}.${type}`, data);
+
+    return data;
+  });
+
+  Promise.all(images)
+  .then(() => {
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "detecciones.zip");
+    });
+  })
+}
 
 export default function ImageGallery() {
   const [clickedImage, setClickedImage] = useState({ id: '', source: '', title: '', width: 0, height: 0 });
   const [openImage, setOpenImage] = useState(false);
+  const [stegoPhotos, setStegoPhotos] = useState([]);
   const photos = useSelector(selectPhotos)
   const userID = useSelector(selectId);
   const username = useSelector(selectName);
@@ -43,9 +66,10 @@ export default function ImageGallery() {
       const model = await fetchModel(modelCollection, filters.modelName);
       const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate, 'Medium')
       const _photos = await predict(model, filters.modelThreshold, updatedPhotos);
-      const stegoPhotoIDs = _photos.filter((photo) => photo.prediction >= filters.modelThreshold)
-                                    .map((photo) => photo.id)
+      const stegoPhotosAux = _photos.filter((photo) => photo.prediction >= filters.modelThreshold)
+      const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id)
       fetchUserFavorites(username, stegoPhotoIDs).then(favorites => dispatch(setFavorites(favorites)))
+      setStegoPhotos(stegoPhotosAux)
       dispatch(setPhotos(_photos));
     };
 
@@ -72,6 +96,16 @@ export default function ImageGallery() {
           </ImageListItem>
         ))}
       </ImageList>
+      {
+        stegoPhotos.length > 0 &&
+        <Button 
+          onClick={() => downloadStegoImages(stegoPhotos)} 
+          variant="outlined" 
+          sx={{ margin: `20px` }} 
+        >
+          Descargar detecciones
+        </Button>
+      }
       <ImageDialog photo={clickedImage} open={openImage} onClose={imageCloseHandler} />
     </Box>
   );
