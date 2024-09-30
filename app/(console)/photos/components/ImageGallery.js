@@ -66,9 +66,10 @@ export default function ImageGallery() {
       const model = await fetchModel(modelCollection, filters.modelName);
       const updatedPhotos = photosAreUpdated ? photos: await fetchUserPhotoSizes(userID, filters.minDate, filters.maxDate, 'Medium')
       const _photos = await predict(model, filters.modelThreshold, updatedPhotos);
-      setStegoPhotos(_photos.filter((photo) => photo.prediction >= filters.modelThreshold))
-      const stegoPhotoIDs = stegoPhotos.map((photo) => photo.id)
+      const stegoPhotosAux = _photos.filter((photo) => photo.prediction >= filters.modelThreshold)
+      const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id)
       fetchUserFavorites(username, stegoPhotoIDs).then(favorites => dispatch(setFavorites(favorites)))
+      setStegoPhotos(stegoPhotosAux)
       dispatch(setPhotos(_photos));
     };
 
