@@ -29,7 +29,6 @@ const text = {
 
 export default function SideBar() {
   const pathname = usePathname();
-  console.log(pathname);
 
   return (
     <Drawer

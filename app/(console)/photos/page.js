@@ -22,7 +22,6 @@ export default function ClippedDrawer() {
     <Box>
       <Grid container spacing={2}>
         <Grid item xs={12}>
-          <Typography variant="h4">Fotos</Typography>
           <PhotosTopBar />
           { username ? 
               <Box sx={{ display: 'flex' }}>
