@@ -9,6 +9,5 @@ export function collectModels(userModels) {
 export function collectModelNames(userModels) {
   const models = collectModels(userModels);
   const modelNames = Object.keys(models); 
-  console.log('modelNames', modelNames)
   return modelNames
 }

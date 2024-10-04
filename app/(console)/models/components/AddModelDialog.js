@@ -40,7 +40,6 @@ export default function AddModelDialog({ open, onClose, setRows }) {
           threshold: model.threshold
         };
       });
-      console.log("data", data);
       dispatch(changeModels(_models));
       toast.success("Modelo agregado");
     } catch (err) {
@@ -60,7 +59,6 @@ export default function AddModelDialog({ open, onClose, setRows }) {
           event.preventDefault();
           const formData = new FormData(event.currentTarget);
           const formJson = Object.fromEntries(formData.entries());
-          console.log(formJson);
           if (
             !(await postModelHandler(
               email,

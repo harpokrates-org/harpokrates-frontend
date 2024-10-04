@@ -4,6 +4,7 @@ import {
   getUserName,
   getUserPhotos,
 } from "@/app/api/UserAPI";
+import { collectModels } from "@/app/libs/ModelCollection";
 import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
 import {
   selectId,
@@ -13,6 +14,7 @@ import {
   selectPhotos,
   setNetwork,
 } from "@/store/FlickrUserSlice";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 import {
   selectColor,
   selectDepth,
@@ -20,6 +22,7 @@ import {
   selectSize,
   selectSpanningTreeK,
 } from "@/store/NetworkSlice";
+import { Box, LinearProgress } from "@mui/material";
 import { useWindowSize } from "@react-hook/window-size";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph2D } from "react-force-graph";
@@ -27,8 +30,6 @@ import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { NetBuilder } from "../utils/NetBuilder";
-import { collectModels } from "@/app/libs/ModelCollection";
-import { selectModels } from "@/store/HarpokratesUserSlice";
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -100,7 +101,6 @@ export default function Graph() {
         });
     };
 
-    
     getSocialNetwork();
   }, [
     userID,
@@ -146,14 +146,13 @@ export default function Graph() {
       );
       setNetworkPhotos(_networkPhotos);
     };
-    getNetworkPhotos(socialNetwork)
+    getNetworkPhotos(socialNetwork);
   }, [socialNetwork]);
 
   useEffect(() => {
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
       const modelCollection = collectModels(userModels);
-      console.log('modelCollection', modelCollection)
       const model = await fetchModel(modelCollection, modelName);
       const net = await new NetBuilder().build(
         socialNetwork,
@@ -192,16 +191,22 @@ export default function Graph() {
   );
 
   return (
-    <ForceGraph2D
-      ref={fgRef}
-      graphData={net}
-      nodeLabel="id"
-      nodeColor={nodeColorHandler}
-      linkDirectionalArrowLength={3.5}
-      linkDirectionalArrowRelPos={1}
-      // onNodeClick={handleClick}
-      width={width - drawerWidth - padding}
-      height={height - topMenuHeight - padding}
-    />
+    <Box>
+      {net.nodes.length == 0 ? (
+        <LinearProgress />
+      ) : (
+        <ForceGraph2D
+          ref={fgRef}
+          graphData={net}
+          nodeLabel="id"
+          nodeColor={nodeColorHandler}
+          linkDirectionalArrowLength={3.5}
+          linkDirectionalArrowRelPos={1}
+          // onNodeClick={handleClick}
+          width={width - drawerWidth - padding}
+          height={height - topMenuHeight - padding}
+        />
+      )}
+    </Box>
   );
 }
