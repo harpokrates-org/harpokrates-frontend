@@ -205,7 +205,6 @@ export default function Graph() {
           // onNodeClick={handleClick}
           width={width - drawerWidth - padding}
           height={height - topMenuHeight - padding}
-          onEngineStop={console.log("onEngineStop")}
         />
       )}
     </Box>
