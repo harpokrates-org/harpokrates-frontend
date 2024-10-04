@@ -22,6 +22,7 @@ import {
   selectSize,
   selectSpanningTreeK,
 } from "@/store/NetworkSlice";
+import { Box, LinearProgress } from "@mui/material";
 import { useWindowSize } from "@react-hook/window-size";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph2D } from "react-force-graph";
@@ -190,16 +191,23 @@ export default function Graph() {
   );
 
   return (
-    <ForceGraph2D
-      ref={fgRef}
-      graphData={net}
-      nodeLabel="id"
-      nodeColor={nodeColorHandler}
-      linkDirectionalArrowLength={3.5}
-      linkDirectionalArrowRelPos={1}
-      // onNodeClick={handleClick}
-      width={width - drawerWidth - padding}
-      height={height - topMenuHeight - padding}
-    />
+    <Box>
+      {net.nodes.length == 0 ? (
+        <LinearProgress />
+      ) : (
+        <ForceGraph2D
+          ref={fgRef}
+          graphData={net}
+          nodeLabel="id"
+          nodeColor={nodeColorHandler}
+          linkDirectionalArrowLength={3.5}
+          linkDirectionalArrowRelPos={1}
+          // onNodeClick={handleClick}
+          width={width - drawerWidth - padding}
+          height={height - topMenuHeight - padding}
+          onEngineStop={console.log("onEngineStop")}
+        />
+      )}
+    </Box>
   );
 }
