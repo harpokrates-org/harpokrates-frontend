@@ -4,7 +4,7 @@ import chroma from "chroma-js";
 const R = require("ramda");
 
 const COLOR_KEY = "group";
-const SIZE_KEY = "vals";
+const SIZE_KEY = "val";
 export class NetBuilder {
   _matchPositivesToColors(positives) {
     const positiveValues = Object.entries(positives).map((entry) => {
