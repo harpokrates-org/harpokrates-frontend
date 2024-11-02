@@ -30,6 +30,7 @@ import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { NetBuilder } from "../utils/NetBuilder";
+const R = require("ramda");
 
 const photosPerFavorite = 1;
 const mainPhotosCount = 12;
@@ -72,6 +73,11 @@ export default function Graph() {
       return photoIDs;
     };
 
+    const removeDuplicatedEdges = (network) => {
+      network.edges = R.uniq(network.edges);
+      return network;
+    };
+
     const getFavorites = async (photos) => {
       const photoIDs = photos.map((photo) => photo.id);
       const response = await getUserFavorites(
@@ -80,7 +86,8 @@ export default function Graph() {
         photosPerFavorite,
         depth
       );
-      dispatch(setNetwork(response.data));
+      const _network = removeDuplicatedEdges(response.data);
+      dispatch(setNetwork(_network));
       return response.data;
     };
 
@@ -116,7 +123,11 @@ export default function Graph() {
   useEffect(() => {
     const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
-      const topUsers = JSON.parse(socialNetwork.get_top_users("degree", 10));
+      const topUsers = JSON.parse(
+        socialNetwork.get_top_users("popularity", 10)
+      );
+      console.log("getNetworkPhotos", network);
+      console.log("getNetworkPhotos", topUsers);
       const _networkPhotos = await Promise.all(
         topUsers.map(async (flickrUserName) => {
           try {
@@ -162,6 +173,7 @@ export default function Graph() {
         model,
         networkPhotos
       );
+      console.log('buildAndSetNet', net)
       setNet(net);
     };
     buildAndSetNet().catch(console.error);

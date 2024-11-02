@@ -46,7 +46,9 @@ impl SocialNetwork {
 
         let net = match config.color.as_str() {
             "community" => community_detection::strongly_connected_components(&self.graph, net),
-            "spanning_tree" => community_detection::k_spanning_tree(&self.graph, net, config.spanning_tree_k),
+            "spanning_tree" => {
+                community_detection::k_spanning_tree(&self.graph, net, config.spanning_tree_k)
+            }
             &_ => net,
         };
 
@@ -59,11 +61,15 @@ impl SocialNetwork {
         set_panic_hook();
         let net = OutputNet::from_graph(&self.graph);
         let mut net = ranking::match_ranking(&self.graph, ranking_type, net);
-        net.nodes.sort_by(|a, b| a.val.cmp(&b.val));
+        net.nodes.sort_by(|a, b| b.val.cmp(&a.val));
         let count = min(count, net.nodes.len());
-        let top = net.nodes.iter().take(count)
+        let top = net
+            .nodes
+            .iter()
+            .take(count)
             .map(|node| &node.id)
             .collect::<Vec<&String>>();
+
         serde_json::to_string(&top).expect("GET_NET: Failed converting rank to string")
     }
 }
@@ -145,5 +151,56 @@ mod tests {
                 .clone(),
             0
         );
+    }
+
+    #[test]
+    fn should_get_top_users_based_on_degree() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["1", "2"], ["2", "1"], ["1", "3"]],
+            "main_node": "1"
+        }"#;
+        let ranking_type = "degree";
+        let count = 2;
+
+        let sn = SocialNetwork::from_net(input);
+        let out = sn.get_top_users(ranking_type, count);
+        let top_users: Vec<String> = serde_json::from_str(&out).unwrap();
+
+        assert_eq!(top_users, vec!["1", "2"]);
+    }
+
+    #[test]
+    fn should_get_top_users_based_on_followers() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["2", "1"], ["1", "3"], ["2", "3"]],
+            "main_node": "1"
+        }"#;
+        let ranking_type = "follower";
+        let count = 3;
+
+        let sn = SocialNetwork::from_net(input);
+        let out = sn.get_top_users(ranking_type, count);
+        let top_users: Vec<String> = serde_json::from_str(&out).unwrap();
+
+        assert_eq!(top_users, vec!["2", "1", "3"]);
+    }
+
+    #[test]
+    fn should_get_top_users_based_on_popularity() {
+        let input = r#"{
+            "nodes": ["1", "2", "3"],
+            "edges": [["2", "1"], ["1", "3"], ["2", "3"]],
+            "main_node": "1"
+        }"#;
+        let ranking_type = "popularity";
+        let count = 3;
+
+        let sn = SocialNetwork::from_net(input);
+        let out = sn.get_top_users(ranking_type, count);
+        let top_users: Vec<String> = serde_json::from_str(&out).unwrap();
+
+        assert_eq!(top_users, vec!["3", "1", "2"]);
     }
 }

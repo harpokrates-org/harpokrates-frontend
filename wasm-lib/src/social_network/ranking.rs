@@ -62,7 +62,7 @@ mod tests {
     fn should_count_node_degree() {
         let input = r#"{
             "nodes": ["1", "2", "3"],
-            "edges": [["1", "2"], ["1", "3"]],
+            "edges": [["1", "2"], ["1", "3"], ["2", "1"]],
             "main_node": "1"
         }"#;
         let input_net: InputNet = serde_json::from_str(input).unwrap();
@@ -77,13 +77,22 @@ mod tests {
                 .filter(|&node| node.id == "1")
                 .collect::<Vec<&OutputNode>>()[0]
                 .val,
+            3
+        );
+        assert_eq!(
+            output_net
+                .nodes
+                .iter()
+                .filter(|&node| node.id == "2")
+                .collect::<Vec<&OutputNode>>()[0]
+                .val,
             2
         );
         assert_eq!(
             output_net
                 .nodes
                 .iter()
-                .filter(|&node| node.id == "2" || node.id == "3")
+                .filter(|&node| node.id == "3")
                 .collect::<Vec<&OutputNode>>()[0]
                 .val,
             1
