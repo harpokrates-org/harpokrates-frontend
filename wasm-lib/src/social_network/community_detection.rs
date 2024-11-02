@@ -1,14 +1,16 @@
+use core::cmp::{max, min};
 use petgraph::{
-    algo::{tarjan_scc, connected_components, min_spanning_tree}, 
-    prelude::Dfs, 
+    algo::{connected_components, min_spanning_tree, tarjan_scc},
+    data::FromElements,
     graph::{DiGraph, NodeIndex, UnGraph},
-    visit::{EdgeRef, NodeRef}, 
-    data::FromElements
+    prelude::Dfs,
+    visit::{EdgeRef, NodeRef},
 };
 use std::collections::HashMap;
-use core::cmp::{ min, max };
 
-use crate::social_network::{group::Group, node::Node, output_net::OutputNet, output_node::OutputNode};
+use crate::social_network::{
+    group::Group, node::Node, output_net::OutputNet, output_node::OutputNode,
+};
 
 use super::group::GREY_COLOR_IN_DECIMAL;
 
@@ -63,7 +65,10 @@ pub fn strongly_connected_components(graph: &DiGraph<Node, ()>, mut net: OutputN
     net
 }
 
-fn get_graph_edge_weights(graph: &DiGraph<Node, ()>, graph_size: usize) -> HashMap<(usize, usize), usize> {
+fn get_graph_edge_weights(
+    graph: &DiGraph<Node, ()>,
+    graph_size: usize,
+) -> HashMap<(usize, usize), usize> {
     let mut edge_weights = HashMap::new();
 
     for edge in graph.edge_references() {
@@ -71,19 +76,18 @@ fn get_graph_edge_weights(graph: &DiGraph<Node, ()>, graph_size: usize) -> HashM
         let to = edge.target().index();
         let x_index = min(from, to);
         let y_index = max(from, to);
-        
+
         // weight = |E|-<las aristas from-to/to-from>
-        edge_weights.entry((x_index, y_index))
-            .and_modify(|weight| {
-                *weight -= 1
-            })
+        edge_weights
+            .entry((x_index, y_index))
+            .and_modify(|weight| *weight -= 1)
             .or_insert(graph_size);
     }
 
     edge_weights
 }
 
-fn get_graph_inverse_weights(graph: & DiGraph<Node, ()>) -> UnGraph<Node, usize> {
+fn get_graph_inverse_weights(graph: &DiGraph<Node, ()>) -> UnGraph<Node, usize> {
     let mut weighted_graph = UnGraph::<Node, usize>::new_undirected();
     let graph_size = graph.edge_count(); // |E|
 
@@ -100,29 +104,39 @@ fn get_graph_inverse_weights(graph: & DiGraph<Node, ()>) -> UnGraph<Node, usize>
     weighted_graph
 }
 
-fn set_spanning_tree_communities(spanning_tree: &UnGraph<Node, usize>, references: &mut HashMap<String, &mut OutputNode>) -> HashMap<NodeIndex, f64> {
+fn set_spanning_tree_communities(
+    spanning_tree: &UnGraph<Node, usize>,
+    references: &mut HashMap<String, &mut OutputNode>,
+) -> HashMap<NodeIndex, f64> {
     let mut visited = vec![false; spanning_tree.node_count()];
     let mut communities = HashMap::new();
     let mut community_index = 0;
-    let communities_number = connected_components(&spanning_tree);
+    let communities_number = connected_components(spanning_tree);
 
     for node in spanning_tree.node_indices() {
-        if visited[node.index()] {continue;}
+        if visited[node.index()] {
+            continue;
+        }
 
         let mut dfs = Dfs::new(&spanning_tree, node);
 
         while let Some(next_node) = dfs.next(&spanning_tree) {
-            if visited[next_node.index()] {continue;}
+            if visited[next_node.index()] {
+                continue;
+            }
             visited[next_node.index()] = true;
 
             let id = &spanning_tree[next_node].id;
             if let Some(node) = references.get_mut(id) {
-                if node.group == Group::Main as u32 {continue;}
+                if node.group == Group::Main as u32 {
+                    continue;
+                }
                 node.group =
-                    component_to_color((community_index + 1) as f64, communities_number as f64) as u32;
+                    component_to_color((community_index + 1) as f64, communities_number as f64)
+                        as u32;
             }
 
-            communities.insert(next_node.id().clone(), community_index.clone() as f64);
+            communities.insert(next_node.id(), community_index as f64);
         }
         community_index += 1;
     }
@@ -130,12 +144,10 @@ fn set_spanning_tree_communities(spanning_tree: &UnGraph<Node, usize>, reference
     communities
 }
 
-fn graph_ascending_edge_indices(graph: &UnGraph::<Node, usize>) -> Vec<petgraph::prelude::EdgeIndex> {
+fn graph_ascending_edge_indices(graph: &UnGraph<Node, usize>) -> Vec<petgraph::prelude::EdgeIndex> {
     let mut edge_refs: Vec<_> = graph.edge_references().collect();
-    edge_refs.sort_by(|a, b| a.weight().cmp(&b.weight()));
-    edge_refs.iter()
-            .map(|edge| edge.id())
-            .collect()
+    edge_refs.sort_by(|a, b| a.weight().cmp(b.weight()));
+    edge_refs.iter().map(|edge| edge.id()).collect()
 }
 
 pub fn k_spanning_tree(graph: &DiGraph<Node, ()>, mut net: OutputNet, k: usize) -> OutputNet {
@@ -146,8 +158,8 @@ pub fn k_spanning_tree(graph: &DiGraph<Node, ()>, mut net: OutputNet, k: usize) 
     let edge_indecies: Vec<_> = graph_ascending_edge_indices(&spanning_tree);
 
     if edge_indecies.len() > k {
-        for i in 0..(k-1) {
-            spanning_tree.remove_edge(edge_indecies[i]).unwrap();
+        for &edge_index in edge_indecies.iter().take(k - 1) {
+            spanning_tree.remove_edge(edge_index).unwrap();
         }
     }
 
@@ -157,12 +169,13 @@ pub fn k_spanning_tree(graph: &DiGraph<Node, ()>, mut net: OutputNet, k: usize) 
     net
 }
 
-
 #[cfg(test)]
 mod tests {
     use crate::social_network::{
-        community_detection::{strongly_connected_components, k_spanning_tree}, input_net::InputNet,
-        output_net::OutputNet, output_node::OutputNode,
+        community_detection::{k_spanning_tree, strongly_connected_components},
+        input_net::InputNet,
+        output_net::OutputNet,
+        output_node::OutputNode,
     };
 
     #[test]
@@ -247,8 +260,7 @@ mod tests {
     }
 
     #[test]
-    fn the_node_with_the_highest_weight_edge_should_not_be_in_the_same_group_as_main_node(
-    ) {
+    fn the_node_with_the_highest_weight_edge_should_not_be_in_the_same_group_as_main_node() {
         let input = r#"{
             "nodes": ["1", "2", "3", "4", "5", "6"],
             "edges": [
