@@ -14,7 +14,7 @@ export const getUserPhotoSizes = async (userID, count, minDate, maxDate) => {
       })
       .then((res) => res.data);
   } catch (err) {
-    console.log(err);
+    console.log(`Error en getUserPhotoSizes para ${userID}`);
     return { photos: [] };
   }
 };
@@ -42,7 +42,7 @@ export const getUserName = async (flickrUserName) => {
       },
     });
   } catch (err) {
-    console.log(err);
+    console.log(`Error getUserName: flickrUserName=${flickrUserName}`);
   }
 };
 

@@ -69,6 +69,7 @@ impl SocialNetwork {
             .take(count)
             .map(|node| &node.id)
             .collect::<Vec<&String>>();
+
         serde_json::to_string(&top).expect("GET_NET: Failed converting rank to string")
     }
 }
