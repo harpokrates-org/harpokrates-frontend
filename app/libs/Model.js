@@ -1,5 +1,6 @@
 const tf = require("@tensorflow/tfjs");
 const pixels = require("image-pixels");
+const ModelLoadError = require("./ModelError");
 
 // Elimina los mensajes de log de tensorflow
 // https://discuss.tensorflow.org/t/removing-the-standard-hi-there-you-are-using-tensorflow-js/13718/3
@@ -17,9 +18,13 @@ class Model {
   async load() {
     if (this.model) return this.model;
     await tf.ready();
-    this.model = await tf.loadGraphModel(this.path, {
-      fromTFHub: this.fromTFHub,
-    });
+    try {
+      this.model = await tf.loadGraphModel(this.path, {
+        fromTFHub: this.fromTFHub,
+      });
+    } catch (error) {
+      throw new ModelLoadError()
+    }
     return this.model;
   }
 

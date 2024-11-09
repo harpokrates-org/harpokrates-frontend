@@ -1,7 +1,7 @@
 "use client";
 import { putPreferencies } from "@/app/api/UserAPI";
 import { collectModelNames, collectModels } from "@/app/libs/ModelCollection";
-import { mustUpdateNetwork, mustUpdatePhotos } from "@/store/FlickrUserSlice";
+import { mustUpdateNetwork, mustUpdatePhotos, resetFavorites } from "@/store/FlickrUserSlice";
 import { selectEmail, selectModels } from "@/store/HarpokratesUserSlice";
 import { selectFilters, setFilters } from "@/store/PhotosFilterSlice";
 import { KeyboardArrowDown } from "@mui/icons-material";
@@ -41,9 +41,11 @@ export default function PhotosTopBar() {
 
   const handleSubmit = (e) => {
     e.preventDefault();
-    const mustUpdate =
+    const datesChanges =
       dateRange.minDate != filters.minDate ||
       dateRange.maxDate != filters.maxDate;
+    const modelChanged = filters.modelName != modelName
+
     dispatch(
       setFilters({
         ...dateRange,
@@ -51,9 +53,13 @@ export default function PhotosTopBar() {
         modelThreshold: models[modelName].threshold || 1,
       })
     );
-    if (mustUpdate) {
+
+    if (datesChanges) {
       dispatch(mustUpdatePhotos());
       dispatch(mustUpdateNetwork());
+      dispatch(resetFavorites());
+    } else if (modelChanged) {
+      dispatch(resetFavorites());
     }
   };
 

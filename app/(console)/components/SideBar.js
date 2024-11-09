@@ -49,7 +49,7 @@ export default function SideBar() {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={
-                  pathname === PATHNAMES.PHOTOS && { style: text }
+                  pathname === PATHNAMES.PHOTOS ? { style: text } : {}
                 }
                 primary="Fotos"
               />
@@ -62,7 +62,7 @@ export default function SideBar() {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={
-                  pathname === PATHNAMES.NETWORK && { style: text }
+                  pathname === PATHNAMES.NETWORK ? { style: text } : {}
                 }
                 primary="Red"
               />
@@ -75,7 +75,7 @@ export default function SideBar() {
               </ListItemIcon>
               <ListItemText
                 primaryTypographyProps={
-                  pathname === PATHNAMES.MODELS && { style: text }
+                  pathname === PATHNAMES.MODELS ? { style: text } : {}
                 }
                 primary="Modelos"
               />

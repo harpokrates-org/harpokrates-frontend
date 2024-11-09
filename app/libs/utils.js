@@ -90,3 +90,16 @@ export const predict = async (model, modelThreshold, photos) => {
   );
   return _photos;
 };
+
+export const resetPresiction = async (photos) => {
+  const _photos = await Promise.all(
+    photos.map(async (p) => {
+      return {
+        ...p,
+        filter: '',
+        prediction: 0,
+      };
+    })
+  );
+  return _photos;
+};
