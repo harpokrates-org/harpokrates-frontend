@@ -34,6 +34,9 @@ export const flickrUserSlice = createSlice({
     setFavorites: (state, action) => {
       state.favorites = action.payload
     },
+    resetFavorites: (state, action) => {
+      state.favorites = initialState.favorites
+    },
     mustUpdatePhotos: (state, action) => {
       state.photosAreUpdated = false
     },
@@ -51,6 +54,7 @@ export const {
   setPhotos,
   setNetwork,
   setFavorites,
+  resetFavorites,
   mustUpdatePhotos,
   mustUpdateNetwork,
   reset,

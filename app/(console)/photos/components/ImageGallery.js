@@ -5,6 +5,7 @@ import {
   fetchUserFavorites,
   fetchUserPhotoSizes,
   predict,
+  resetPresiction,
 } from "@/app/libs/utils";
 import {
   selectId,
@@ -28,6 +29,8 @@ import JSZip from "jszip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
 import ImageDialog from "./ImageDialog";
+import toast from "react-hot-toast";
+import ModelLoadError from "@/app/libs/ModelError";
 const R = require("ramda");
 
 const downloadStegoImages = async (stegoPhotos) => {
@@ -78,31 +81,45 @@ export default function ImageGallery() {
 
   useEffect(() => {
     const modelPrediction = async () => {
-      // if (!userID) return
-      const modelCollection = collectModels(userModels);
-      const model = await fetchModel(modelCollection, filters.modelName);
-      const updatedPhotos = photosAreUpdated
-        ? photos
-        : await fetchUserPhotoSizes(
-            userID,
-            filters.minDate,
-            filters.maxDate,
-            "Medium"
+      try {
+        const modelCollection = collectModels(userModels);
+        const model = await fetchModel(modelCollection, filters.modelName);
+
+        const updatedPhotos = photosAreUpdated
+          ? photos
+          : await fetchUserPhotoSizes(
+              userID,
+              filters.minDate,
+              filters.maxDate,
+              "Medium"
+            );
+
+        const _photos = await predict(
+          model,
+          filters.modelThreshold,
+          updatedPhotos
+        );
+        const stegoPhotosAux = _photos.filter(
+          (photo) => photo.prediction >= filters.modelThreshold
+        );
+        const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id);
+        fetchUserFavorites(username, stegoPhotoIDs).then((favorites) =>
+          dispatch(setFavorites(favorites))
+        );
+        setStegoPhotos(stegoPhotosAux);
+        dispatch(setPhotos(_photos));
+
+      } catch (error) {
+        if (error instanceof ModelLoadError){
+          toast.error("No pudimos cargar el modelo");
+          setStegoPhotos([]);
+          resetPresiction(photos).then((_photos) =>
+            dispatch(setPhotos(_photos))
           );
-      const _photos = await predict(
-        model,
-        filters.modelThreshold,
-        updatedPhotos
-      );
-      const stegoPhotosAux = _photos.filter(
-        (photo) => photo.prediction >= filters.modelThreshold
-      );
-      const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id);
-      fetchUserFavorites(username, stegoPhotoIDs).then((favorites) =>
-        dispatch(setFavorites(favorites))
-      );
-      setStegoPhotos(stegoPhotosAux);
-      dispatch(setPhotos(_photos));
+        } else {
+          toast.error("No pudimos realizar la predicción");
+        }
+      }
     };
 
     modelPrediction();
@@ -111,7 +128,7 @@ export default function ImageGallery() {
   return (
     <Box>
       <ImageList cols={4}>
-        {photos.map((photo) => (
+        {photos.map((photo, index) => (
           <ImageListItem key={photo.id}>
             <Button onClick={() => imageClickHandler(photo)}>
               <img
