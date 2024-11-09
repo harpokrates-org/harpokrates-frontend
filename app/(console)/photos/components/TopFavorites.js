@@ -30,7 +30,7 @@ export default function TopFavorites() {
                         favorites[favoriteY] - favorites[favoriteX])
                     .slice(0, 10)
                     .map((favorite) => (
-                      <ListItem key={favorites}>
+                      <ListItem key={favorite}>
                       <ListItemText
                         primary={favorite}
                         secondary={favorites[favorite] + ' Favoritos'}
