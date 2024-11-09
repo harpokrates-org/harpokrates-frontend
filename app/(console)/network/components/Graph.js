@@ -30,6 +30,9 @@ import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { NetBuilder } from "../utils/NetBuilder";
+import ModelLoadError from "@/app/libs/ModelError";
+import toast from "react-hot-toast";
+import { appModelNames } from "@/app/libs/AppModelIndex";
 const R = require("ramda");
 
 const photosPerFavorite = 1;
@@ -153,10 +156,21 @@ export default function Graph() {
   }, [socialNetwork]);
 
   useEffect(() => {
+    const getModel = async () => {
+      try {
+        const modelCollection = collectModels(userModels);
+        return await fetchModel(modelCollection, modelName);
+      } catch (error) {
+        if (error instanceof ModelLoadError){
+          toast.error("No pudimos cargar el modelo");
+          return appModelNames.NO_MODEL
+        }
+      }
+    }
+
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
-      const modelCollection = collectModels(userModels);
-      const model = await fetchModel(modelCollection, modelName);
+      const model = await getModel()
       const net = await new NetBuilder().build(
         socialNetwork,
         size,
@@ -167,6 +181,7 @@ export default function Graph() {
       );
       setNet(net);
     };
+
     buildAndSetNet().catch(console.error);
   }, [socialNetwork, networkPhotos, size, color, spanningTreeK, modelName]);
 
