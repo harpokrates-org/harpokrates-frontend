@@ -11,6 +11,7 @@ import {
 } from "@mui/material";
 import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
+const tf = require("@tensorflow/tfjs");
 
 export default function AddModelDialog({ open, onClose, setRows }) {
   const dispatch = useDispatch();
@@ -24,6 +25,16 @@ export default function AddModelDialog({ open, onClose, setRows }) {
     modelThreshold
   ) => {
     try {
+      await toast.promise(
+        tf.loadGraphModel(modelURL, {
+          fromTFHub: true,
+        }),
+        {
+          loading: "Revisando la URL del modelo",
+          success: "URL valida",
+          error: "URL invalida",
+        }
+      );
       const data = await postModel(
         email,
         modelName,
@@ -37,7 +48,7 @@ export default function AddModelDialog({ open, onClose, setRows }) {
           name: model.name,
           url: model.url,
           imageSize: model.imageSize,
-          threshold: model.threshold
+          threshold: model.threshold,
         };
       });
       dispatch(changeModels(_models));
@@ -110,7 +121,7 @@ export default function AddModelDialog({ open, onClose, setRows }) {
           variant="standard"
           inputProps={{
             maxLength: 1,
-            step: "0.1"
+            step: "0.1",
           }}
         />
       </DialogContent>
