@@ -91,9 +91,8 @@ export default function ImageGallery() {
     }
 
     if (modelName in photoPredictions) {
-      console.log(photoPredictions);
       return photoPredictions[modelName];
-    } 
+    }
 
     const _photos = await toast.promise(
       predict(model, modelThreshold, updatedPhotos),
@@ -105,9 +104,8 @@ export default function ImageGallery() {
     );
     const _photoPredictions = { ...photoPredictions };
     _photoPredictions[modelName] = _photos;
-    console.log(_photoPredictions);
     dispatch(setPhotoPredictions(_photoPredictions));
-    
+
     return _photos;
   };
 
