@@ -10,9 +10,11 @@ import {
 import {
   selectId,
   selectName,
+  selectPhotoPredictions,
   selectPhotos,
   selectPhotosAreUpdated,
   setFavorites,
+  setPhotoPredictions,
   setPhotos,
 } from "@/store/FlickrUserSlice";
 import { selectModels } from "@/store/HarpokratesUserSlice";
@@ -69,6 +71,10 @@ export default function ImageGallery() {
   const photosAreUpdated = useSelector(selectPhotosAreUpdated);
   const dispatch = useDispatch();
   const userModels = useSelector(selectModels);
+  const photoPredictions = useSelector(selectPhotoPredictions);
+
+  const modelName = filters.modelName;
+  const modelThreshold = filters.modelThreshold;
 
   const imageClickHandler = (photo) => {
     setClickedImage(photo);
@@ -79,11 +85,37 @@ export default function ImageGallery() {
     setOpenImage(false);
   };
 
+  const tryUsingPastPredictions = async (model, updatedPhotos) => {
+    if (!photosAreUpdated) {
+      dispatch(setPhotoPredictions({}));
+    }
+
+    if (modelName in photoPredictions) {
+      console.log(photoPredictions);
+      return photoPredictions[modelName];
+    } 
+
+    const _photos = await toast.promise(
+      predict(model, modelThreshold, updatedPhotos),
+      {
+        loading: "Revisando las imagenes",
+        success: "Imagenes revisadas",
+        error: "Error de predicción",
+      }
+    );
+    const _photoPredictions = { ...photoPredictions };
+    _photoPredictions[modelName] = _photos;
+    console.log(_photoPredictions);
+    dispatch(setPhotoPredictions(_photoPredictions));
+    
+    return _photos;
+  };
+
   useEffect(() => {
     const modelPrediction = async () => {
       try {
         const modelCollection = collectModels(userModels);
-        const model = await fetchModel(modelCollection, filters.modelName);
+        const model = await fetchModel(modelCollection, modelName);
 
         const updatedPhotos = photosAreUpdated
           ? photos
@@ -94,13 +126,10 @@ export default function ImageGallery() {
               "Medium"
             );
 
-        const _photos = await predict(
-          model,
-          filters.modelThreshold,
-          updatedPhotos
-        );
+        const _photos = await tryUsingPastPredictions(model, updatedPhotos);
+
         const stegoPhotosAux = _photos.filter(
-          (photo) => photo.prediction >= filters.modelThreshold
+          (photo) => photo.prediction >= modelThreshold
         );
         const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id);
         fetchUserFavorites(username, stegoPhotoIDs).then((favorites) =>
@@ -108,15 +137,15 @@ export default function ImageGallery() {
         );
         setStegoPhotos(stegoPhotosAux);
         dispatch(setPhotos(_photos));
-
       } catch (error) {
-        if (error instanceof ModelLoadError){
+        if (error instanceof ModelLoadError) {
           toast.error("No pudimos cargar el modelo");
           setStegoPhotos([]);
           resetPresiction(photos).then((_photos) =>
             dispatch(setPhotos(_photos))
           );
         } else {
+          console.log(error);
           toast.error("No pudimos realizar la predicción");
         }
       }
@@ -138,15 +167,13 @@ export default function ImageGallery() {
                   width: "100%",
                   height: "20vh",
                   filter: photo.filter,
-                  objectFit: 'cover'
+                  objectFit: "cover",
                 }}
                 loading="lazy"
               />
             </Button>
             {photo.prediction >= filters.modelThreshold ? (
-              <ImageListItemBar
-                subtitle={photo.prediction.toFixed(2)}
-              />
+              <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
             ) : null}
           </ImageListItem>
         ))}

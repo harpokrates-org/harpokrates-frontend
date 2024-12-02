@@ -7,7 +7,19 @@ const initialState = {
   network: { nodes:[], edges:[] },
   favorites: {},
   photosAreUpdated: true,
-  networkIsUpdated: true
+  networkIsUpdated: true,
+  
+  // Esquema de ejemplo de las predicciones
+  //  
+  // { 
+  //     'efficientnet: [
+  //          { source: ..., prediction: 0.9 }, 
+  //          { source: ..., prediction: 0.8 }
+  //     ],
+  //     'mobilenet': [],
+  //     'sin modelo': []
+  // }  
+  photoPredictions: {}
 }
 
 export const flickrUserSlice = createSlice({
@@ -46,6 +58,9 @@ export const flickrUserSlice = createSlice({
     reset: (state, action) => {
       return initialState
     },
+    setPhotoPredictions: (state, action) => {
+      state.photoPredictions = action.payload
+    },
   },
 })
 
@@ -58,6 +73,7 @@ export const {
   mustUpdatePhotos,
   mustUpdateNetwork,
   reset,
+  setPhotoPredictions
 } = flickrUserSlice.actions
 
 export const selectName = (state) => state.flickrUser.name
@@ -67,5 +83,7 @@ export const selectNetwork = (state) => state.flickrUser.network
 export const selectFavorites = (state) => state.flickrUser.favorites
 export const selectPhotosAreUpdated = (state) => state.flickrUser.photosAreUpdated
 export const selectNetworkIsUpdated = (state) => state.flickrUser.networkIsUpdated
+export const selectPhotoPredictions = (state) => state.flickrUser.photoPredictions
+
 
 export default flickrUserSlice.reducer
