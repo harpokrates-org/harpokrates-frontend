@@ -14,5 +14,5 @@ jobs:
         with:
           toolchain: nightly
       - run: cd wasm-lib && cargo +nightly test
-      - run: cd wasm-lib && cargo fmt
-      - run: cd wasm-lib && cargo clippy
+      - run: cd wasm-lib && cargo +nightly fmt
+      - run: cd wasm-lib && cargo +nightly clippy
