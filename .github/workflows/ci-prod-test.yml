@@ -12,7 +12,7 @@ jobs:
       - uses: actions/checkout@v2
       - uses: actions-rs/toolchain@v1
         with:
-          toolchain: stable
+          toolchain: nightly
       - run: cd wasm-lib && cargo +nightly test
       - run: cd wasm-lib && cargo fmt
       - run: cd wasm-lib && cargo clippy
