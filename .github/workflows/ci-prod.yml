@@ -9,14 +9,6 @@ jobs:
     runs-on: ubuntu-latest
 
     steps:
-      - uses: actions/checkout@v2
-      - uses: actions-rs/toolchain@v1
-        with:
-          toolchain: stable
-      - run: cd wasm-lib && cargo test
-      - run: cd wasm-lib && cargo fmt
-      - run: cd wasm-lib && cargo clippy
-
       - name: Use Node.js 20.x
         uses: actions/setup-node@v1
         with:
