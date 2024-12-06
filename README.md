@@ -1,5 +1,13 @@
 This is a [Next.js](https://nextjs.org/) project bootstrapped with [`create-next-app`](https://github.com/vercel/next.js/tree/canary/packages/create-next-app).
 
+## Transformacion model.h5 a json
+
+Usar en formato output: tfjs_graph_model y cargarlo con loadGraphModel en la app
+
+```
+tensorflowjs_converter --input_format keras --output_format=tfjs_graph_model model.h5 out
+```
+
 ## Getting Started
 
 First, run the development server:

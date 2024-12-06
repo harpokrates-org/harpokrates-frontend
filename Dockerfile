@@ -8,7 +8,7 @@ RUN cd wasm-lib && wasm-pack build --target web --out-dir pkg
 
 # Nextjs building
 COPY package.json package-lock.json ./
-RUN npm ci --verbose
+RUN npm install
 COPY . . 
 
 # Traigo las variables de entorno de render

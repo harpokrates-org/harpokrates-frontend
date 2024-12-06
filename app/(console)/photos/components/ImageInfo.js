@@ -1,5 +1,6 @@
 'use client';
-import Image from 'next/image';
+import { getUserName } from '@/app/api/UserAPI';
+import { userFound } from '@/store/FlickrUserSlice';
 import {
   Box,
   DialogContent,
@@ -9,15 +10,14 @@ import {
   ListItem,
   Typography,
 } from '@mui/material';
-import { useDispatch } from 'react-redux';
+import Image from 'next/image';
 import toast from 'react-hot-toast';
-import { getUserName } from '@/app/api/UserAPI';
-import { userFound } from '@/store/FlickrUserSlice';
+import { useDispatch } from 'react-redux';
 
 const favoritesCountWidth = 100
 const favoritesCountHeight = 25
 
-export default function ImageInfo({ photo, favorites }) {
+export default function ImageInfo({ photo, favorites, onNameClick }) {
   const dispatch = useDispatch()
 
   const getFavoritosCount = () => {
@@ -29,6 +29,7 @@ export default function ImageInfo({ photo, favorites }) {
     const flickrUserName = event.target.innerText
     getUserName(flickrUserName)
     .then((response) => {
+      onNameClick()
       dispatch(userFound({
         name: flickrUserName,
         id: response.data.id

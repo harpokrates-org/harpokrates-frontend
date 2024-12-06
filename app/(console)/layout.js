@@ -16,7 +16,7 @@ export default function ConsoleLayout({ children }) {
     <>
       <Box sx={{ display: 'flex' }}>
         <SideBar />
-        <Box component="main" sx={{ flexGrow: 1, p: 3 }}>
+        <Box component="main" sx={{ flexGrow: 5, p: 3 }}>
           <Toolbar />
           {children}
         </Box>

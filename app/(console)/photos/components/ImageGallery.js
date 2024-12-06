@@ -1,5 +1,24 @@
 "use client";
-import { getPrediction, loadLowModel } from "@/app/libs/classifier";
+import { collectModels } from "@/app/libs/ModelCollection";
+import {
+  fetchModel,
+  fetchUserFavorites,
+  fetchUserPhotoSizes,
+  predict,
+  resetPresiction,
+} from "@/app/libs/utils";
+import {
+  selectId,
+  selectName,
+  selectPhotoPredictions,
+  selectPhotos,
+  selectPhotosAreUpdated,
+  setFavorites,
+  setPhotoPredictions,
+  setPhotos,
+} from "@/store/FlickrUserSlice";
+import { selectModels } from "@/store/HarpokratesUserSlice";
+import { selectFilters } from "@/store/PhotosFilterSlice";
 import {
   Box,
   Button,
@@ -7,23 +26,58 @@ import {
   ImageListItem,
   ImageListItemBar,
 } from "@mui/material";
+import { saveAs } from "file-saver";
+import JSZip from "jszip";
 import { useEffect, useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { selectName, selectPhotos, setPhotos } from "@/store/FlickrUserSlice";
-const R = require("ramda");
-import { getUserPhotoSizes } from "@/app/api/UserAPI"
 import ImageDialog from "./ImageDialog";
+import toast from "react-hot-toast";
+import ModelLoadError from "@/app/libs/ModelError";
+const R = require("ramda");
+
+const downloadStegoImages = async (stegoPhotos) => {
+  const zip = new JSZip();
+  const images = stegoPhotos.map(async (photo) => {
+    const response = await fetch(photo.source);
+    const data = await response.blob();
+    const name = photo.title.replaceAll(" ", "_");
+    const type = photo.source.split(".").pop();
+    zip.file(`${name}.${type}`, data);
+
+    return data;
+  });
+
+  Promise.all(images).then(() => {
+    zip.generateAsync({ type: "blob" }).then((content) => {
+      saveAs(content, "detecciones.zip");
+    });
+  });
+};
 
 export default function ImageGallery() {
-  const [model, setModel] = useState(null);
-  const [clickedImage, setClickedImage] = useState({ id: '', source: '', title: '', width: 0, height: 0 });
+  const [clickedImage, setClickedImage] = useState({
+    id: "",
+    source: "",
+    title: "",
+    width: 0,
+    height: 0,
+  });
   const [openImage, setOpenImage] = useState(false);
-  const photos = useSelector(selectPhotos)
+  const [stegoPhotos, setStegoPhotos] = useState([]);
+  const photos = useSelector(selectPhotos);
+  const userID = useSelector(selectId);
   const username = useSelector(selectName);
+  const filters = useSelector(selectFilters);
+  const photosAreUpdated = useSelector(selectPhotosAreUpdated);
   const dispatch = useDispatch();
+  const userModels = useSelector(selectModels);
+  const photoPredictions = useSelector(selectPhotoPredictions);
+
+  const modelName = filters.modelName;
+  const modelThreshold = filters.modelThreshold;
 
   const imageClickHandler = (photo) => {
-    setClickedImage(photo)
+    setClickedImage(photo);
     setOpenImage(true);
   };
 
@@ -31,77 +85,111 @@ export default function ImageGallery() {
     setOpenImage(false);
   };
 
-  useEffect(() => {
-    const getFilter = async (prediction) => {
-      const stegoFilter =
-        "grayscale(100%) brightness(40%) sepia(100%) hue-rotate(-50deg) saturate(600%) contrast(0.8)";
-      const filter = prediction > 0.5 ? stegoFilter : "";
-      return filter;
-    };
+  const tryUsingPastPredictions = async (model, updatedPhotos) => {
+    if (!photosAreUpdated) {
+      dispatch(setPhotoPredictions({}));
+    }
 
-    const fetchModel = async () => {
-      if (model) return;
-      const _model = await loadLowModel();
-      setModel(_model);
-    };
+    if (modelName in photoPredictions) {
+      return photoPredictions[modelName];
+    }
 
-    const fetchUserPhotoSizes = async (label) => {
-      if (!username | !model) return;
-      const count = 12;
-      const res = await getUserPhotoSizes(username, count);
-      if (res.status != "200") {
-        toast.error("Error al cargar las fotos");
-        return;
+    const _photos = await toast.promise(
+      predict(model, modelThreshold, updatedPhotos),
+      {
+        loading: "Revisando las imagenes",
+        success: "Imagenes revisadas",
+        error: "Error de predicción",
       }
+    );
+    const _photoPredictions = { ...photoPredictions };
+    _photoPredictions[modelName] = _photos;
+    dispatch(setPhotoPredictions(_photoPredictions));
 
-      const _photos = await Promise.all(
-        res.data.photos.map(async (p) => {
-          const size = R.filter((e) => e.label == label, p.sizes)[0];
-          const prediction = await getPrediction(model, size.source);
-          const filter = await getFilter(prediction);
-          return {
-            id: p.id,
-            title: p.title,
-            source: size.source,
-            height: size.height,
-            width: size.width,
-            filter: filter,
-            prediction: prediction,
-          };
-        })
-      );
-      dispatch(setPhotos(_photos));
+    return _photos;
+  };
+
+  useEffect(() => {
+    const modelPrediction = async () => {
+      try {
+        const modelCollection = collectModels(userModels);
+        const model = await fetchModel(modelCollection, modelName);
+
+        const updatedPhotos = photosAreUpdated
+          ? photos
+          : await fetchUserPhotoSizes(
+              userID,
+              filters.minDate,
+              filters.maxDate,
+              "Medium"
+            );
+
+        const _photos = await tryUsingPastPredictions(model, updatedPhotos);
+
+        const stegoPhotosAux = _photos.filter(
+          (photo) => photo.prediction >= modelThreshold
+        );
+        const stegoPhotoIDs = stegoPhotosAux.map((photo) => photo.id);
+        fetchUserFavorites(username, stegoPhotoIDs).then((favorites) =>
+          dispatch(setFavorites(favorites))
+        );
+        setStegoPhotos(stegoPhotosAux);
+        dispatch(setPhotos(_photos));
+      } catch (error) {
+        if (error instanceof ModelLoadError) {
+          toast.error("No pudimos cargar el modelo");
+          setStegoPhotos([]);
+          resetPresiction(photos).then((_photos) =>
+            dispatch(setPhotos(_photos))
+          );
+        } else {
+          console.log(error);
+          toast.error("No pudimos realizar la predicción");
+        }
+      }
     };
 
-    const fetchAll = async () => {
-      await fetchModel();
-      fetchUserPhotoSizes("Medium");
-    };
-
-    setOpenImage(false)
-    fetchAll();
-  }, [username, model, dispatch]);
+    modelPrediction();
+  }, [userID, photosAreUpdated, filters, dispatch]);
 
   return (
     <Box>
       <ImageList cols={4}>
-        {photos.map((photo) => (
+        {photos.map((photo, index) => (
           <ImageListItem key={photo.id}>
             <Button onClick={() => imageClickHandler(photo)}>
               <img
                 src={photo.source}
                 alt={photo.title}
-                style={{ height: 150, filter: photo.filter }}
+                style={{
+                  width: "100%",
+                  height: "20vh",
+                  filter: photo.filter,
+                  objectFit: "cover",
+                }}
                 loading="lazy"
               />
             </Button>
-            {photo.prediction > 0.5 ? (
+            {photo.prediction >= filters.modelThreshold ? (
               <ImageListItemBar subtitle={photo.prediction.toFixed(2)} />
             ) : null}
           </ImageListItem>
         ))}
       </ImageList>
-      <ImageDialog photo={clickedImage} open={openImage} onClose={imageCloseHandler} />
+      {stegoPhotos.length > 0 && (
+        <Button
+          onClick={() => downloadStegoImages(stegoPhotos)}
+          variant="outlined"
+          sx={{ margin: `20px` }}
+        >
+          Descargar detecciones
+        </Button>
+      )}
+      <ImageDialog
+        photo={clickedImage}
+        open={openImage}
+        onClose={imageCloseHandler}
+      />
     </Box>
   );
 }

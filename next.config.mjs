@@ -1,6 +1,7 @@
 /** @type {import('next').NextConfig} */
 const nextConfig = {
   output: 'standalone',
+  //reactStrictMode: false,
   images: {
     remotePatterns: [
       {
@@ -12,7 +13,7 @@ const nextConfig = {
         hostname: '**.staticflickr.com',
       },
     ],
-  },
+  }
 };
 
 export default nextConfig;
