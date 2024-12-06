@@ -90,12 +90,14 @@ export default function ImageGallery() {
       dispatch(setPhotoPredictions({}));
     }
 
+    let pastPredictions = [];
+
     if (modelName in photoPredictions) {
-      return photoPredictions[modelName];
+      pastPredictions = photoPredictions[modelName];
     }
 
     const _photos = await toast.promise(
-      predict(model, modelThreshold, updatedPhotos),
+      predict(model, modelThreshold, updatedPhotos, pastPredictions),
       {
         loading: "Revisando las imagenes",
         success: "Imagenes revisadas",

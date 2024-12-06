@@ -75,10 +75,11 @@ export const fetchUserFavorites = async (username, photoIDs) => {
   }
 };
 
-export const predict = async (model, modelThreshold, photos) => {
+export const predict = async (model, modelThreshold, photos, pastPredictions) => {
   if (!model) return;
   const _photos = await Promise.all(
     photos.map(async (p) => {
+      if (pastPredictions[p.sourse]) return pastPredictions[p.sourse];
       const prediction = await model.getPrediction(p.source);
       const filter = await getFilter(prediction, modelThreshold);
       return {
