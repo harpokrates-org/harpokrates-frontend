@@ -11,6 +11,7 @@ import {
   selectName,
   selectNetwork,
   selectNetworkIsUpdated,
+  selectPhotoPredictions,
   selectPhotos,
   setNetwork,
 } from "@/store/FlickrUserSlice";
@@ -61,8 +62,8 @@ export default function Graph() {
   const color = useSelector(selectColor);
   const spanningTreeK = useSelector(selectSpanningTreeK);
 
-  const [model, setModel] = useState();
   const modelName = useSelector(selectModelName);
+  const photoPredictions = useSelector(selectPhotoPredictions);
   const [networkPhotos, setNetworkPhotos] = useState();
 
   const userModels = useSelector(selectModels);
@@ -171,13 +172,15 @@ export default function Graph() {
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
       const model = await getModel()
+      let pastPredictions = modelName in photoPredictions ? photoPredictions[modelName] : [] ;
       const net = await new NetBuilder().build(
         socialNetwork,
         size,
         color,
         spanningTreeK,
         model,
-        networkPhotos
+        networkPhotos,
+        pastPredictions
       );
       setNet(net);
     };
