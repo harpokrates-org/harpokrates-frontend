@@ -50,13 +50,14 @@ export class NetBuilder {
     return count;
   }
 
-  async _countPositivesInNetwork(model, networkPhotos) {
+  async _countPositivesInNetwork(model, networkPhotos, pastPredictions) {
     const positives = await Promise.all(
       networkPhotos.map(async (userPhotos) => {
         const predictions = await predict(
           model,
           model.threshold,
-          userPhotos.photoSizes
+          userPhotos.photoSizes,
+          pastPredictions
         );
         const positives = this._countPositives(model, predictions);
         const res = {};
@@ -68,22 +69,22 @@ export class NetBuilder {
     return positiveUsers;
   }
 
-  async _addPositivesAsignedToKey(net, model, networkPhotos, key) {
-    const positives = await this._countPositivesInNetwork(model, networkPhotos);
+  async _addPositivesAsignedToKey(net, model, networkPhotos, key, pastPredictions) {
+    const positives = await this._countPositivesInNetwork(model, networkPhotos, pastPredictions);
     return this._setNodeWeights(net, key, positives);
   }
 
-  async _updateSizesByStegoCount(net, model, networkPhotos) {
-    return this._addPositivesAsignedToKey(net, model, networkPhotos, SIZE_KEY);
+  async _updateSizesByStegoCount(net, model, networkPhotos, pastPredictions) {
+    return this._addPositivesAsignedToKey(net, model, networkPhotos, SIZE_KEY, pastPredictions);
   }
 
-  async _updateColorsByStegoCount(net, model, networkPhotos) {
-    const positives = await this._countPositivesInNetwork(model, networkPhotos);
+  async _updateColorsByStegoCount(net, model, networkPhotos, pastPredictions) {
+    const positives = await this._countPositivesInNetwork(model, networkPhotos, pastPredictions);
     const colorsPerUser = this._matchPositivesToColors(positives);
     return this._setNodeWeights(net, COLOR_KEY, colorsPerUser);
   }
 
-  async build(socialNetwork, size, color, spanningTreeK, model, networkPhotos) {
+  async build(socialNetwork, size, color, spanningTreeK, model, networkPhotos, pastPredictions) {
     const config = JSON.stringify({
       color: color,
       size: size,
@@ -95,9 +96,9 @@ export class NetBuilder {
     }
 
     if (size == "stego-count") {
-      net = await this._updateSizesByStegoCount(net, model, networkPhotos);
+      net = await this._updateSizesByStegoCount(net, model, networkPhotos, pastPredictions);
     } else if (color == "stego-count") {
-      net = await this._updateColorsByStegoCount(net, model, networkPhotos);
+      net = await this._updateColorsByStegoCount(net, model, networkPhotos, pastPredictions);
     }
     return net;
   }

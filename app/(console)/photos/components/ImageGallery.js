@@ -90,11 +90,7 @@ export default function ImageGallery() {
       dispatch(setPhotoPredictions({}));
     }
 
-    let pastPredictions = [];
-
-    if (modelName in photoPredictions) {
-      pastPredictions = photoPredictions[modelName];
-    }
+    let pastPredictions = modelName in photoPredictions ? photoPredictions[modelName] : [] ;
 
     const _photos = await toast.promise(
       predict(model, modelThreshold, updatedPhotos, pastPredictions),
