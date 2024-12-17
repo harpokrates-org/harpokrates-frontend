@@ -22,6 +22,7 @@ import {
   selectModelName,
   selectSize,
   selectSpanningTreeK,
+  selectTopStegoUsersCounter,
 } from "@/store/NetworkSlice";
 import { Box, LinearProgress } from "@mui/material";
 import { useWindowSize } from "@react-hook/window-size";
@@ -61,6 +62,7 @@ export default function Graph() {
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
   const spanningTreeK = useSelector(selectSpanningTreeK);
+  const topStegoUsersCounter = useSelector(selectTopStegoUsersCounter);
 
   const modelName = useSelector(selectModelName);
   const photoPredictions = useSelector(selectPhotoPredictions);
@@ -95,7 +97,14 @@ export default function Graph() {
           const photos = await getPhotos(userID);
           let inputNet = networkIsUpdated
             ? { ...network }
-            : { ...(await getFavorites(photos)) };
+            : {
+                ...(await toast.promise(getFavorites(photos)),
+                {
+                  loading: "Construyendo la red en base a los favoritos",
+                  success: "Red completa",
+                  error: "Error al cargar la red",
+                }),
+              };
           inputNet.main_node = username;
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
@@ -121,40 +130,54 @@ export default function Graph() {
   useEffect(() => {
     const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
-      const topUsers = JSON.parse(
-        socialNetwork.get_top_users("popularity", 10)
-      );
-      const _networkPhotos = await Promise.all(
-        topUsers.map(async (flickrUserName) => {
-          try {
-            const resUserName = await getUserName(flickrUserName);
-            const userID = resUserName.data.id;
-            const today = new Date().toJSON();
-            const photoSizes = await fetchUserPhotoSizes(
-              userID,
-              "1970-01-01",
-              today,
-              "Medium"
-            );
-            const res = {
-              userID: userID,
-              flickrUserName: flickrUserName,
-              photoSizes: photoSizes,
-            };
-            return res;
-          } catch (err) {
-            return {
-              userID: userID,
-              flickrUserName: userID,
-              photoSizes: [],
-            };
-          }
-        })
+
+      console.log("topStegoUsersCounter", topStegoUsersCounter);
+
+      let topUsers = [];
+      if (color == "stego-count" || size == "stego-count") {
+        topUsers = JSON.parse(
+          socialNetwork.get_top_users("popularity", topStegoUsersCounter)
+        );
+      }
+
+      const _networkPhotos = await toast.promise(
+        Promise.all(
+          topUsers.map(async (flickrUserName) => {
+            try {
+              const resUserName = await getUserName(flickrUserName);
+              const userID = resUserName.data.id;
+              const today = new Date().toJSON();
+              const photoSizes = await fetchUserPhotoSizes(
+                userID,
+                "1970-01-01",
+                today,
+                "Medium"
+              );
+              const res = {
+                userID: userID,
+                flickrUserName: flickrUserName,
+                photoSizes: photoSizes,
+              };
+              return res;
+            } catch (err) {
+              return {
+                userID: userID,
+                flickrUserName: userID,
+                photoSizes: [],
+              };
+            }
+          })
+        ),
+        {
+          loading: "Descargando las fotos de los usuarios top",
+          success: "Descarga completa",
+          error: "Error al descargar las fotos",
+        }
       );
       setNetworkPhotos(_networkPhotos);
     };
     getNetworkPhotos(socialNetwork);
-  }, [socialNetwork]);
+  }, [socialNetwork, topStegoUsersCounter]);
 
   useEffect(() => {
     const getModel = async () => {
@@ -162,17 +185,18 @@ export default function Graph() {
         const modelCollection = collectModels(userModels);
         return await fetchModel(modelCollection, modelName);
       } catch (error) {
-        if (error instanceof ModelLoadError){
+        if (error instanceof ModelLoadError) {
           toast.error("No pudimos cargar el modelo");
-          return appModelNames.NO_MODEL
+          return appModelNames.NO_MODEL;
         }
       }
-    }
+    };
 
     const buildAndSetNet = async () => {
       if (!socialNetwork || !networkPhotos) return;
-      const model = await getModel()
-      let pastPredictions = modelName in photoPredictions ? photoPredictions[modelName] : [] ;
+      const model = await getModel();
+      let pastPredictions =
+        modelName in photoPredictions ? photoPredictions[modelName] : [];
       const net = await new NetBuilder().build(
         socialNetwork,
         size,

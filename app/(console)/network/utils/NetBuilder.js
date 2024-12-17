@@ -2,9 +2,11 @@ import { appModelNames } from "@/app/libs/AppModelIndex";
 import { predict } from "@/app/libs/utils";
 import chroma from "chroma-js";
 const R = require("ramda");
+import toast from "react-hot-toast";
 
 const COLOR_KEY = "group";
 const SIZE_KEY = "val";
+const COVER_COLOR_IN_HEXA = 0x00FF00; // green
 export class NetBuilder {
   _matchPositivesToColors(positives) {
     const positiveValues = Object.entries(positives).map((entry) => {
@@ -12,12 +14,19 @@ export class NetBuilder {
       return value;
     });
     const maxPositiveValue = R.apply(Math.max, positiveValues);
-    const scale = chroma.scale(["gray", "red"]);
+    const scale = chroma.scale(["pink", "red"]);
 
     const userColors = Object.entries(positives).map((entry) => {
       const key = entry[0];
       const value = entry[1];
       const res = {};
+
+
+      if (value == 0) {
+        res[key] = COVER_COLOR_IN_HEXA
+        return res;
+      }
+
       res[key] = Number(
         scale(value / maxPositiveValue)
           .hex()
@@ -51,7 +60,7 @@ export class NetBuilder {
   }
 
   async _countPositivesInNetwork(model, networkPhotos, pastPredictions) {
-    const positives = await Promise.all(
+    const positives = await toast.promise(Promise.all(
       networkPhotos.map(async (userPhotos) => {
         const predictions = await predict(
           model,
@@ -64,7 +73,13 @@ export class NetBuilder {
         res[userPhotos.flickrUserName] = positives;
         return res;
       })
-    );
+    ), {
+      loading: "Aplicando el modelo a las imagenes",
+      success: "Predicciones completas",
+      error: "Error al predecir las imagenes",
+    }
+  
+  );
     const positiveUsers = Object.assign({}, ...positives);
     return positiveUsers;
   }

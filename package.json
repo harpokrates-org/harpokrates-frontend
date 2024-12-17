@@ -7,7 +7,8 @@
     "build": "next build",
     "start": "next start",
     "lint": "next lint",
-    "build:wasm": "cd wasm-lib && wasm-pack build --target web --out-dir pkg --dev"
+    "build:wasm": "cd wasm-lib && wasm-pack build --target web --out-dir pkg",
+    "build:wasm-dev": "cd wasm-lib && wasm-pack build --target web --out-dir pkg --dev"
   },
   "dependencies": {
     "@emotion/cache": "^11.11.0",
