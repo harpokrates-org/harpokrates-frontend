@@ -131,8 +131,6 @@ export default function Graph() {
     const getNetworkPhotos = async (socialNetwork) => {
       if (!socialNetwork) return;
 
-      console.log("topStegoUsersCounter", topStegoUsersCounter);
-
       let topUsers = [];
       if (color == "stego-count" || size == "stego-count") {
         topUsers = JSON.parse(

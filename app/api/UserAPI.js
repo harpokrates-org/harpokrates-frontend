@@ -64,6 +64,7 @@ export const getUserFavorites = async (
     });
   } catch (error) {
     console.log(error);
+    return []
   }
 };
 
