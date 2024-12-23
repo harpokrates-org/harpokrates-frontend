@@ -1,6 +1,4 @@
-import { models } from "@/app/libs/AppModelIndex";
 import { getUserFavorites, getUserPhotoSizes } from "../api/UserAPI";
-import { collectModels } from "./ModelCollection";
 const R = require("ramda");
 
 export const fetchModel = async (modelCollection, modelName) => {

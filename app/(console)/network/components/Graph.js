@@ -71,6 +71,12 @@ export default function Graph() {
   const userModels = useSelector(selectModels);
 
   useEffect(() => {
+    const warnUserIfNetworkIsEmpty = (network) => {
+      if (network.nodes.length <= 1) {
+        toast('Red vacía. Intentá en unos segundos...', { icon: '⚠️'})
+      }
+    }
+
     const getPhotos = async (userID) => {
       if (photos.length > 0) return photos;
       const data = await getUserPhotos(userID, mainPhotosCount);
@@ -87,11 +93,26 @@ export default function Graph() {
         photosPerFavorite,
         depth
       );
+      console.log('set_network', response.data)
       dispatch(setNetwork(response.data));
       return response.data;
     };
 
     const getSocialNetwork = async () => {
+      const dependencies = {
+        userID,
+        photos,
+        username,
+        dispatch,
+        wasmInitPromise,
+        depth,
+        network,
+        networkIsUpdated,
+      }
+
+      console.log('dependencies', dependencies)
+
+
       wasmInitPromise
         .then(async () => {
           const photos = await getPhotos(userID);
@@ -106,6 +127,8 @@ export default function Graph() {
                 }),
               };
           inputNet.main_node = username;
+          console.log(inputNet)
+          warnUserIfNetworkIsEmpty(inputNet)
           const parsed_input = JSON.stringify(inputNet);
           const socialNetwork = new SocialNetwork(parsed_input);
           setSocialNetwork(socialNetwork);

@@ -63,8 +63,8 @@ export const getUserFavorites = async (
       },
     });
   } catch (error) {
-    console.log(error);
-    return []
+    console.log('getUserFavorites', error);
+    return { nodes: [username], links: []}
   }
 };
 
