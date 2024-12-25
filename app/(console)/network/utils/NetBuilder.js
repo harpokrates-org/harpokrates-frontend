@@ -6,7 +6,7 @@ import toast from "react-hot-toast";
 
 const COLOR_KEY = "group";
 const SIZE_KEY = "val";
-const COVER_COLOR_IN_HEXA = 0xA9A9A9; // green
+const COVER_COLOR_IN_HEXA = 0x3b3b3b; // gray
 export class NetBuilder {
   _matchPositivesToColors(positives) {
     const positiveValues = Object.entries(positives).map((entry) => {
