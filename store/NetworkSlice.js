@@ -7,6 +7,7 @@ const initialState = {
   color: "community",
   spanningTreeK: 10,
   modelName: appModelNames.NO_MODEL,
+  topStegoUsersCounter: 10
 };
 
 export const networkSlice = createSlice({
@@ -28,6 +29,9 @@ export const networkSlice = createSlice({
     changeModelName: (state, action) => {
       state.modelName = action.payload;
     },
+    changeTopStegoUsersCounter: (state, action) => {
+      state.topStegoUsersCounter = action.payload;
+    },
     reset: (state, action) => {
       return initialState;
     },
@@ -40,6 +44,7 @@ export const {
   changeColor,
   changeModelName,
   changeSpanningTreeK,
+  changeTopStegoUsersCounter,
   reset,
 } = networkSlice.actions;
 
@@ -48,5 +53,6 @@ export const selectSize = (state) => state.network.size;
 export const selectColor = (state) => state.network.color;
 export const selectSpanningTreeK = (state) => state.network.spanningTreeK;
 export const selectModelName = (state) => state.network.modelName;
+export const selectTopStegoUsersCounter = (state) => state.network.topStegoUsersCounter;
 
 export default networkSlice.reducer;

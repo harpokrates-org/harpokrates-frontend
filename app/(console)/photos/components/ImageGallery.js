@@ -90,13 +90,14 @@ export default function ImageGallery() {
       dispatch(setPhotoPredictions({}));
     }
 
-    let pastPredictions = modelName in photoPredictions ? photoPredictions[modelName] : [] ;
+    let pastPredictions =
+      modelName in photoPredictions ? photoPredictions[modelName] : [];
 
     const _photos = await toast.promise(
       predict(model, modelThreshold, updatedPhotos, pastPredictions),
       {
         loading: "Revisando las imagenes",
-        success: "Imagenes revisadas",
+        success: "Revisión completa",
         error: "Error de predicción",
       }
     );
@@ -105,6 +106,15 @@ export default function ImageGallery() {
     dispatch(setPhotoPredictions(_photoPredictions));
 
     return _photos;
+  };
+
+  const warnUserIfPhotosAreEmpty = (photos) => {
+    if (photos.length === 0) {
+      toast(
+        "No se pudo obtener las imagenes del usuario. Reintentá en unos segundos...",
+        { icon: "⚠️" }
+      );
+    }
   };
 
   useEffect(() => {

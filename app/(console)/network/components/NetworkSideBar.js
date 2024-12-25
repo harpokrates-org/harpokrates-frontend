@@ -1,13 +1,14 @@
 "use client";
-import { modelNames } from "@/app/libs/AppModelIndex";
 import { Box, Button, FormControl, MenuItem, TextField } from "@mui/material";
 
+import { collectModelNames } from "@/app/libs/ModelCollection";
 import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 import {
   changeColor,
   changeDepth,
-  changeSize,
   changeModelName,
+  changeSize,
   changeSpanningTreeK,
   selectColor,
   selectDepth,
@@ -17,8 +18,6 @@ import {
 } from "@/store/NetworkSlice.js";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { collectModelNames, collectModels } from "@/app/libs/ModelCollection";
-import { selectModels } from "@/store/HarpokratesUserSlice";
 
 export const drawerWidth = 180;
 
@@ -35,7 +34,6 @@ export default function NetworkSideBar() {
   const userModels = useSelector(selectModels);
 
   const modelNames = collectModelNames(userModels);
-  const models = collectModels(userModels);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -144,7 +142,7 @@ export default function NetworkSideBar() {
               setModelName(e.target.value);
             }}
           >
-           {modelNames.map((name) => {
+            {modelNames.map((name) => {
               return (
                 <MenuItem key={name} value={name}>
                   {name}

@@ -26,7 +26,9 @@ export default function UserProfile() {
       }
     }).then((response) => {
       setUserProfile(response.data)
-    }).catch(() => {})
+    }).catch(() => {
+      console.log('Error al descargar el perfil del usuario')
+    })
   }, [setUserProfile, userID])
 
   return (

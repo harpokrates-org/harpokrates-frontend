@@ -1,6 +1,4 @@
-import { models } from "@/app/libs/AppModelIndex";
 import { getUserFavorites, getUserPhotoSizes } from "../api/UserAPI";
-import { collectModels } from "./ModelCollection";
 const R = require("ramda");
 
 export const fetchModel = async (modelCollection, modelName) => {
@@ -62,10 +60,11 @@ export const fetchUserFavorites = async (username, photoIDs) => {
 
     const favorites = response.data.edges.reduce(
       (accumulator, currentValue) => {
-        accumulator[currentValue[originIndex]] = (accumulator[currentValue[originIndex]] || 0) + 1
-        return accumulator
+        accumulator[currentValue[originIndex]] =
+          (accumulator[currentValue[originIndex]] || 0) + 1;
+        return accumulator;
       },
-      {},
+      {}
     );
 
     return favorites;
@@ -75,7 +74,12 @@ export const fetchUserFavorites = async (username, photoIDs) => {
   }
 };
 
-export const predict = async (model, modelThreshold, photos, pastPredictions) => {
+export const predict = async (
+  model,
+  modelThreshold,
+  photos,
+  pastPredictions
+) => {
   if (!model) return;
   const _photos = await Promise.all(
     photos.map(async (p) => {
@@ -97,7 +101,7 @@ export const resetPresiction = async (photos) => {
     photos.map(async (p) => {
       return {
         ...p,
-        filter: '',
+        filter: "",
         prediction: 0,
       };
     })

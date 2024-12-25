@@ -63,7 +63,7 @@ export const getUserFavorites = async (
       },
     });
   } catch (error) {
-    console.log(error);
+    return { data: { nodes: [username], edges: [] } };
   }
 };
 
