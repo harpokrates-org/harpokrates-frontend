@@ -132,8 +132,6 @@ export default function ImageGallery() {
               "Medium"
             );
 
-        warnUserIfPhotosAreEmpty(updatedPhotos);
-
         const _photos = await tryUsingPastPredictions(model, updatedPhotos);
 
         const stegoPhotosAux = _photos.filter(

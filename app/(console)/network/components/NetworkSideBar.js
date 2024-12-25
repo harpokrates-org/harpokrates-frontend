@@ -1,26 +1,23 @@
 "use client";
-import { modelNames } from "@/app/libs/AppModelIndex";
 import { Box, Button, FormControl, MenuItem, TextField } from "@mui/material";
 
+import { collectModelNames } from "@/app/libs/ModelCollection";
 import { mustUpdateNetwork } from "@/store/FlickrUserSlice";
+import { selectModels } from "@/store/HarpokratesUserSlice";
 import {
   changeColor,
   changeDepth,
-  changeSize,
   changeModelName,
+  changeSize,
   changeSpanningTreeK,
   selectColor,
   selectDepth,
   selectModelName,
   selectSize,
   selectSpanningTreeK,
-  selectTopStegoUsersCounter,
-  changeTopStegoUsersCounter,
 } from "@/store/NetworkSlice.js";
 import { useState } from "react";
 import { useDispatch, useSelector } from "react-redux";
-import { collectModelNames, collectModels } from "@/app/libs/ModelCollection";
-import { selectModels } from "@/store/HarpokratesUserSlice";
 
 export const drawerWidth = 180;
 
@@ -35,10 +32,8 @@ export default function NetworkSideBar() {
   );
   const [modelName, setModelName] = useState(useSelector(selectModelName));
   const userModels = useSelector(selectModels);
-  const [topStegoUsersCounter, setTopStegoUsersCounter] = useState(useSelector(selectTopStegoUsersCounter))
 
   const modelNames = collectModelNames(userModels);
-  const models = collectModels(userModels);
 
   const handleSubmit = (e) => {
     e.preventDefault();
@@ -48,7 +43,6 @@ export default function NetworkSideBar() {
     dispatch(changeSize(size));
     dispatch(changeSpanningTreeK(spanningTreeK));
     dispatch(changeModelName(modelName));
-    dispatch(changeTopStegoUsersCounter(topStegoUsersCounter));
     if (mustUpdate) dispatch(mustUpdateNetwork());
   };
 
@@ -148,7 +142,7 @@ export default function NetworkSideBar() {
               setModelName(e.target.value);
             }}
           >
-           {modelNames.map((name) => {
+            {modelNames.map((name) => {
               return (
                 <MenuItem key={name} value={name}>
                   {name}
@@ -156,21 +150,6 @@ export default function NetworkSideBar() {
               );
             })}
           </TextField>
-        )}
-        {(color == "stego-count" || size == "stego-count") && (
-          <TextField
-            label="Cantidad usuarios a analizar"
-            variant="outlined"
-            type="number"
-            value={topStegoUsersCounter}
-            onChange={(e) => {
-              setTopStegoUsersCounter(parseInt(e.target.value));
-            }}
-            error={topStegoUsersCounter <= 1}
-            helperText={
-              topStegoUsersCounter <= 1 ? "Debe ser mayor a 1" : "Numero de usuarios a analizar"
-            }
-          />
         )}
         <Button type="submit" onClick={handleSubmit}>
           APLICAR

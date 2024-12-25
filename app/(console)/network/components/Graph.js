@@ -4,7 +4,9 @@ import {
   getUserName,
   getUserPhotos,
 } from "@/app/api/UserAPI";
+import { appModelNames } from "@/app/libs/AppModelIndex";
 import { collectModels } from "@/app/libs/ModelCollection";
+import ModelLoadError from "@/app/libs/ModelError";
 import { fetchModel, fetchUserPhotoSizes } from "@/app/libs/utils";
 import {
   selectId,
@@ -21,20 +23,17 @@ import {
   selectDepth,
   selectModelName,
   selectSize,
-  selectSpanningTreeK,
-  selectTopStegoUsersCounter,
+  selectSpanningTreeK
 } from "@/store/NetworkSlice";
 import { Box, LinearProgress } from "@mui/material";
 import { useWindowSize } from "@react-hook/window-size";
 import { useCallback, useEffect, useRef, useState } from "react";
 import { ForceGraph2D } from "react-force-graph";
+import toast from "react-hot-toast";
 import { useDispatch, useSelector } from "react-redux";
 import init, { SocialNetwork } from "wasm-lib";
 import { drawerWidth } from "../../components/SideBar";
 import { NetBuilder } from "../utils/NetBuilder";
-import ModelLoadError from "@/app/libs/ModelError";
-import toast from "react-hot-toast";
-import { appModelNames } from "@/app/libs/AppModelIndex";
 const R = require("ramda");
 
 const photosPerFavorite = 1;
@@ -42,6 +41,7 @@ const mainPhotosCount = 12;
 const topMenuHeight = 50;
 const padding = 60;
 const mainNodeColor = "blue";
+const topStegoUsersCounter = 15;
 
 export default function Graph() {
   const fgRef = useRef();
@@ -62,7 +62,6 @@ export default function Graph() {
   const size = useSelector(selectSize);
   const color = useSelector(selectColor);
   const spanningTreeK = useSelector(selectSpanningTreeK);
-  const topStegoUsersCounter = useSelector(selectTopStegoUsersCounter);
 
   const modelName = useSelector(selectModelName);
   const photoPredictions = useSelector(selectPhotoPredictions);
